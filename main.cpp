@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 #include <boost/process.hpp>
 #include "directory.h"
+#include "treeview.h"
 
 GtkBuilder *builder;
 GtkWidget  *window;
@@ -40,6 +41,8 @@ void cb_app_exit(GSimpleAction*, GVariant*, gpointer) {
 int setup() {
 	builder = gtk_builder_new_from_resource("/ui/form.ui");
 	window = GTK_WIDGET(gtk_builder_get_object(builder, "form"));
+	
+	treeview_init(builder);
 	
 	return 0;
 }

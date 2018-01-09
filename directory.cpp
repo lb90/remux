@@ -20,8 +20,6 @@ int scan_directory(char *dirpath) {
 		path += name;
 		model_add(TRUE, name, path.c_str());
 		
-		g_print("%s : %s\n", name, path.c_str());
-		
 		count++;
 		if (count >= 2000)
 			break;

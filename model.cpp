@@ -2,14 +2,7 @@
 #include <cassert>
 #include <gtk/gtk.h>
 
-GtkListStore *liststore;
-extern GtkBuilder *builder;
-
-int model_init() {
-	liststore = GTK_LIST_STORE(gtk_builder_get_object(builder, "liststore"));
-	
-	return 0;
-}
+extern GtkListStore *liststore;
 
 int model_clear() {
 	gtk_list_store_clear(liststore);

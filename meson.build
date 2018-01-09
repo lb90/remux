@@ -31,7 +31,8 @@ endif
 src = [
   'main.cpp',
   'directory.cpp',
-  'model.cpp'
+  'model.cpp',
+  'treeview.cpp'
 ]
 
 res = gnome.compile_resources('res', 'res.gresource.xml')
