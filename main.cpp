@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include <boost/process.hpp>
+#include "model.h"
 #include "directory.h"
 #include "treeview.h"
 
@@ -23,6 +24,7 @@ void cb_app_open(GSimpleAction*, GVariant*, gpointer) {
 		GtkFileChooser *chooser = GTK_FILE_CHOOSER(native);
 		directoryname = gtk_file_chooser_get_filename(chooser);
 		
+		model_clear();
 		scan_directory(directoryname);
 		
 		g_free(directoryname);

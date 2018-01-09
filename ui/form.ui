@@ -94,10 +94,11 @@
         </child>
         <child>
           <object class="GtkButton" id="exitbutton">
-            <property name="label" translatable="yes">Exit</property>
+            <property name="label" translatable="yes">Esci</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="action_name">app.exit</property>
           </object>
           <packing>
             <property name="left_attach">0</property>
@@ -160,6 +161,8 @@
             <property name="can_focus">True</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
+            <property name="propagate_natural_width">True</property>
+            <property name="propagate_natural_height">True</property>
             <child>
               <object class="GtkTreeView" id="treeview">
                 <property name="visible">True</property>
