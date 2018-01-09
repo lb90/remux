@@ -1,0 +1,65 @@
+Build started at 2018-01-09T16:15:06.366903
+Main binary: /usr/bin/python
+Python system: Linux
+The Meson build system
+Version: 0.44.0
+Source dir: /home/luca/remux
+Build dir: /home/luca/remux/build
+Build type: native build
+Project name: remux
+Sanity testing C compiler: cc
+Is cross compiler: False.
+Sanity check compiler command line: cc /home/luca/remux/build/meson-private/sanitycheckc.c -o /home/luca/remux/build/meson-private/sanitycheckc.exe
+Sanity check compile stdout:
+
+-----
+Sanity check compile stderr:
+
+-----
+Running test binary command: /home/luca/remux/build/meson-private/sanitycheckc.exe
+Native C compiler: cc (gcc 7.2.1)
+Sanity testing C++ compiler: c++
+Is cross compiler: False.
+Sanity check compiler command line: c++ /home/luca/remux/build/meson-private/sanitycheckcpp.cc -o /home/luca/remux/build/meson-private/sanitycheckcpp.exe
+Sanity check compile stdout:
+
+-----
+Sanity check compile stderr:
+
+-----
+Running test binary command: /home/luca/remux/build/meson-private/sanitycheckcpp.exe
+Native C++ compiler: c++ (gcc 7.2.1)
+Build machine cpu family: x86_64
+Build machine cpu: x86_64
+Found pkg-config: /usr/bin/pkg-config (0.29.2)
+Determining dependency 'gtk+-3.0' with pkg-config executable '/usr/bin/pkg-config'
+Native dependency gtk+-3.0 found: YES 3.22.26
+Boost library root dir is None
+Boost include directory is /usr/include
+Boost library directory is None
+Dependency Boost (system, filesystem) found: YES 1.66
+Dependency threads found: YES
+Determining dependency 'glib-2.0' with pkg-config executable '/usr/bin/pkg-config'
+Native dependency glib-2.0 found: YES 2.54.0
+Build targets in project: 3
+Found ninja-1.8.2 at /usr/bin/ninja
+Running compile:
+Working directory:  /tmp/tmprclbrv4h
+Command line:  c++ /tmp/tmprclbrv4h/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_system -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmprclbrv4h/output.exe 
+
+Code:
+ int main(int argc, char **argv) { return 0; }
+Compiler stdout:
+ 
+Compiler stderr:
+ 
+Running compile:
+Working directory:  /tmp/tmp4y78gvzp
+Command line:  c++ /tmp/tmp4y78gvzp/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_filesystem -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmp4y78gvzp/output.exe 
+
+Code:
+ int main(int argc, char **argv) { return 0; }
+Compiler stdout:
+ 
+Compiler stderr:
+ 
