@@ -18,7 +18,7 @@ void cb_app_open(GSimpleAction*, GVariant*, gpointer) {
                                          GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
                                          "_Apri",
                                          "_Annulla");
-    res = gtk_native_dialog_run(GTK_NATIVE_DIALOG(native));
+	res = gtk_native_dialog_run(GTK_NATIVE_DIALOG(native));
 	if (res == GTK_RESPONSE_ACCEPT) {
 		char *directoryname;
 		GtkFileChooser *chooser = GTK_FILE_CHOOSER(native);
