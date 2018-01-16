@@ -1,5 +1,4 @@
 #include <gtk/gtk.h>
-#include <boost/process.hpp>
 #include "model.h"
 #include "directory.h"
 #include "treeview.h"

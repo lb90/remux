@@ -21,21 +21,6 @@ void cb_media_toggled(GtkCellRendererToggle *cell,
 	}
 }
 
-void icon_cell_data_func (GtkTreeViewColumn *col,
-                          GtkCellRenderer   *renderer,
-                          GtkTreeModel      *model,
-                          GtkTreeIter       *iter,
-                          gpointer)
-{
-	gchar *path = NULL;
-	gtk_tree_model_get(model, iter, 2, &path, -1);
-	
-	GIcon *gicon = NULL;
-	gicon = g_file_info_get_icon(fileinfo)
-
-	g_object_set(renderer, "gicon", buf, NULL);
-}
-
 int treeview_init_store() {
 	liststore = gtk_list_store_new(3, G_TYPE_BOOLEAN,
 	                                  G_TYPE_STRING,
@@ -73,11 +58,6 @@ int treeview_init_columns() {
 	gtk_tree_view_column_set_clickable(col, TRUE);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), col);
-	
-	renderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-	gtk_tree_view_column_set_cell_data_func(col, renderer, icon_cell_data_func,
-	                                        NULL, NULL);
 
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(col, renderer, TRUE);

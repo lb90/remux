@@ -1,4 +1,4 @@
-Build started at 2018-01-09T17:44:28.706230
+Build started at 2018-01-11T23:34:11.118083
 Main binary: /usr/bin/python
 Python system: Linux
 The Meson build system
@@ -44,8 +44,8 @@ Native dependency glib-2.0 found: YES 2.54.0
 Build targets in project: 3
 Found ninja-1.8.2 at /usr/bin/ninja
 Running compile:
-Working directory:  /tmp/tmp1xaftf2e
-Command line:  c++ /tmp/tmp1xaftf2e/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_system -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmp1xaftf2e/output.exe 
+Working directory:  /tmp/tmp79jm52q2
+Command line:  c++ /tmp/tmp79jm52q2/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_system -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmp79jm52q2/output.exe 
 
 Code:
  int main(int argc, char **argv) { return 0; }
@@ -54,8 +54,8 @@ Compiler stdout:
 Compiler stderr:
  
 Running compile:
-Working directory:  /tmp/tmpnkajnw8t
-Command line:  c++ /tmp/tmpnkajnw8t/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_filesystem -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmpnkajnw8t/output.exe 
+Working directory:  /tmp/tmpww31ju83
+Command line:  c++ /tmp/tmpww31ju83/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_filesystem -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmpww31ju83/output.exe 
 
 Code:
  int main(int argc, char **argv) { return 0; }

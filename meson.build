@@ -14,11 +14,13 @@ gtk_dep     = dependency('gtk+-3.0',
 boost_dep   = dependency('boost',
                        modules : boost_modules,
                        version : '>= 1.60')
+portaudio_dep = dependency('portaudio')
 threads_dep = dependency('threads')
 
 deps = [
   gtk_dep,
   boost_dep,
+  portaudio_dep,
   threads_dep
 ]
 

@@ -76,36 +76,36 @@ build PHONY: phony
 
 # Build rules for targets
 
-build res.c: CUSTOM_COMMAND_DEP ../res.gresource.xml
- DEPFILE = res.c.d
- COMMAND = glib-compile-resources ../res.gresource.xml --sourcedir ../ --internal --generate --target res.c --dependency-file res.c.d
+build src/res.c: CUSTOM_COMMAND_DEP ../src/res.gresource.xml
+ DEPFILE = src/res.c.d
+ COMMAND = glib-compile-resources ../src/res.gresource.xml --sourcedir ../src --internal --generate --target src/res.c --dependency-file src/res.c.d
  description = Generating$ res_c$ with$ a$ custom$ command.
 
-build res.h: CUSTOM_COMMAND ../res.gresource.xml
- COMMAND = glib-compile-resources ../res.gresource.xml --sourcedir ../ --internal --generate --target res.h
+build src/res.h: CUSTOM_COMMAND ../src/res.gresource.xml
+ COMMAND = glib-compile-resources ../src/res.gresource.xml --sourcedir ../src --internal --generate --target src/res.h
  description = Generating$ res_h$ with$ a$ custom$ command.
 
-build remux@exe/meson-generated_.._res.c.o: c_COMPILER res.c | res.h
- DEPFILE = remux@exe/meson-generated_.._res.c.o.d
- ARGS = -Iremux@exe -I. -I.. -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -O0 -g -pthread
+build src/remux@exe/meson-generated_.._res.c.o: c_COMPILER src/res.c | src/res.h
+ DEPFILE = src/remux@exe/meson-generated_.._res.c.o.d
+ ARGS = -Isrc/remux@exe -Isrc -I../src -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -O0 -g -pthread
 
-build remux@exe/main.cpp.o: cpp_COMPILER ../main.cpp || res.h
- DEPFILE = remux@exe/main.cpp.o.d
- ARGS = -Iremux@exe -I. -I.. -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -O0 -g -pthread
+build src/remux@exe/main.cpp.o: cpp_COMPILER ../src/main.cpp || src/res.h
+ DEPFILE = src/remux@exe/main.cpp.o.d
+ ARGS = -Isrc/remux@exe -Isrc -I../src -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -O0 -g -pthread
 
-build remux@exe/directory.cpp.o: cpp_COMPILER ../directory.cpp || res.h
- DEPFILE = remux@exe/directory.cpp.o.d
- ARGS = -Iremux@exe -I. -I.. -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -O0 -g -pthread
+build src/remux@exe/directory.cpp.o: cpp_COMPILER ../src/directory.cpp || src/res.h
+ DEPFILE = src/remux@exe/directory.cpp.o.d
+ ARGS = -Isrc/remux@exe -Isrc -I../src -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -O0 -g -pthread
 
-build remux@exe/model.cpp.o: cpp_COMPILER ../model.cpp || res.h
- DEPFILE = remux@exe/model.cpp.o.d
- ARGS = -Iremux@exe -I. -I.. -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -O0 -g -pthread
+build src/remux@exe/model.cpp.o: cpp_COMPILER ../src/model.cpp || src/res.h
+ DEPFILE = src/remux@exe/model.cpp.o.d
+ ARGS = -Isrc/remux@exe -Isrc -I../src -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -O0 -g -pthread
 
-build remux@exe/treeview.cpp.o: cpp_COMPILER ../treeview.cpp || res.h
- DEPFILE = remux@exe/treeview.cpp.o.d
- ARGS = -Iremux@exe -I. -I.. -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -O0 -g -pthread
+build src/remux@exe/treeview.cpp.o: cpp_COMPILER ../src/treeview.cpp || src/res.h
+ DEPFILE = src/remux@exe/treeview.cpp.o.d
+ ARGS = -Isrc/remux@exe -Isrc -I../src -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -O0 -g -pthread
 
-build remux: cpp_LINKER remux@exe/meson-generated_.._res.c.o remux@exe/main.cpp.o remux@exe/directory.cpp.o remux@exe/model.cpp.o remux@exe/treeview.cpp.o
+build src/remux: cpp_LINKER src/remux@exe/meson-generated_.._res.c.o src/remux@exe/main.cpp.o src/remux@exe/directory.cpp.o src/remux@exe/model.cpp.o src/remux@exe/treeview.cpp.o
  LINK_ARGS = -Wl,--no-undefined -Wl,--as-needed -pthread -Wl,--start-group -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lboost_system -lboost_filesystem -Wl,--end-group
 
 # Test rules
@@ -154,7 +154,7 @@ build meson-uninstall: CUSTOM_COMMAND PHONY
 
 build uninstall: phony meson-uninstall
 
-build all: phony remux
+build all: phony src/remux
 
 default all
 
@@ -170,11 +170,11 @@ build meson-clean: CUSTOM_COMMAND PHONY | clean-ctlist
  COMMAND = ninja -t clean
  description = Cleaning.
 
-build build.ninja: REGENERATE_BUILD ../meson.build meson-private/coredata.dat
+build build.ninja: REGENERATE_BUILD ../meson.build ../src/meson.build meson-private/coredata.dat
  pool = console
 
 build reconfigure: REGENERATE_BUILD PHONY
  pool = console
 
-build ../meson.build meson-private/coredata.dat: phony 
+build ../meson.build ../src/meson.build meson-private/coredata.dat: phony 
 
