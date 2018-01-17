@@ -17,7 +17,7 @@ private:
 };
 
 int FileContext::printinfo() {
-	libebml::EbmlStream ebml_stream(ebml_iocb);
+/*	libebml::EbmlStream ebml_stream(ebml_iocb);
 	
 	libebml::EbmlElement *toplevel
 	
@@ -27,7 +27,9 @@ int FileContext::printinfo() {
 	
 	
 	
-	printf("number of tracks: %d\n", number_of_tracks);
+	printf("number of tracks: %d\n", number_of_tracks);*/
+	
+	return 0;
 }
 
 void read_file(char *filename) {
