@@ -106,7 +106,14 @@ build src/remux@exe/treeview.cpp.o: cpp_COMPILER ../src/treeview.cpp || src/res.
  ARGS = -Isrc/remux@exe -Isrc -I../src -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -O0 -g -pthread
 
 build src/remux: cpp_LINKER src/remux@exe/meson-generated_.._res.c.o src/remux@exe/main.cpp.o src/remux@exe/directory.cpp.o src/remux@exe/model.cpp.o src/remux@exe/treeview.cpp.o
- LINK_ARGS = -Wl,--no-undefined -Wl,--as-needed -pthread -Wl,--start-group -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lboost_system -lboost_filesystem -Wl,--end-group
+ LINK_ARGS = -Wl,--no-undefined -Wl,--as-needed -pthread -Wl,--start-group -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lboost_system -lboost_filesystem -lportaudio -lasound -lm -lpthread -lebml -lmatroska -Wl,--end-group
+
+build test/test1@exe/test1.cpp.o: cpp_COMPILER ../test/test1.cpp
+ DEPFILE = test/test1@exe/test1.cpp.o.d
+ ARGS = -Itest/test1@exe -Itest -I../test -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/harfbuzz -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -O0 -g -pthread
+
+build test/test1: cpp_LINKER test/test1@exe/test1.cpp.o
+ LINK_ARGS = -Wl,--no-undefined -Wl,--as-needed -pthread -Wl,--start-group -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lboost_system -lboost_filesystem -lportaudio -lasound -lm -lpthread -lebml -lmatroska -Wl,--end-group
 
 # Test rules
 
@@ -154,7 +161,7 @@ build meson-uninstall: CUSTOM_COMMAND PHONY
 
 build uninstall: phony meson-uninstall
 
-build all: phony src/remux
+build all: phony src/remux test/test1
 
 default all
 
@@ -170,11 +177,11 @@ build meson-clean: CUSTOM_COMMAND PHONY | clean-ctlist
  COMMAND = ninja -t clean
  description = Cleaning.
 
-build build.ninja: REGENERATE_BUILD ../meson.build ../src/meson.build meson-private/coredata.dat
+build build.ninja: REGENERATE_BUILD ../meson.build ../src/meson.build ../test/meson.build meson-private/coredata.dat
  pool = console
 
 build reconfigure: REGENERATE_BUILD PHONY
  pool = console
 
-build ../meson.build ../src/meson.build meson-private/coredata.dat: phony 
+build ../meson.build ../src/meson.build ../test/meson.build meson-private/coredata.dat: phony 
 

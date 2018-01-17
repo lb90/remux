@@ -1,12 +1,9 @@
 # ninja log v5
-1	49	1515710055	src/res.h	afc4c19f2ced0568
-0	56	1515710055	src/res.c	ae02eaf33e3de162
-57	1143	1515710056	src/remux@exe/meson-generated_.._res.c.o	7ec89a565a37cfd6
-50	3794	1515710059	src/remux@exe/directory.cpp.o	ea46b46e92cb73b2
-1144	5890	1515710061	src/remux@exe/model.cpp.o	2dbf332156ae06b6
-49	29470	1515710085	src/remux@exe/main.cpp.o	cc51104ce0fac699
-9	3775	1515710179	src/remux@exe/model.cpp.o	2dbf332156ae06b6
-9	4104	1515710400	src/remux@exe/model.cpp.o	2dbf332156ae06b6
-17	3937	1515710525	src/remux@exe/model.cpp.o	2dbf332156ae06b6
-7	1960	1515710538	src/remux@exe/treeview.cpp.o	ce902736cb3621ca
-1960	3295	1515710540	src/remux	aa833cdb13c7b992
+0	10	1516188578	src/res.h	afc4c19f2ced0568
+0	18	1516188578	src/res.c	ae02eaf33e3de162
+18	4437	1516188582	src/remux@exe/meson-generated_.._res.c.o	7ec89a565a37cfd6
+14	6686	1516188585	src/remux@exe/treeview.cpp.o	ce902736cb3621ca
+11	6687	1516188585	src/remux@exe/main.cpp.o	cc51104ce0fac699
+11	6828	1516188585	src/remux@exe/directory.cpp.o	ea46b46e92cb73b2
+11	7127	1516188585	src/remux@exe/model.cpp.o	2dbf332156ae06b6
+4	261	1516188626	src/remux	14bfa6fdbb95b5bc

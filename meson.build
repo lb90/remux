@@ -9,18 +9,22 @@ gnome = import('gnome')
 boost_modules = ['system',
                  'filesystem']
 
-gtk_dep     = dependency('gtk+-3.0',
+gtk_dep        = dependency('gtk+-3.0',
                      version : '>= 3.20')
-boost_dep   = dependency('boost',
+boost_dep      = dependency('boost',
                        modules : boost_modules,
                        version : '>= 1.60')
-portaudio_dep = dependency('portaudio')
-threads_dep = dependency('threads')
+portaudio_dep  = dependency('portaudio-2.0')
+ebml_dep       = dependency('libebml')
+matroska_dep   = dependency('libmatroska')
+threads_dep    = dependency('threads')
 
 deps = [
   gtk_dep,
   boost_dep,
   portaudio_dep,
+  ebml_dep,
+  matroska_dep,
   threads_dep
 ]
 
@@ -31,4 +35,5 @@ if boost_dep.version().version_compare('< 1.65')
 endif
 
 subdir('src')
+subdir('test')
 

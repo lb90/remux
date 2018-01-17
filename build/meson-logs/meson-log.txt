@@ -1,4 +1,4 @@
-Build started at 2018-01-11T23:34:11.118083
+Build started at 2018-01-17T12:29:31.828789
 Main binary: /usr/bin/python
 Python system: Linux
 The Meson build system
@@ -38,14 +38,20 @@ Boost library root dir is None
 Boost include directory is /usr/include
 Boost library directory is None
 Dependency Boost (system, filesystem) found: YES 1.66
+Determining dependency 'portaudio-2.0' with pkg-config executable '/usr/bin/pkg-config'
+Native dependency portaudio-2.0 found: YES 19
+Determining dependency 'libebml' with pkg-config executable '/usr/bin/pkg-config'
+Native dependency libebml found: YES 1.3.5
+Determining dependency 'libmatroska' with pkg-config executable '/usr/bin/pkg-config'
+Native dependency libmatroska found: YES 1.4.8
 Dependency threads found: YES
 Determining dependency 'glib-2.0' with pkg-config executable '/usr/bin/pkg-config'
-Native dependency glib-2.0 found: YES 2.54.0
-Build targets in project: 3
+Native dependency glib-2.0 found: YES 2.54.3
+Build targets in project: 4
 Found ninja-1.8.2 at /usr/bin/ninja
 Running compile:
-Working directory:  /tmp/tmp79jm52q2
-Command line:  c++ /tmp/tmp79jm52q2/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_system -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmp79jm52q2/output.exe 
+Working directory:  /tmp/tmp5_q7llam
+Command line:  c++ /tmp/tmp5_q7llam/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_system -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmp5_q7llam/output.exe 
 
 Code:
  int main(int argc, char **argv) { return 0; }
@@ -54,8 +60,28 @@ Compiler stdout:
 Compiler stderr:
  
 Running compile:
-Working directory:  /tmp/tmpww31ju83
-Command line:  c++ /tmp/tmpww31ju83/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_filesystem -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmpww31ju83/output.exe 
+Working directory:  /tmp/tmp6rq5vpbb
+Command line:  c++ /tmp/tmp6rq5vpbb/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_filesystem -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmp6rq5vpbb/output.exe 
+
+Code:
+ int main(int argc, char **argv) { return 0; }
+Compiler stdout:
+ 
+Compiler stderr:
+ 
+Running compile:
+Working directory:  /tmp/tmp3x4cmqmw
+Command line:  c++ /tmp/tmp3x4cmqmw/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_system -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmp3x4cmqmw/output.exe 
+
+Code:
+ int main(int argc, char **argv) { return 0; }
+Compiler stdout:
+ 
+Compiler stderr:
+ 
+Running compile:
+Working directory:  /tmp/tmpadmd8rau
+Command line:  c++ /tmp/tmpadmd8rau/testfile.cpp -O0 -fpermissive -Wl,--start-group -lboost_filesystem -Wl,--end-group -pipe -D_FILE_OFFSET_BITS=64 -o /tmp/tmpadmd8rau/output.exe 
 
 Code:
  int main(int argc, char **argv) { return 0; }
