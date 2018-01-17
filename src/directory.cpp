@@ -18,6 +18,8 @@ int scan_directory(char *dirpath) {
 		path = dirpath;
 		path += "/";
 		path += name;
+		if (g_file_test(path.c_str(), G_FILE_TEST_IS_DIR))
+			continue;
 		model_add(TRUE, name, path.c_str());
 		
 		count++;

@@ -1,21 +1,33 @@
+#include <cstdlib>
+#include <climits>
 #include <ebml/StdIOCallback.h>
 #include <matroska/FileKax.h>
+#include <matroska/KaxTracks.h>
 
 class FileContext {
 public:
 	FileContext(const char *path)
-	 : iocb(path, MODE_READ),
-	   filek(iocb)
+	 : ebml_iocb(path, MODE_READ),
 	 { }
 private:
-	libebml::StdIOCallback     iocb;
-	libmatroska::FileMatroska  filek;
+	libebml::StdIOCallback     ebml_iocb;
+	libebml::EbmlStream        ebml_stream;
 	
 	void printinfo();
 };
 
-void FileContext::printinfo() {
-	printf("number of tracks: %d\n", filek.GetTrackNumber());
+int FileContext::printinfo() {
+	libebml::EbmlStream ebml_stream(ebml_iocb);
+	
+	libebml::EbmlElement *toplevel
+	
+	toplevel = ebml_stream.FindNextID(EbmlHead::ClassInfos, (uint64_t)-1);
+	if (toplevel == NULL)
+		return 1;
+	
+	
+	
+	printf("number of tracks: %d\n", number_of_tracks);
 }
 
 void read_file(char *filename) {

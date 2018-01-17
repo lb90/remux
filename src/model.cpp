@@ -1,6 +1,5 @@
 #include <cstdlib>
 #include <cassert>
-#
 #include <gtk/gtk.h>
 #include <map>
 extern GtkListStore *liststore;
@@ -59,10 +58,10 @@ GdkPixbuf* get_file_mime_icon(const char *path) {
 int model_clear() {
 	gtk_list_store_clear(liststore);
 	
-	for (auto pair : iconset) {
+	/*for (auto pair : iconset) {
 		g_object_unref(pair.second);
 	}
-	iconset.clear();
+	iconset.clear();*/
 	
 	return 0;
 }
@@ -73,7 +72,7 @@ int model_add(bool st,
 {
 	assert(name && path);
 	
-	get_file_mime_icon(path);	
+	//get_file_mime_icon(path);	
 	
 	GtkTreeIter iter;
 	gtk_list_store_append(liststore, &iter);

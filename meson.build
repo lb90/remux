@@ -35,5 +35,5 @@ if boost_dep.version().version_compare('< 1.65')
 endif
 
 subdir('src')
-subdir('test')
+#subdir('test')
 
