@@ -7,7 +7,7 @@
     <property name="type_hint">dialog</property>
     <property name="program_name">Remux</property>
     <property name="version">1.0</property>
-    <property name="comments" translatable="yes">uses: MkvToolNix, eac3to, FFmpeg</property>
+    <property name="comments" translatable="yes">uses MkvToolNix, eac3to, FFmpeg</property>
     <property name="website">github.com/lb90/remux</property>
     <property name="authors">Luca Bacci</property>
     <property name="logo_icon_name">audio-x-generic</property>
@@ -76,6 +76,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="cb_enqueue" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -89,6 +90,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="cb_skip" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -222,7 +224,7 @@
                     <property name="label" translatable="yes">Nome del file di output:</property>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
+                    <property name="left_attach">1</property>
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
@@ -230,10 +232,20 @@
                   <object class="GtkEntry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="hexpand">True</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="stock">gtk-go-forward</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
@@ -256,6 +268,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="cb_ac3_aac" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -269,6 +282,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="cb_ac3" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -282,6 +296,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="cb_dts" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -344,7 +359,7 @@
                         <property name="label">gtk-open</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="action_name">app.open</property>
+                        <property name="action_name">win.open</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="always_show_image">True</property>
@@ -385,6 +400,7 @@
                         <property name="label">gtk-about</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="action_name">win.showabout</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -430,8 +446,7 @@
               <object class="GtkToolButton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="is_important">True</property>
-                <property name="action_name">app.open</property>
+                <property name="action_name">win.open</property>
                 <property name="label" translatable="yes">Apri</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-open</property>
@@ -455,9 +470,37 @@
               <object class="GtkToolButton">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="action_name">win.remove</property>
+                <property name="label" translatable="yes">Rimuovi</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-remove</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="action_name">win.showproperties</property>
+                <property name="label" translatable="yes">Proprietà</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-properties</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="is_important">True</property>
-                <property name="action_name">app.apply</property>
-                <property name="label" translatable="yes">Applica</property>
+                <property name="action_name">win.convert</property>
+                <property name="label" translatable="yes">Converti</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-apply</property>
               </object>
@@ -488,6 +531,7 @@
                 <property name="vexpand">True</property>
                 <property name="search_column">0</property>
                 <property name="rubber_banding">True</property>
+                <signal name="row-activated" handler="cb_row_activated" after="yes" swapped="no"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection">
                     <property name="mode">multiple</property>

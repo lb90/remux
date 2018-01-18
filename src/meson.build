@@ -1,9 +1,12 @@
 
 src = [
   'main.cpp',
-  'directory.cpp',
+  'scandirectory.cpp',
   'model.cpp',
-  'treeview.cpp'
+  'window.cpp',
+  'app.cpp',
+  'treeview.cpp',
+  'gtkmodel.cpp'
 ]
 
 res = gnome.compile_resources('res', 'res.gresource.xml')

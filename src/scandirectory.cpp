@@ -3,8 +3,9 @@
 #include <string>
 #include <gtk/gtk.h>
 #include "model.h"
+#include "scandirectory.h"
 
-int scan_directory(char *dirpath) {
+int scan_directory(const char *dirpath) {
 	GDir *dir;
 	int count;
 	

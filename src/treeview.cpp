@@ -1,10 +1,27 @@
+#include "config.h"
 #include <cstdlib>
 #include <cassert>
 #include <gtk/gtk.h>
 #include "treeview.h"
+#include "app.h"
 
-GtkWidget    *treeview;
 GtkListStore *liststore;
+
+HANDLER_BEGIN
+void cb_row_activated(GtkTreeView* treeview,
+                      GtkTreePath *path,
+                      GtkTreeViewColumn,
+                      gpointer)
+{
+	gint *indices, n;
+	assert(gtk_tree_path_get_depth(path) == 1);
+	indices = gtk_tree_path_get_indices(path);
+	n = indices[0];
+	//signalcentre::emit("treview\\row\\activated", n);
+	/*TEMP*/
+	g_print("activated row %d\n", n);
+}
+HANDLER_END
 
 void cb_media_toggled(GtkCellRendererToggle *cell,
                       gchar *path_string, gpointer) {
@@ -21,7 +38,7 @@ void cb_media_toggled(GtkCellRendererToggle *cell,
 	}
 }
 
-int treeview_init_store() {
+int treeview_init_store(GtkWidget *treeview) {
 	liststore = gtk_list_store_new(3, G_TYPE_BOOLEAN,
 	                                  G_TYPE_STRING,
 	                                  G_TYPE_STRING);
@@ -32,7 +49,7 @@ int treeview_init_store() {
 	return 0;
 }
 
-int treeview_init_columns() {
+int treeview_init_columns(GtkWidget *treeview) {
 	GtkTreeViewColumn *col;
 	GtkCellRenderer   *renderer;
 
@@ -67,14 +84,15 @@ int treeview_init_columns() {
 }
 
 int treeview_init(GtkBuilder *builder) {
+	GtkWidget *treeview;
 	treeview = GTK_WIDGET(gtk_builder_get_object(builder, "treeview"));
 	assert(treeview);
 	
-	treeview_init_store();
+	treeview_init_store(treeview);
 	
 	gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(treeview), TRUE);
 	
-	treeview_init_columns();
+	treeview_init_columns(treeview);
 
 	return 0;
 }

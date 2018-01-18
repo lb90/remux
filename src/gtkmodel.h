@@ -1,5 +1,5 @@
-#ifndef TREEMODEL_CONV
-#define TREEMODEL_CONV
+#ifndef REMUX_GTK_MODEL_H
+#define REMUX_GTK_MODEL_H
 
 
 #endif
