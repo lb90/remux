@@ -62,7 +62,7 @@ int parseinfo(std::stringstream& info,
 			return -1;
 		
 		if (level == prevlevel + 1)
-			curitems.push(&(curitems.top()->back()));
+			curitems.push(&(curitems.top()->back().second));
 
 		else if (level < prevlevel)
 			for (size_t count = 0; count < prevlevel - level; count++)
