@@ -3,14 +3,9 @@
 
 #include <string>
 #include <vector>
-#include <memory>
 #include <boost/property_tree/ptree.hpp>
 
-enum itemtype_t {
-	ITEMTYPE_UNKNOWN = 0,
-	ITEMTYPE_TRACK,
-	ITEMTYPE_SUBTITLE
-};
+enum itemtype_t;
 
 struct item_t {
 	itemtype_t  itemtype;
@@ -19,25 +14,40 @@ struct item_t {
 	std::string language;
 	std::string uid;
 	
-	bool forced;
-	bool defaul;
-};
-
-enum tracktype_t {
-	TRACKTYPE_UNKNOWN = 0,
-	TRACKTYPE_VIDEO,
-	TRACKTYPE_AUDIO
-};
-struct track_t
- : public item_t
-{
-	tracktype_t tracktype;
 	std::string codec;
+	
+	bool orig_forced;
+	bool want_forced;
+	bool orig_default;
+	bool want_deafult;
 };
 
-struct subtitle_t
- : public item_t
-{
+enum itemtype_t {
+	ITEMTYPE_UNKNOWN = 0,
+	ITEMTYPE_SUBTITLE,
+	ITEMTYPE_VIDEO,
+	ITEMTYPE_AUDIO,
+};
+
+
+
+struct errors_t;
+struct options_t;
+
+struct media_t {
+	std::string name;
+	std::string directory;
+	std::string path;
+	
+	std::string outdirectory;
+	std::string outname;
+	
+	errors_t  errors;
+	options_t options;
+	
+	std::vector<item_t>
+	
+	boost::property_tree::ptree pt;
 };
 
 struct errors_t {
@@ -50,21 +60,6 @@ struct options_t {
 	bool ac3ita_aac;
 	bool intact_dts;
 	bool intact_ac3;
-};
-struct media_t {
-	std::string name;
-	std::string directory;
-	std::string path;
-	
-	std::string outdirectory;
-	std::string outname;
-	
-	errors_t  errors;
-	options_t options;
-	
-	std::vector<std::unique_ptr<item_t>>
-	
-	boost::property_tree::ptree pt;
 };
 
 #endif
