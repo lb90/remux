@@ -31,11 +31,6 @@ deps = [
 ]
 
 inc = []
-if boost_dep.version().version_compare('< 1.65')
-  boostprocess_inc = include_directories('ext/boostprocess')
-  inc += boostprocess_inc
-endif
-
 
 config_data = configuration_data()
 config_data.set_quoted('REMUX_VERSION', meson.project_version())
