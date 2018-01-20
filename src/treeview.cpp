@@ -18,8 +18,6 @@ void cb_row_activated(GtkTreeView* treeview,
 	indices = gtk_tree_path_get_indices(path);
 	n = indices[0];
 	//signalcentre::emit("treview\\row\\activated", n);
-	/*TEMP*/
-	g_print("activated row %d\n", n);
 }
 HANDLER_END
 

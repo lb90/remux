@@ -5,6 +5,7 @@
 #include <stack>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include "parseinfo.h"
 
 typedef boost::property_tree::ptree pt_t;
 
@@ -55,7 +56,7 @@ int parseinfo(std::stringstream& info,
 		level = line.find('+');
 		if (level == std::string::npos)
 			continue;
-		if (level < prevlevel + 1)
+		if (level > prevlevel + 1)
 			return -1;
 		
 		if (!check_indent(line, level))
