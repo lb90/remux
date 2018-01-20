@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <stack>
+#include <algorithm>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include "parseinfo.h"
@@ -37,6 +38,8 @@ void parse_line(const std::string& line,
 	
 	boost::algorithm::trim(kv.first);
 	boost::algorithm::trim(kv.second);
+	
+	std::replace(kv.first.begin(), kv.first.end(), ' ', '-');
 }
 
 int parseinfo(std::stringstream& info,
