@@ -3,7 +3,7 @@
 #include <ebml/StdIOCallback.h>
 #include <matroska/FileKax.h>
 #include <matroska/KaxTracks.h>
-
+/*
 class FileContext {
 public:
 	FileContext(const char *path)
@@ -17,7 +17,7 @@ private:
 };
 
 int FileContext::printinfo() {
-/*	libebml::EbmlStream ebml_stream(ebml_iocb);
+	libebml::EbmlStream ebml_stream(ebml_iocb);
 	
 	libebml::EbmlElement *toplevel
 	
@@ -27,7 +27,7 @@ int FileContext::printinfo() {
 	
 	
 	
-	printf("number of tracks: %d\n", number_of_tracks);*/
+	printf("number of tracks: %d\n", number_of_tracks);
 	
 	return 0;
 }
@@ -35,10 +35,10 @@ int FileContext::printinfo() {
 void read_file(char *filename) {
 	FileContext filectx(filename);
 }
-
+*/
 int main(int argc, char **argv) {
 	int retcode = 0;
-
+/*
 	if (argc != 2) {
 		printf("usage: %s filename.mkv\n", argv[0]);
 		retcode = 1;
@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 		char *filename = argv[1];
 		read_file(filename);
 	}
-
+*/
 	return retcode;
 }
 

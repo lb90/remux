@@ -1,3 +1,4 @@
+#include "config.h"
 #include <cstdlib>
 #include <gtk/gtk.h>
 #include "window.h"
@@ -37,6 +38,13 @@ void cb_win_showproperties(GSimpleAction*, GVariant*, gpointer userdata) {
 }
 
 void cb_win_showabout(GSimpleAction*, GVariant*, gpointer userdata) {
+	GtkWidget *window = (GtkWidget *) userdata;
+	
+	gtk_show_about_dialog(GTK_WINDOW(window),
+	                      "program-name", "Remux",
+	                      "version",      REMUX_VERSION,
+	                      "website",      "github.com/lb90",
+	                      NULL);
 }
 
 int window_init(GtkWidget *window) {

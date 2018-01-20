@@ -1,7 +1,7 @@
-#include "config.h"
 #include <cstdlib>
 #include <cassert>
 #include <gtk/gtk.h>
+#include "util.h"
 #include "treeview.h"
 #include "app.h"
 

@@ -1,64 +1,80 @@
 #include <cstdlib>
 #include <cassert>
 #include <string>
-#include <stack>
-#include <boost/property_tree.hpp>
 #include <sstream>
-#include <boost/strings.hpp>
+#include <stack>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
-std::stack<boost::property_tree::ptree*> stackelem;
+typedef boost::property_tree::ptree pt_t;
 
-static
-void pretty_line(std::string& line) {
-	assert(line.size() <= INT_MAX);
-	int imax = (int) line.size();
-	for (int i = 0; i < imax; i++) {
-		if (line[i] == ' ') continue;
-		if (line[i] == '|') line[i] = ' ';
-		else break;
-	}
-}
-
-int makept(std::string& info) {
-	std::sstream(info);
-	std::string line;
-	while (std::getline(info_sstream, line)) {
-		if (line.empty()) continue;
-		pretty_line(line);
-		
-		size_t ppos = line.find('+');
-		if (ppos == std::string::npos)
-			continue;
-		
-		assert(ppos < stackelem.size());
-		
-		*cur = stackelem.back();
-		cur[
-	}
-}
-
-int gatherfrom(pt) {
-	if pt.child("EBML head") {
-		if (!(child["Document type"] == "matroska"))
-			return 1;
-	}
-	else return -1;
-	/*TODO could be Segment: size xxxxxx... */
-	if pt.child("Segment") {
-		if pt.child("Segment information") {
-			title = child.get("Title", "");
-		}
-		else return -1;
-	}
-	else return -1;
+bool check_indent(const std::string& line, size_t level) {
+	assert(level < line.size());
 	
-	title = pt.get("Segment.Segment information.Title", "");
-	for (pt.getchild("Segment.Tracks.Track")) {
-	}
+	for (size_t count = 0; count < level; count++)
+		if (line[count] != ' ' &&
+		    line[count] != '|'   )
+			return false;
+	
+	return true;
 }
 
-int parseinfo(const std::string& info) {
-	stackelem.push(&pt);
-	makept(info);
-	gatherfrom(pt);
+void parse_line(const std::string& line,
+                std::pair<std::string, std::string>& kv)
+{
+	size_t pos = 0;
+	
+	pos = line.find(':');
+	if (pos == std::string::npos) {
+		kv.first = line;
+		kv.second = "";
+	}
+	else {
+		kv.first = line.substr(0, pos);
+		kv.second = line.substr(pos + 1, std::string::npos);
+	}
+	
+	boost::algorithm::trim(kv.first);
+	boost::algorithm::trim(kv.second);
 }
+
+int parseinfo(std::stringstream& info,
+              boost::property_tree::ptree& pt)
+{
+	std::stack<pt_t*> curitems;
+	size_t prevlevel;
+	size_t level;
+	
+	curitems.push(&pt);
+	prevlevel = 0;
+	
+	std::string line;
+	while (std::getline(info, line)) {
+		if (line.empty()) continue;
+		
+		level = line.find('+');
+		if (level == std::string::npos)
+			continue;
+		if (level < prevlevel + 1)
+			return -1;
+		
+		if (!check_indent(line, level))
+			return -1;
+		
+		if (level == prevlevel + 1)
+			curitems.push(&(curitems.top()->back()));
+
+		else if (level < prevlevel)
+			for (size_t count = 0; count < prevlevel - level; count++)
+				curitems.pop();
+		
+		std::pair<std::string, std::string> kv;
+		parse_line(line.substr(level + 1, std::string::npos), kv);
+		curitems.top()->add(kv.first, kv.second);
+		
+		prevlevel = level;
+	}
+	
+	return 0;
+}
+

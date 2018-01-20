@@ -6,7 +6,8 @@ src = [
   'window.cpp',
   'app.cpp',
   'treeview.cpp',
-  'gtkmodel.cpp'
+  'parseinfo.cpp'
+# 'gtkmodel.cpp'
 ]
 
 res = gnome.compile_resources('res', 'res.gresource.xml')

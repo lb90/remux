@@ -36,6 +36,12 @@ if boost_dep.version().version_compare('< 1.65')
   inc += boostprocess_inc
 endif
 
+
+config_data = configuration_data()
+config_data.set_quoted('REMUX_VERSION', meson.project_version())
+configure_file(output : 'config.h', configuration : config_data)
+inc += include_directories('.')
+
 subdir('src')
-#subdir('test')
+subdir('test')
 
