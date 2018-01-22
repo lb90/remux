@@ -6,27 +6,18 @@ project('remux', ['c', 'cpp'],
 
 gnome = import('gnome')
 
-boost_modules = ['system',
-                 'filesystem']
-
 gtk_dep        = dependency('gtk+-3.0',
-                     version : '>= 3.20')
+                       version: '>= 3.20')
 gmodule_dep    = dependency('gmodule-2.0')
 boost_dep      = dependency('boost',
-                       modules : boost_modules,
-                       version : '>= 1.60')
-portaudio_dep  = dependency('portaudio-2.0')
-ebml_dep       = dependency('libebml')
-matroska_dep   = dependency('libmatroska')
+                       modules: [],
+                       version: '>= 1.60')
 threads_dep    = dependency('threads')
 
 deps = [
   gtk_dep,
   gmodule_dep,
   boost_dep,
-  portaudio_dep,
-  ebml_dep,
-  matroska_dep,
   threads_dep
 ]
 

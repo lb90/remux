@@ -6,32 +6,32 @@
 /* Some boilerplate GObject defines. 'klass' is used
  * instead of 'class', because 'class' is a C++ keyword */
 
-#define TYPE_FAKE_LIST_MODEL            (fake_list_model_get_type ())
+#define TYPE_BASIC_LIST_MODEL            (basic_list_model_get_type ())
 
-#define FAKE_LIST_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_FAKE_LIST_MODEL, FakeListModel))
-#define IS_FAKE_LIST_MODEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_FAKE_LIST_MODEL))
+#define BASIC_LIST_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_BASIC_LIST_MODEL, BasicListModel))
+#define IS_BASIC_LIST_MODEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_BASIC_LIST_MODEL))
 
-#define FAKE_LIST_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  TYPE_FAKE_LIST_MODEL, FakeListModelClass))
-#define IS_FAKE_LIST_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  TYPE_FAKE_LIST_MODEL))
+#define BASIC_LIST_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  TYPE_BASIC_LIST_MODEL, BasicListModelClass))
+#define IS_BASIC_LIST_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  TYPE_BASIC_LIST_MODEL))
 
-#define FAKE_LIST_MODEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  TYPE_FAKE_LIST_MODEL, FakeListModelClass))
+#define BASIC_LIST_MODEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  TYPE_BASIC_LIST_MODEL, BasicListModelClass))
 
-typedef struct _FakeListModel {
+typedef struct _BasicListModel {
 	GObject         parent;      /* this MUST be the first member */
 	
-	//pointer to vector
+	gint            numrows;
 	
 	gint            stamp;       /* Random integer to check whether an iter belongs to our model */
-} FakeListModel;
+} BasicListModel;
 
 /* CustomListClass: more boilerplate GObject stuff */
 
-typedef struct _FakeListModelClass
+typedef struct _BasicListModelClass
 {
   GObjectClass parent_class;
-} FakeListModelClass;
+} BasicListModelClass;
 
 
-GType             fake_list_model_get_type (void);
+GType             basic_list_model_get_type (void);
 
 #endif
