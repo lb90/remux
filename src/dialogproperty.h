@@ -1,7 +1,7 @@
-#ifndef REMUX_DIALOGCONV_H
-#define REMUX_DIALOGCONV_H
+#ifndef REMUX_DIALOGPROPERTY_H
+#define REMUX_DIALOGPROPERTY_H
 
-class dialogconversion {
+class dialogproperty_t {
 public:
 	void init();
 	void show();
