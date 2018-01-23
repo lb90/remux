@@ -2,8 +2,7 @@
 #define REMUX_MODEL_H
 
 int model_clear();
-int model_add(bool st,
-              const char *name,
+int model_add(const char *name,
               const char *path);
 
 #endif

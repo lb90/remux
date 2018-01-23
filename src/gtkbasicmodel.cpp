@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <gtk/gtk.h>
-#include "gtkmodel.h"
+#include "gtkbasicmodel.h"
 
 /* boring declarations of local functions */
 
@@ -229,10 +229,7 @@ static GType
 basic_list_model_get_column_type (GtkTreeModel *tree_model,
                                   gint          index)
 {
-  BasicListModel *basic_list_model;
-
   g_return_val_if_fail (IS_BASIC_LIST_MODEL(tree_model), G_TYPE_INVALID);
-  basic_list_model = BASIC_LIST_MODEL(tree_model);
   g_return_val_if_fail (index == 0, G_TYPE_INVALID);
 
   return G_TYPE_POINTER;
@@ -253,7 +250,7 @@ basic_list_model_get_iter (GtkTreeModel *tree_model,
                            GtkTreePath  *path)
 {
   BasicListModel *basic_list_model;
-  gint           *indices
+  gint           *indices, depth;
   gint            n;
 
   g_assert(IS_BASIC_LIST_MODEL(tree_model));
@@ -269,7 +266,7 @@ basic_list_model_get_iter (GtkTreeModel *tree_model,
   
   g_assert(n < basic_list_model->numrows);
 
-  /*TODO can we just do it? is it ok with persistent  iters?
+  /*TODO can we just do it? is it ok with persistent  iters?*/
   /* and if we use a list, can we store an iterator? */
   iter->stamp      = basic_list_model->stamp;
   iter->user_data  = GINT_TO_POINTER(n);
@@ -490,6 +487,8 @@ basic_list_model_iter_nth_child (GtkTreeModel *tree_model,
   }
   else
     return FALSE;
+  
+  return TRUE;
 }
 
 

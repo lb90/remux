@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cassert>
+#include <vector>
 #include <gtk/gtk.h>
 #include <map>
 
@@ -28,5 +29,5 @@ int model_add(const char *name,
 }
 
 int model_remove(const std::vector<int>& indexv) {
-	
+	return 0;
 }

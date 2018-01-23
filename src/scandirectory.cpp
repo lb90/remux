@@ -21,7 +21,8 @@ int scan_directory(const char *dirpath) {
 		path += name;
 		if (g_file_test(path.c_str(), G_FILE_TEST_IS_DIR))
 			continue;
-		model_add(TRUE, name, path.c_str());
+		else
+			model_add(name, path.c_str());
 		
 		count++;
 		if (count >= 2000)
