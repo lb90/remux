@@ -6,7 +6,7 @@ src = [
   'model.cpp',
   'scandirectory.cpp',
   'parseinfo.cpp',
-#  'signalcentre.cpp',
+  'signalcentre.cpp',
   'treeview.cpp',
   'window.cpp',
   'gtkbasicmodel.cpp',

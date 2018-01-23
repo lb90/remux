@@ -2,6 +2,7 @@
 #define REMUX_DIALOGPROPERTY_H
 
 #include <gtk/gtk.h>
+#include "gtkbasicmodel.h"
 
 class dialogproperty_t {
 public:
@@ -25,7 +26,15 @@ private:
 	GtkWidget  *treeview_item;
 	GtkWidget  *entry_outname;
 	
-	int n;
+	BasicListModel *basic_model;
+	
+	int cur;
+	
+	static
+	void self_deleter(GtkDialog *dialog, gpointer self);
+	
+	static
+	void celldata
 };
 
 #endif

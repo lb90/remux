@@ -510,3 +510,23 @@ basic_list_model_iter_parent (GtkTreeModel *tree_model,
   return FALSE;
 }
 
+/*****************************************************************************
+ *
+ *  basic_list_new:  This is what you use in your own code to create a
+ *                   new basic list tree model for you to use.
+ *
+ *****************************************************************************/
+
+BasicListModel *
+basic_list_new (gint numrows)
+{
+  BasicListModel *newbasicmodel;
+
+  newbasicmodel = (BasicListModel*) g_object_new (TYPE_BASIC_LIST_MODEL, NULL);
+  g_assert( newbasicmodel != NULL );
+  
+  newbasicmodel->numrows = numrows;
+
+  return newbasicmodel;
+}
+

@@ -34,4 +34,6 @@ typedef struct _BasicListModelClass
 
 GType             basic_list_model_get_type (void);
 
+BasicListModel   *basic_list_model_new (gint numrows);
+
 #endif

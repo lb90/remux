@@ -3,7 +3,7 @@
 #include <gtk/gtk.h>
 #include "util.h"
 #include "treeview.h"
-#include "app.h"
+#include "signalcentre.h"
 
 GtkListStore *liststore;
 
@@ -17,7 +17,7 @@ void cb_row_activated(GtkTreeView* treeview,
 	assert(gtk_tree_path_get_depth(path) == 1);
 	indices = gtk_tree_path_get_indices(path);
 	n = indices[0];
-	//signalcentre::emit("treview\\row\\activated", n);
+	signalcentre::emit("treeview\\rowactivated", n);
 }
 HANDLER_END
 

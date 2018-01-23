@@ -17,12 +17,16 @@ int scan_directory(const char *dirpath) {
 	while (const gchar *name = g_dir_read_name(dir)) {
 		std::string path;
 		path = dirpath;
+#ifdef _WIN32
+		path += "\\";
+#else
 		path += "/";
+#endif
 		path += name;
 		if (g_file_test(path.c_str(), G_FILE_TEST_IS_DIR))
 			continue;
 		else
-			model_add(name, path.c_str());
+			model_add(name, dirpath);
 		
 		count++;
 		if (count >= 2000)
