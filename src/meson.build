@@ -5,13 +5,15 @@ src = [
   'op.cpp',
   'model.cpp',
   'scandirectory.cpp',
+  'mediascan.cpp',
   'parseinfo.cpp',
   'signalcentre.cpp',
   'treeview.cpp',
   'window.cpp',
   'gtkbasicmodel.cpp',
   'dialogproperty.cpp',
-  'dialogconversion.cpp'
+  'dialogconversion.cpp',
+  'gtkutil.cpp'
 ]
 
 res = gnome.compile_resources('res', 'res.gresource.xml')

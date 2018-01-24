@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.2 -->
+<!-- Generated with glade 3.21.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkDialog" id="dialog_property">
@@ -54,7 +54,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkStack">
+          <object class="GtkStack" id="stack">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
@@ -100,52 +100,74 @@
                           <object class="GtkTreeSelection"/>
                         </child>
                         <child>
-                          <object class="GtkTreeViewColumn">
+                          <object class="GtkTreeViewColumn" id="col_number">
                             <property name="resizable">True</property>
                             <property name="title" translatable="yes">Numero Traccia</property>
                             <property name="clickable">True</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="ren_number"/>
+                            </child>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkTreeViewColumn">
+                          <object class="GtkTreeViewColumn" id="col_name">
                             <property name="resizable">True</property>
                             <property name="title" translatable="yes">Nome</property>
+                            <property name="expand">True</property>
                             <property name="clickable">True</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="ren_name"/>
+                            </child>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkTreeViewColumn">
+                          <object class="GtkTreeViewColumn" id="col_type">
                             <property name="resizable">True</property>
                             <property name="title" translatable="yes">Tipo</property>
                             <property name="clickable">True</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="ren_type"/>
+                            </child>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkTreeViewColumn">
+                          <object class="GtkTreeViewColumn" id="col_format">
                             <property name="resizable">True</property>
                             <property name="title" translatable="yes">Formato</property>
                             <property name="clickable">True</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="ren_format"/>
+                            </child>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkTreeViewColumn">
+                          <object class="GtkTreeViewColumn" id="col_language">
                             <property name="resizable">True</property>
                             <property name="title" translatable="yes">Lingua</property>
                             <property name="clickable">True</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="ren_language"/>
+                            </child>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkTreeViewColumn">
+                          <object class="GtkTreeViewColumn" id="col_isdefault">
                             <property name="resizable">True</property>
                             <property name="title" translatable="yes">Predefinito</property>
                             <property name="clickable">True</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="ren_isdefault"/>
+                            </child>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkTreeViewColumn">
+                          <object class="GtkTreeViewColumn" id="col_isforced">
                             <property name="resizable">True</property>
                             <property name="title" translatable="yes">Forzato</property>
                             <property name="clickable">True</property>
+                            <child>
+                              <object class="GtkCellRendererText" id="ren_isforced"/>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -293,8 +315,8 @@
                 </child>
               </object>
               <packing>
-                <property name="name">page0</property>
-                <property name="title" translatable="yes">page0</property>
+                <property name="name">page_main</property>
+                <property name="title" translatable="yes">Property</property>
               </packing>
             </child>
             <child>
@@ -357,7 +379,7 @@
                             <property name="propagate_natural_width">True</property>
                             <property name="propagate_natural_height">True</property>
                             <child>
-                              <object class="GtkTextView">
+                              <object class="GtkTextView" id="textview_error">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="editable">False</property>
@@ -386,8 +408,8 @@
                 </child>
               </object>
               <packing>
-                <property name="name">page1</property>
-                <property name="title" translatable="yes">page1</property>
+                <property name="name">page_error</property>
+                <property name="title" translatable="yes">Error</property>
                 <property name="position">1</property>
               </packing>
             </child>

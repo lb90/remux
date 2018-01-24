@@ -17,6 +17,7 @@ struct item_t {
 	std::string name;
 	std::string language;
 	std::string uid;
+	std::string number;
 	
 	std::string codec;
 	
@@ -27,10 +28,14 @@ struct item_t {
 };
 
 struct errors_t {
-	bool error;
-	std::string errorstring;
+	bool infoerror;
+	std::string infoerror_description;
 	bool converterror;
-	std::string converterrorstring;
+	std::string converterror_description;
+	
+	operator bool() const {
+		return infoerror || converterror;
+	}
 };
 struct options_t {
 	bool ac3ita_aac;
@@ -51,6 +56,8 @@ struct media_t {
 	std::vector<item_t> itemv;
 	
 	boost::property_tree::ptree pt;
+	
+	bool isinit;
 };
 
 #endif
