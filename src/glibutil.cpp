@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <cassert>
-#include <gtk/gtk.h>
-#include "gtkutil.h"
+#include "glibutil.h"
 
 std::string util_build_filename(const std::string& first,
                                 const std::string& second)

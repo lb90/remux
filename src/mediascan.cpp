@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <gio/gio.h>
+#include "glibutil.h"
 #include "elements.h"
 #include "parseinfo.h"
 #include "mediascan.h"
@@ -35,9 +36,11 @@ void get_stdout_sstream(GSubprocess *subproc, std::stringstream& sstream) {
 	}
 }
 
-int media_scan(const std::string& filename, media_t& elem) {
+int media_scan(media_t& elem) {
 	GSubprocess *subproc;
 	GError      *errspec = NULL;
+	
+	elem.isinit = true;
 
 	subproc = g_subprocess_new(G_SUBPROCESS_FLAGS_STDOUT_PIPE,
 	                           &errspec,
@@ -48,7 +51,7 @@ int media_scan(const std::string& filename, media_t& elem) {
 	                           "UTF-8",
 	                           "--output-charset",
 	                           "UTF-8",
-	                           filename.c_str(),
+	                           elem.path.c_str(),
 	                           NULL);
 
 	if (subproc == NULL) {

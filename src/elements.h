@@ -50,6 +50,8 @@ struct media_t {
 	std::string outdirectory;
 	std::string outname;
 	
+	std::string title;
+	
 	errors_t  errors;
 	options_t options;
 	

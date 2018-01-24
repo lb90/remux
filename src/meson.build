@@ -13,7 +13,7 @@ src = [
   'gtkbasicmodel.cpp',
   'dialogproperty.cpp',
   'dialogconversion.cpp',
-  'gtkutil.cpp'
+  'glibutil.cpp'
 ]
 
 res = gnome.compile_resources('res', 'res.gresource.xml')

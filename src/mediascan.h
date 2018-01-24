@@ -1,9 +1,9 @@
 #ifndef REMUX_MEDIASCAN_H
 #define REMUX_MEDIASCAN_H
 
-#include <string>
+#include "elements.h"
 
-int media_scan(const std::string& filename);
+int media_scan(media_t& elem);
 
 #endif
 

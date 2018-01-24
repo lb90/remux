@@ -25,7 +25,7 @@ private:
 	GtkWidget  *label_name;
 	GtkWidget  *check_ac3ita_aac;
 	GtkWidget  *check_intact_ac3;
-	GtkWidget  *label_intact_dts;
+	GtkWidget  *check_intact_dts;
 	GtkWidget  *treeview_item;
 	GtkWidget  *entry_outname;
 	

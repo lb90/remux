@@ -1,8 +1,8 @@
-#ifndef REMUX_GTKUTIL_H
-#define REMUX_GTKUTIL_H
+#ifndef REMUX_GLIBUTIL_H
+#define REMUX_GLIBUTIL_H
 
 #include <string>
-#include <gtk/gtk.h>
+#include <glib.h>
 
 std::string util_build_filename(const std::string& first,
                                 const std::string& second);

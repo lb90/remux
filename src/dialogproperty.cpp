@@ -15,7 +15,7 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	label_name       = GTK_WIDGET(gtk_builder_get_object(builder, "label_name"));
 	check_ac3ita_aac = GTK_WIDGET(gtk_builder_get_object(builder, "check_ac3ita_aac"));
 	check_intact_ac3 = GTK_WIDGET(gtk_builder_get_object(builder, "check_intact_ac3"));
-	label_intact_dts = GTK_WIDGET(gtk_builder_get_object(builder, "label_intact_dts"));
+	check_intact_dts = GTK_WIDGET(gtk_builder_get_object(builder, "label_intact_dts"));
 	treeview_item    = GTK_WIDGET(gtk_builder_get_object(builder, "treeview_item"));
 	entry_outname    = GTK_WIDGET(gtk_builder_get_object(builder, "entry_outname"));
 	textview_error   = GTK_WIDGET(gtk_builder_get_object(builder, "textview_error"));
@@ -66,11 +66,16 @@ int dialogproperty_t::setcurrentelement(gint n) {
 
 	if (curelem->errors.infoerror) {
 		gtk_stack_set_visible_child_name(GTK_STACK(stack), "page_error");
-		gtk_text_view_set_text(GTK_TEXT_VIEW(textview_error), curelem->errors.infoerror_description.c_str());
+		gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_error)),
+		                         curelem->errors.infoerror_description.c_str(),
+		                         -1);
 	}
 	else {
 		gtk_stack_set_visible_child_name(GTK_STACK(stack), "page_main");
 		gtk_label_set_text(GTK_LABEL(label_name), curelem->name.c_str());
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_ac3ita_aac), curelem->options.ac3ita_aac);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_intact_dts), curelem->options.intact_dts);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_intact_ac3), curelem->options.intact_ac3);
 		basic_model = basic_list_model_new(curelem->itemv.size());
 		gtk_tree_view_set_model(GTK_TREE_VIEW(treeview_item), GTK_TREE_MODEL(basic_model));
 		gtk_entry_set_text(GTK_ENTRY(entry_outname), curelem->outname.c_str());

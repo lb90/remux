@@ -264,7 +264,7 @@ basic_list_model_get_iter (GtkTreeModel *tree_model,
   g_assert(depth == 1);
   n = indices[0];
   
-  g_assert(n < basic_list_model->numrows);
+  g_return_val_if_fail( n < basic_list_model->numrows, FALSE );
 
   /*TODO can we just do it? is it ok with persistent  iters?*/
   /* and if we use a list, can we store an iterator? */
@@ -512,13 +512,13 @@ basic_list_model_iter_parent (GtkTreeModel *tree_model,
 
 /*****************************************************************************
  *
- *  basic_list_new:  This is what you use in your own code to create a
- *                   new basic list tree model for you to use.
+ *  basic_list_model_new:  This is what you use in your own code to create a
+ *                         new basic list tree model for you to use.
  *
  *****************************************************************************/
 
 BasicListModel *
-basic_list_new (gint numrows)
+basic_list_model_new (gint numrows)
 {
   BasicListModel *newbasicmodel;
 
