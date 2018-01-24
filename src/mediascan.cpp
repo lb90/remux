@@ -1,6 +1,8 @@
 #include <cstdlib>
 #include <string>
 #include <sstream>
+#include <gio/gio.h>
+#include "elements.h"
 #include "parseinfo.h"
 #include "mediascan.h"
 
@@ -8,7 +10,7 @@
 change g_print to rmx_log
 */
 
-void get_stdout_stream(GSubprocess *subproc, std::stringstream& sstream) {
+void get_stdout_sstream(GSubprocess *subproc, std::stringstream& sstream) {
 	GInputStream *istream;
 	GError       *errspec;
 
@@ -71,9 +73,10 @@ int media_scan(const std::string& filename, media_t& elem) {
 			get_stdout_sstream(subproc, proc_stdout); /*TODO or stderr */
 			proc_exitstatus = g_subprocess_get_exit_status(subproc);
 			
-			if (proc_exitstatus != 0)
-				g_print("child process exited with failure status %d\n", status);
+			if (proc_exitstatus != 0) {
+				g_print("child process exited with failure status %d\n", proc_exitstatus);
 				elem.errors.infoerror_description = proc_stdout.str();
+			}
 			else {
 				parse_info(proc_stdout, elem.pt);
 			}

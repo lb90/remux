@@ -42,7 +42,7 @@ void parse_line(const std::string& line,
 	std::replace(kv.first.begin(), kv.first.end(), ' ', '-');
 }
 
-int parseinfo(std::stringstream& info,
+int parse_info(std::stringstream& info,
               boost::property_tree::ptree& pt)
 {
 	std::stack<pt_t*> curitems;

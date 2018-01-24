@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cassert>
+#include <utility>
 #include "dialogproperty.h"
 #include "model.h"
 #include "elements.h"
@@ -25,7 +26,7 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	
 	GtkTreeViewColumn *col;
 	GtkCellRenderer   *ren;
-	std::vector<std::pair<string, GtkTreeCellDataFunc>> colv = {
+	std::vector<std::pair<std::string, GtkTreeCellDataFunc>> colv = {
 		std::make_pair("number",    cell_data_number),
 		std::make_pair("name",      cell_data_name),
 		std::make_pair("type",      cell_data_type),
@@ -39,7 +40,7 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	for (const auto& c : colv) {
 		col = GTK_TREE_VIEW_COLUMN(gtk_builder_get_object( builder, (colstring + c.first).c_str() ));
 		ren = GTK_CELL_RENDERER(gtk_builder_get_object( builder, (renstring + c.first).c_str() ));
-		gtk_tree_view_column_set_cell_data_func(col, ren, c.second, NULL, NULL);
+		gtk_tree_view_column_set_cell_data_func(col, ren, c.second, (gpointer) this, NULL);
 	}
 	
 	curn = -1;
@@ -102,42 +103,47 @@ void dialogproperty_t::cell_data_number(GtkTreeViewColumn *,
 	                                    GtkCellRenderer *ren,
 	                                    GtkTreeModel *,
 	                                    GtkTreeIter *iter,
-	                                    gpointer)
+	                                    gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->userdata);
+	gint n = GPOINTER_TO_INT(iter->user_data);
+	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", curelem->itemv[n].number.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->itemv[n].number.c_str(), NULL);
 }
 
 void dialogproperty_t::cell_data_name(GtkTreeViewColumn *,
 	                                  GtkCellRenderer *ren,
 	                                  GtkTreeModel *,
 	                                  GtkTreeIter *iter,
-	                                  gpointer)
+	                                  gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->userdata);
+	gint n = GPOINTER_TO_INT(iter->user_data);
+	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", curelem->itemv[n].name.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->itemv[n].name.c_str(), NULL);
 }
 
 void dialogproperty_t::cell_data_type(GtkTreeViewColumn *,
 	                                  GtkCellRenderer *ren,
 	                                  GtkTreeModel *,
 	                                  GtkTreeIter *iter,
-	                                  gpointer)
+	                                  gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->userdata);
+	gint n = GPOINTER_TO_INT(iter->user_data);
+	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	char *text = "";
-	switch (curelem->itemv[n].itemtype) {
+	const char *text = "";
+	switch (self->curelem->itemv[n].itemtype) {
 		case ITEMTYPE_SUBTITLE:
-			text = "Sottotitolo"
+			text = "Sottotitolo";
 			break;
 		case ITEMTYPE_VIDEO:
-			text = "Video"
+			text = "Video";
 			break;
 		case ITEMTYPE_AUDIO:
-			text = "Audio"
+			text = "Audio";
+			break;
+		default:
 			break;
 	}
 	
@@ -148,37 +154,40 @@ void dialogproperty_t::cell_data_format(GtkTreeViewColumn *,
 	                                  GtkCellRenderer *ren,
 	                                  GtkTreeModel *,
 	                                  GtkTreeIter *iter,
-	                                  gpointer)
+	                                  gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->userdata);
+	gint n = GPOINTER_TO_INT(iter->user_data);
+	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", curelem->itemv[n].codec.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->itemv[n].codec.c_str(), NULL);
 }
 
 void dialogproperty_t::cell_data_language(GtkTreeViewColumn *,
 	                                      GtkCellRenderer *ren,
 	                                      GtkTreeModel *,
 	                                      GtkTreeIter *iter,
-	                                      gpointer)
+	                                      gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->userdata);
+	gint n = GPOINTER_TO_INT(iter->user_data);
+	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", curelem->itemv[n].language.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->itemv[n].language.c_str(), NULL);
 }
 
 void dialogproperty_t::cell_data_isdefault(GtkTreeViewColumn *,
 	                                       GtkCellRenderer *ren,
 	                                       GtkTreeModel *,
 	                                       GtkTreeIter *iter,
-	                                       gpointer)
+	                                       gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->userdata);
+	gint n = GPOINTER_TO_INT(iter->user_data);
+	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	char *text;
-	if (curelem->itemv[n].want_default)
-		text = "Sì"
+	const char *text;
+	if (self->curelem->itemv[n].want_default)
+		text = "Sì";
 	else
-		text = "No"
+		text = "No";
 	
 	g_object_set(ren, "text", text, NULL);
 }
@@ -187,15 +196,16 @@ void dialogproperty_t::cell_data_isforced(GtkTreeViewColumn *,
 	                                      GtkCellRenderer *ren,
 	                                      GtkTreeModel *,
 	                                      GtkTreeIter *iter,
-	                                      gpointer)
+	                                      gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->userdata);
+	gint n = GPOINTER_TO_INT(iter->user_data);
+	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	char *text;
-	if (curelem->itemv[n].want_forced)
-		text = "Sì"
+	const char *text;
+	if (self->curelem->itemv[n].want_forced)
+		text = "Sì";
 	else
-		text = "No"
+		text = "No";
 	
 	g_object_set(ren, "text", text, NULL);
 }

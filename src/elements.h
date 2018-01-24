@@ -24,7 +24,7 @@ struct item_t {
 	bool orig_forced;
 	bool want_forced;
 	bool orig_default;
-	bool want_deafult;
+	bool want_default;
 };
 
 struct errors_t {

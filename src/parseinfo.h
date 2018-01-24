@@ -5,7 +5,7 @@
 #include <sstream>
 #include <boost/property_tree/ptree.hpp>
 
-int parseinfo(std::stringstream& info,
+int parse_info(std::stringstream& info,
               boost::property_tree::ptree& pt);
 
 #endif
