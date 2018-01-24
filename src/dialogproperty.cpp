@@ -69,6 +69,7 @@ int dialogproperty_t::setcurrentelement(gint n) {
 		gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_error)),
 		                         curelem->errors.infoerror_description.c_str(),
 		                         -1);
+		gtk_window_resize(GTK_WINDOW(dialog), 1, 1);
 	}
 	else {
 		gtk_stack_set_visible_child_name(GTK_STACK(stack), "page_main");

@@ -6,6 +6,8 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Proprietà</property>
     <property name="modal">True</property>
+    <property name="default_width">675</property>
+    <property name="default_height">390</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
@@ -91,6 +93,7 @@
                     <property name="hscrollbar_policy">always</property>
                     <property name="vscrollbar_policy">always</property>
                     <property name="shadow_type">in</property>
+                    <property name="overlay_scrolling">False</property>
                     <property name="propagate_natural_width">True</property>
                     <property name="propagate_natural_height">True</property>
                     <child>
@@ -230,7 +233,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">5</property>
+                    <property name="top_attach">4</property>
                   </packing>
                 </child>
                 <child>
@@ -300,18 +303,6 @@
                   <packing>
                     <property name="left_attach">0</property>
                     <property name="top_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSeparator">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="margin_top">10</property>
-                    <property name="margin_bottom">3</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">4</property>
                   </packing>
                 </child>
               </object>
