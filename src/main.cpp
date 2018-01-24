@@ -42,8 +42,8 @@ int main(int argc, char **argv) {
 	gtkapp = gtk_application_new("org.remux.remux", G_APPLICATION_FLAGS_NONE);
 
 #ifdef _WIN32
-	GResource *iconsresource = g_resource_load("C:\icons.gresource", NULL);
-	g_resource_register(iconsresource);
+	GResource *iconsresource = g_resource_load("C:\\icons.gresource", NULL);
+	g_resources_register(iconsresource);
 #endif
 	
 	g_signal_connect(G_OBJECT(gtkapp), "startup",  G_CALLBACK(cb_startup),  NULL);
