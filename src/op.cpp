@@ -12,23 +12,21 @@ consider using a case insensitive property tree
 
 static
 void internal_fill_element(media_t& elem) {
-/*	if (elem.pt.get("EBML-head.Document-type", "") != "matroska") {
+	if (elem.pt.get("EBML_head.Document_type", "") != "matroska") {
 		elem.errors.infoerror = true;
 		elem.errors.infoerror_description = "Not a matroska file";
 		return;
-	}*/
-	elem.title = elem.pt.get("Segment.Title", "");
-	
-	if (!elem.pt.count("Segment.Tracks")) {
-		/*TODO no tracks */
-		return;
 	}
+	elem.title = elem.pt.get("Segment.Segment_information.Title", "");
+	
+	/*if (elem.pt.find("Segment.Tracks") == elem.pt.not_found())
+		return; */
 	for (const auto& childpt : elem.pt.get_child("Segment.Tracks")) {
 		if (childpt.first == "Track") {
 			elem.itemv.emplace_back();
 			item_t& item = elem.itemv.back();
 			
-			std::string tracktype_info = childpt.second.get("Track-type", "");
+			std::string tracktype_info = childpt.second.get("Track_type", "");
 			if (tracktype_info == "subtitles")
 				item.itemtype = ITEMTYPE_SUBTITLE;
 			else if (tracktype_info == "video")
@@ -40,14 +38,14 @@ void internal_fill_element(media_t& elem) {
 			
 			item.name = childpt.second.get("Name", "");
 			item.language = childpt.second.get("Language", "");
-			item.uid = childpt.second.get("Track-UID", "");
+			item.uid = childpt.second.get("Track_UID", "");
 			
-			std::string number_info = childpt.second.get("Track-number", "");
+			std::string number_info = childpt.second.get("Track_number", "");
 			item.number = number_info.substr(0, number_info.find(' '));
 			
-			item.codec = childpt.second.get("Codec-ID", "");
+			item.codec = childpt.second.get("Codec_ID", "");
 			
-			int isdefault_info = childpt.second.get("Default-track-flag", -1);
+			int isdefault_info = childpt.second.get("Default_track_flag", -1);
 			if (isdefault_info == -1) {
 				elem.errors.infoerror = true;
 				elem.errors.infoerror_description = "Cannot find info about default flag for track\n"
@@ -59,7 +57,7 @@ void internal_fill_element(media_t& elem) {
 			item.orig_default = isdefault_info;
 			item.want_default = item.orig_default;
 			
-			int isforced_info = childpt.second.get("Forced-track-flag", -1);
+			int isforced_info = childpt.second.get("Forced_track_flag", -1);
 			if (isforced_info == -1) {
 				elem.errors.infoerror = true;
 				elem.errors.infoerror_description = "Cannot find info about forced flag for track\n"

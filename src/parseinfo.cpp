@@ -39,7 +39,7 @@ void parse_line(const std::string& line,
 	boost::algorithm::trim(kv.first);
 	boost::algorithm::trim(kv.second);
 	
-	std::replace(kv.first.begin(), kv.first.end(), ' ', '-');
+	std::replace(kv.first.begin(), kv.first.end(), ' ', '_');
 }
 
 int parse_info(std::stringstream& info,
