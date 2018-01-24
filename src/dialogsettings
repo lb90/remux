@@ -1,0 +1,10 @@
+#ifndef REMUX_DIALOGSETTINGS_H
+#define REMUX_DIALOGSETTINGS_H
+
+#include <gtk/gtk.h>
+
+class dialogsettings {
+};
+
+#endif
+

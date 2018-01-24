@@ -12,11 +12,11 @@ consider using a case insensitive property tree
 
 static
 void internal_fill_element(media_t& elem) {
-	if (elem.pt.get("EBML-head.Document-type", "") != "matroska") {
+/*	if (elem.pt.get("EBML-head.Document-type", "") != "matroska") {
 		elem.errors.infoerror = true;
 		elem.errors.infoerror_description = "Not a matroska file";
 		return;
-	}
+	}*/
 	elem.title = elem.pt.get("Segment.Title", "");
 	
 	if (!elem.pt.count("Segment.Tracks")) {

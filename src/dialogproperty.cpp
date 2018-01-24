@@ -15,7 +15,7 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	label_name       = GTK_WIDGET(gtk_builder_get_object(builder, "label_name"));
 	check_ac3ita_aac = GTK_WIDGET(gtk_builder_get_object(builder, "check_ac3ita_aac"));
 	check_intact_ac3 = GTK_WIDGET(gtk_builder_get_object(builder, "check_intact_ac3"));
-	check_intact_dts = GTK_WIDGET(gtk_builder_get_object(builder, "label_intact_dts"));
+	check_intact_dts = GTK_WIDGET(gtk_builder_get_object(builder, "check_intact_dts"));
 	treeview_item    = GTK_WIDGET(gtk_builder_get_object(builder, "treeview_item"));
 	entry_outname    = GTK_WIDGET(gtk_builder_get_object(builder, "entry_outname"));
 	textview_error   = GTK_WIDGET(gtk_builder_get_object(builder, "textview_error"));

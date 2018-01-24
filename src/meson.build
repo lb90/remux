@@ -13,6 +13,8 @@ src = [
   'gtkbasicmodel.cpp',
   'dialogproperty.cpp',
   'dialogconversion.cpp',
+  'dialogsettings.cpp',
+  'settings.cpp',
   'glibutil.cpp'
 ]
 

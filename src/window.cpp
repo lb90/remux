@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <gtk/gtk.h>
 #include "window.h"
+#include "dialogsettings.h"
 #include "app.h"
 
 void cb_win_open(GSimpleAction*, GVariant*, gpointer userdata) {
@@ -37,6 +38,14 @@ void cb_win_remove(GSimpleAction*, GVariant*, gpointer userdata) {
 void cb_win_showproperties(GSimpleAction*, GVariant*, gpointer userdata) {
 }
 
+void cb_win_showsettings(GSimpleAction*, GVariant*, gpointer userdata) {
+	GtkWindow *window = GTK_WINDOW(userdata);
+
+	dialogsettings_t *dialog = new dialogsettings_t(window);
+
+	dialog->show();
+}
+
 void cb_win_showabout(GSimpleAction*, GVariant*, gpointer userdata) {
 	GtkWidget *window = (GtkWidget *) userdata;
 	
@@ -53,6 +62,7 @@ int window_init(GtkWidget *window) {
 		{"convert",        cb_win_convert,        NULL, NULL, NULL },
 		{"remove",         cb_win_remove,         NULL, NULL, NULL },
 		{"showproperties", cb_win_showproperties, NULL, NULL, NULL },
+		{"showsettings",   cb_win_showsettings,   NULL, NULL, NULL },
 		{"showabout",      cb_win_showabout,      NULL, NULL, NULL },
 	};
 	g_action_map_add_action_entries(G_ACTION_MAP(window),
