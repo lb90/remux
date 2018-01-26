@@ -2,6 +2,8 @@
 #include <cassert>
 #include "glibutil.h"
 
+typedef std::function<void(void)> callable_t;
+
 std::string util_build_filename(const std::string& first,
                                 const std::string& second)
 {

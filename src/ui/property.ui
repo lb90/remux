@@ -6,8 +6,8 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Proprietà</property>
     <property name="modal">True</property>
-    <property name="default_width">675</property>
-    <property name="default_height">390</property>
+    <property name="default_width">910</property>
+    <property name="default_height">500</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
@@ -22,7 +22,7 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="button_enqueue">
                 <property name="label" translatable="yes">Accoda</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -36,7 +36,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="button_skip">
                 <property name="label" translatable="yes">Salta</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -73,7 +73,7 @@
                   <object class="GtkLabel" id="label_name">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="halign">start</property>
+                    <property name="halign">center</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
@@ -87,7 +87,9 @@
                   <object class="GtkScrolledWindow">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="margin_top">10</property>
+                    <property name="margin_left">20</property>
+                    <property name="margin_right">20</property>
+                    <property name="margin_top">20</property>
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
                     <property name="hscrollbar_policy">always</property>
@@ -109,7 +111,9 @@
                             <property name="title" translatable="yes">Numero Traccia</property>
                             <property name="clickable">True</property>
                             <child>
-                              <object class="GtkCellRendererText" id="ren_number"/>
+                              <object class="GtkCellRendererText" id="ren_number">
+                                <property name="cell_background_rgba">rgb(217,225,242)</property>
+                              </object>
                             </child>
                           </object>
                         </child>
@@ -120,7 +124,9 @@
                             <property name="expand">True</property>
                             <property name="clickable">True</property>
                             <child>
-                              <object class="GtkCellRendererText" id="ren_name"/>
+                              <object class="GtkCellRendererText" id="ren_name">
+                                <property name="cell_background_rgba">rgb(217,225,242)</property>
+                              </object>
                             </child>
                           </object>
                         </child>
@@ -130,7 +136,9 @@
                             <property name="title" translatable="yes">Tipo</property>
                             <property name="clickable">True</property>
                             <child>
-                              <object class="GtkCellRendererText" id="ren_type"/>
+                              <object class="GtkCellRendererText" id="ren_type">
+                                <property name="cell_background_rgba">rgb(217,225,242)</property>
+                              </object>
                             </child>
                           </object>
                         </child>
@@ -140,7 +148,9 @@
                             <property name="title" translatable="yes">Formato</property>
                             <property name="clickable">True</property>
                             <child>
-                              <object class="GtkCellRendererText" id="ren_format"/>
+                              <object class="GtkCellRendererText" id="ren_format">
+                                <property name="cell_background_rgba">rgb(217,225,242)</property>
+                              </object>
                             </child>
                           </object>
                         </child>
@@ -150,7 +160,9 @@
                             <property name="title" translatable="yes">Lingua</property>
                             <property name="clickable">True</property>
                             <child>
-                              <object class="GtkCellRendererText" id="ren_language"/>
+                              <object class="GtkCellRendererText" id="ren_language">
+                                <property name="cell_background_rgba">rgb(217,225,242)</property>
+                              </object>
                             </child>
                           </object>
                         </child>
@@ -160,7 +172,9 @@
                             <property name="title" translatable="yes">Predefinito</property>
                             <property name="clickable">True</property>
                             <child>
-                              <object class="GtkCellRendererText" id="ren_isdefault"/>
+                              <object class="GtkCellRendererText" id="ren_isdefault">
+                                <property name="cell_background_rgba">rgb(217,225,242)</property>
+                              </object>
                             </child>
                           </object>
                         </child>
@@ -170,7 +184,9 @@
                             <property name="title" translatable="yes">Forzato</property>
                             <property name="clickable">True</property>
                             <child>
-                              <object class="GtkCellRendererText" id="ren_isforced"/>
+                              <object class="GtkCellRendererText" id="ren_isforced">
+                                <property name="cell_background_rgba">rgb(217,225,242)</property>
+                              </object>
                             </child>
                           </object>
                         </child>
@@ -320,6 +336,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
                     <property name="pixel_size">100</property>
                     <property name="icon_name">gtk-dialog-warning</property>
                   </object>
@@ -348,6 +365,7 @@
                   <object class="GtkExpander">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="valign">end</property>
                     <child>
                       <object class="GtkGrid">
                         <property name="visible">True</property>

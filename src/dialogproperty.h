@@ -31,6 +31,9 @@ private:
 	
 	GtkWidget  *textview_error;
 	
+	GtkWidget  *button_enqueue;
+	GtkWidget  *button_skip;
+	
 	BasicListModel *basic_model;
 	
 	int      curn;

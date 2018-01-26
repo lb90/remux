@@ -362,7 +362,8 @@ basic_list_model_iter_next (GtkTreeModel  *tree_model,
   
   n = GPOINTER_TO_INT(iter->user_data);
   
-  g_return_val_if_fail ( n + 1 < basic_list_model->numrows , FALSE );
+  if (n+1 >= basic_list_model->numrows)
+    return FALSE;
   
   iter->stamp      = basic_list_model->stamp;
   iter->user_data  = GINT_TO_POINTER(n + 1);

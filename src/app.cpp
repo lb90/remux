@@ -3,6 +3,7 @@
 #include "model.h"
 #include "scandirectory.h"
 #include "dialogproperty.h"
+#include "window.h"
 
 void app_scandirectory(const char *directoryname) {
 	model_clear();
@@ -12,7 +13,7 @@ void app_scandirectory(const char *directoryname) {
 void app_elementactivated(int n) {
 	assert(n >= 0);
 	assert(size_t(n) < elementv.size());
-	dialogproperty_t *dialog = new dialogproperty_t(NULL);
+	dialogproperty_t *dialog = new dialogproperty_t(get_window(NULL));
 	
 	dialog->setcurrentelement(n);
 	dialog->show();

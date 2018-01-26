@@ -56,6 +56,15 @@ void cb_win_showabout(GSimpleAction*, GVariant*, gpointer userdata) {
 	                      NULL);
 }
 
+GtkWindow *get_window(GtkWindow *registerw) {
+	static GtkWindow *win = NULL;
+	
+	if (registerw)
+		win = registerw;
+	
+	return win;
+}
+
 int window_init(GtkWidget *window) {
 	GActionEntry action_entries[] = {
 		{"open",           cb_win_open,           NULL, NULL, NULL },
@@ -69,7 +78,7 @@ int window_init(GtkWidget *window) {
 	                                action_entries,
 	                                G_N_ELEMENTS(action_entries),
 	                                window);
-
+	get_window(GTK_WINDOW(window));
 	return 0;
 }
 

@@ -77,7 +77,7 @@ int media_scan(media_t& elem) {
 			proc_exitstatus = g_subprocess_get_exit_status(subproc);
 			
 			if (proc_exitstatus != 0) {
-				g_print("child process exited with failure status %d\n", proc_exitstatus);
+				/*g_print("child process exited with failure status %d\n", proc_exitstatus);*/
 				elem.errors.infoerror = true;
 				elem.errors.infoerror_description = proc_stdout.str();
 			}

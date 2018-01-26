@@ -19,6 +19,8 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	treeview_item    = GTK_WIDGET(gtk_builder_get_object(builder, "treeview_item"));
 	entry_outname    = GTK_WIDGET(gtk_builder_get_object(builder, "entry_outname"));
 	textview_error   = GTK_WIDGET(gtk_builder_get_object(builder, "textview_error"));
+	button_enqueue   = GTK_WIDGET(gtk_builder_get_object(builder, "button_enqueue"));
+	button_skip      = GTK_WIDGET(gtk_builder_get_object(builder, "button_skip"));
 	
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
 	
@@ -69,7 +71,6 @@ int dialogproperty_t::setcurrentelement(gint n) {
 		gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_error)),
 		                         curelem->errors.infoerror_description.c_str(),
 		                         -1);
-		gtk_window_resize(GTK_WINDOW(dialog), 1, 1);
 	}
 	else {
 		gtk_stack_set_visible_child_name(GTK_STACK(stack), "page_main");
@@ -105,6 +106,11 @@ void dialogproperty_t::self_deleter(GtkDialog *dialog, gpointer self) {
 	delete inst;
 }
 
+static
+void internal_cell_color(GtkCellRenderer *ren, gint n) {
+	g_object_set(ren, "cell-background-set", (n%2) ? TRUE : FALSE, NULL);
+}
+
 void dialogproperty_t::cell_data_number(GtkTreeViewColumn *,
 	                                    GtkCellRenderer *ren,
 	                                    GtkTreeModel *,
@@ -115,6 +121,7 @@ void dialogproperty_t::cell_data_number(GtkTreeViewColumn *,
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
 	g_object_set(ren, "text", self->curelem->itemv[n].number.c_str(), NULL);
+	internal_cell_color(ren, n);
 }
 
 void dialogproperty_t::cell_data_name(GtkTreeViewColumn *,
@@ -127,6 +134,7 @@ void dialogproperty_t::cell_data_name(GtkTreeViewColumn *,
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
 	g_object_set(ren, "text", self->curelem->itemv[n].name.c_str(), NULL);
+	internal_cell_color(ren, n);
 }
 
 void dialogproperty_t::cell_data_type(GtkTreeViewColumn *,
@@ -154,6 +162,7 @@ void dialogproperty_t::cell_data_type(GtkTreeViewColumn *,
 	}
 	
 	g_object_set(ren, "text", text, NULL);
+	internal_cell_color(ren, n);
 }
 
 void dialogproperty_t::cell_data_format(GtkTreeViewColumn *,
@@ -166,6 +175,7 @@ void dialogproperty_t::cell_data_format(GtkTreeViewColumn *,
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
 	g_object_set(ren, "text", self->curelem->itemv[n].codec.c_str(), NULL);
+	internal_cell_color(ren, n);
 }
 
 void dialogproperty_t::cell_data_language(GtkTreeViewColumn *,
@@ -178,6 +188,7 @@ void dialogproperty_t::cell_data_language(GtkTreeViewColumn *,
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
 	g_object_set(ren, "text", self->curelem->itemv[n].language.c_str(), NULL);
+	internal_cell_color(ren, n);
 }
 
 void dialogproperty_t::cell_data_isdefault(GtkTreeViewColumn *,
@@ -196,6 +207,7 @@ void dialogproperty_t::cell_data_isdefault(GtkTreeViewColumn *,
 		text = "No";
 	
 	g_object_set(ren, "text", text, NULL);
+	internal_cell_color(ren, n);
 }
 
 void dialogproperty_t::cell_data_isforced(GtkTreeViewColumn *,
@@ -214,5 +226,6 @@ void dialogproperty_t::cell_data_isforced(GtkTreeViewColumn *,
 		text = "No";
 	
 	g_object_set(ren, "text", text, NULL);
+	internal_cell_color(ren, n);
 }
 
