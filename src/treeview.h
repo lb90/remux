@@ -3,6 +3,14 @@
 
 #include <gtk/gtk.h>
 
+enum treeview_select_t {
+	select_all,
+	select_none,
+	select_invert
+};
+
 int treeview_init(GtkBuilder *builder);
+
+void treeview_select(treeview_select_t sel);
 
 #endif

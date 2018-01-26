@@ -2,7 +2,7 @@
 #include <cassert>
 #include <vector>
 #include <gtk/gtk.h>
-#include <map>
+#include "glibutil.h"
 #include "model.h"
 #include "elements.h"
 
@@ -25,20 +25,15 @@ int model_add(const char *name,
 	GtkTreeIter iter;
 	gtk_list_store_append(liststore, &iter);
 	gtk_list_store_set(liststore, &iter,
-	                   0, (gboolean) TRUE,
-	                   1, (gchar *) name,
-	                   2, (gchar *) directory,
+	                   0, (gchar *) name,
+	                   1, (gchar *) directory,
 	                   -1);
 
 	elementv.emplace_back();
 	media_t& e = elementv.back();
 	e.name = name;
 	e.directory = directory;
-#ifdef _WIN32
-	e.path = e.directory + "\\" + name;
-#else
-	e.path = e.directory + "/" + name;
-#endif
+	e.path = util_build_filename(e.directory, e.path);
 	
 	
 	return 0;

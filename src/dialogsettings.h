@@ -14,6 +14,13 @@ private:
 	GtkBuilder *builder;
 	GtkDialog  *dialog;
 	
+	GtkWidget  *entry_mkvtoolnix;
+	GtkWidget  *entry_ac3to;
+	GtkWidget  *entry_ffmpeg;
+	
+	static
+	void response(GtkDialog *dialog, gint resp_id, gpointer self);
+	
 	static
 	void self_deleter(GtkDialog *dialog, gpointer self);
 };

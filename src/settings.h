@@ -8,7 +8,14 @@ public:
 	static
 	boost::property_tree::ptree pt;
 	
+	static
+	std::string file;
+	
+	static
 	void init();
+	
+	static
+	void write();
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include "model.h"
+#include "settings.h"
 #include "scandirectory.h"
 #include "window.h"
 #include "treeview.h"
@@ -14,6 +15,8 @@ void cb_app_exit(GSimpleAction*, GVariant*, gpointer userdata) {
 
 void cb_startup(GtkApplication* app, gpointer) {
 	GtkWidget *window;
+	
+	settings::init();
 
 	builder = gtk_builder_new_from_resource("/org/remux/remux/ui/form.ui");
 	window = GTK_WIDGET(gtk_builder_get_object(builder, "form"));
@@ -39,7 +42,7 @@ int main(int argc, char **argv) {
 	int status = 0;
 
 #ifdef _WIN32
-	GResource *iconsresource = g_resource_load("C:\\icons.gresource", NULL);
+	GResource *iconsresource = g_resource_load(util_filename_from_install_directory("icons.gresource"), NULL);
 	g_resources_register(iconsresource);
 #endif
 

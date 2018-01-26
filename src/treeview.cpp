@@ -1,11 +1,14 @@
 #include <cstdlib>
 #include <cassert>
+#include <vector>
+#include <string>
 #include <gtk/gtk.h>
 #include "util.h"
 #include "treeview.h"
 #include "signalcentre.h"
 
 GtkListStore *liststore;
+GtkWidget    *treeview;
 
 HANDLER_BEGIN
 void cb_row_activated(GtkTreeView* treeview,
@@ -21,24 +24,8 @@ void cb_row_activated(GtkTreeView* treeview,
 }
 HANDLER_END
 
-void cb_media_toggled(GtkCellRendererToggle *cell,
-                      gchar *path_string, gpointer) {
-	GtkTreeIter iter;
-	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(liststore),
-	                                        &iter, path_string))
-	{
-		gboolean booleanval;
-		gtk_tree_model_get(GTK_TREE_MODEL(liststore),
-		                   &iter, 0, &booleanval, -1);
-		booleanval = !booleanval;
-		gtk_list_store_set(liststore,
-		                   &iter, 0, booleanval, -1);
-	}
-}
-
 int treeview_init_store(GtkWidget *treeview) {
-	liststore = gtk_list_store_new(3, G_TYPE_BOOLEAN,
-	                                  G_TYPE_STRING,
+	liststore = gtk_list_store_new(2, G_TYPE_STRING,
 	                                  G_TYPE_STRING);
 	assert(liststore);
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(liststore));
@@ -47,50 +34,42 @@ int treeview_init_store(GtkWidget *treeview) {
 	return 0;
 }
 
-int treeview_init_columns(GtkWidget *treeview) {
+int treeview_init_columns(GtkBuilder *builder, GtkWidget *treeview) {
 	GtkTreeViewColumn *col;
-	GtkCellRenderer   *renderer;
-
-	/* --- Column #1 --- */
-	col = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(col, "");
-	gtk_tree_view_column_set_clickable(col, TRUE);
-
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), col);
-
-	renderer = gtk_cell_renderer_toggle_new();
-	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-	gtk_cell_renderer_toggle_set_radio(GTK_CELL_RENDERER_TOGGLE(renderer),
-	                                   FALSE);
-	gtk_cell_renderer_toggle_set_activatable(GTK_CELL_RENDERER_TOGGLE(renderer),
-	                                         TRUE);
-	g_signal_connect(renderer, "toggled", G_CALLBACK(cb_media_toggled), NULL);
-	gtk_tree_view_column_add_attribute(col, renderer, "active", 0);
-
-	/* --- Column #2 --- */
-	col = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(col, "Media");
-	gtk_tree_view_column_set_clickable(col, TRUE);
-
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), col);
-
-	renderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(col, renderer, TRUE);
-	gtk_tree_view_column_add_attribute(col, renderer, "text", 1);
-	
+	GtkCellRenderer   *ren;
+	std::vector<std::pair<std::string, int>> colv = {
+		std::make_pair("name",      0),
+		std::make_pair("directory", 1)
+	};
+	std::string colstring = "col_";
+	std::string renstring = "ren_";
+	for (const auto& c : colv) {
+		col = GTK_TREE_VIEW_COLUMN(gtk_builder_get_object( builder, (colstring + c.first).c_str() ));
+		ren = GTK_CELL_RENDERER(gtk_builder_get_object( builder, (renstring + c.first).c_str() ));
+		gtk_tree_view_column_add_attribute(col, ren, "text", c.second);
+	}
 	return 0;
 }
 
 int treeview_init(GtkBuilder *builder) {
-	GtkWidget *treeview;
 	treeview = GTK_WIDGET(gtk_builder_get_object(builder, "treeview"));
-	assert(treeview);
 	
 	treeview_init_store(treeview);
-	
-	gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(treeview), TRUE);
-	
-	treeview_init_columns(treeview);
+	treeview_init_columns(builder, treeview);
 
 	return 0;
 }
+
+void treeview_select(treeview_select_t sel) {
+	switch (sel) {
+		case select_all:
+			gtk_tree_selection_select_all(gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)));
+			break;
+		case select_none:
+			gtk_tree_selection_unselect_all(gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)));
+			break;
+		case select_invert:
+			break;
+	}
+}
+

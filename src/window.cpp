@@ -2,7 +2,9 @@
 #include <cstdlib>
 #include <gtk/gtk.h>
 #include "window.h"
+#include "treeview.h"
 #include "dialogsettings.h"
+#include "dialogconversion.h"
 #include "app.h"
 
 void cb_win_open(GSimpleAction*, GVariant*, gpointer userdata) {
@@ -29,20 +31,35 @@ void cb_win_open(GSimpleAction*, GVariant*, gpointer userdata) {
 	g_object_unref (native);
 }
 
-void cb_win_convert(GSimpleAction*, GVariant*, gpointer userdata) {
+void cb_win_selall(GSimpleAction*, GVariant*, gpointer userdata) {
+	treeview_select(select_all);
+}
+
+void cb_win_selnone(GSimpleAction*, GVariant*, gpointer userdata) {
+	treeview_select(select_none);
+}
+
+void cb_win_selinvert(GSimpleAction*, GVariant*, gpointer userdata) {
+	treeview_select(select_invert);
 }
 
 void cb_win_remove(GSimpleAction*, GVariant*, gpointer userdata) {
 }
 
-void cb_win_showproperties(GSimpleAction*, GVariant*, gpointer userdata) {
+void cb_win_convert(GSimpleAction*, GVariant*, gpointer userdata) {
+	GtkWindow *window = GTK_WINDOW(userdata);
+
+	dialogconversion_t *dialog = new dialogconversion_t(window);
+	dialog->show();
+}
+
+void cb_win_showproperty(GSimpleAction*, GVariant*, gpointer userdata) {
 }
 
 void cb_win_showsettings(GSimpleAction*, GVariant*, gpointer userdata) {
 	GtkWindow *window = GTK_WINDOW(userdata);
 
 	dialogsettings_t *dialog = new dialogsettings_t(window);
-
 	dialog->show();
 }
 
@@ -70,7 +87,10 @@ int window_init(GtkWidget *window) {
 		{"open",           cb_win_open,           NULL, NULL, NULL },
 		{"convert",        cb_win_convert,        NULL, NULL, NULL },
 		{"remove",         cb_win_remove,         NULL, NULL, NULL },
-		{"showproperties", cb_win_showproperties, NULL, NULL, NULL },
+		{"selectall",      cb_win_selall,         NULL, NULL, NULL },
+		{"selectnone",     cb_win_selnone,        NULL, NULL, NULL },
+		{"selectinvert",   cb_win_selinvert,      NULL, NULL, NULL },
+		{"showproperty",   cb_win_showproperty,   NULL, NULL, NULL },
 		{"showsettings",   cb_win_showsettings,   NULL, NULL, NULL },
 		{"showabout",      cb_win_showabout,      NULL, NULL, NULL },
 	};

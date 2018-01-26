@@ -210,19 +210,6 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="exitbutton">
-            <property name="label" translatable="yes">Esci</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="action_name">app.exit</property>
-          </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">4</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkToolbar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
@@ -332,6 +319,9 @@
             <property name="left_attach">0</property>
             <property name="top_attach">2</property>
           </packing>
+        </child>
+        <child>
+          <placeholder/>
         </child>
       </object>
     </child>
