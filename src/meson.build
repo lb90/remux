@@ -4,6 +4,7 @@ src = [
   'app.cpp',
   'op.cpp',
   'model.cpp',
+  'elements.cpp',
   'scandirectory.cpp',
   'mediascan.cpp',
   'parseinfo.cpp',

@@ -59,15 +59,15 @@ int media_scan(media_t& elem) {
 		if (errspec != NULL) g_print(": %s", errspec->message);
 		g_print("\n");
 		
-		elem.errors.infoerror = true;
-		elem.errors.infoerror_description = (errspec && errspec->message && errspec->message[0]) ?
+		elem.err.scan = true;
+		elem.err.scan_description = (errspec && errspec->message && errspec->message[0]) ?
 		                                    errspec->message : "Errore sconosciuto";
 	}
 	else {
 		if (!g_subprocess_wait(subproc, NULL, NULL)) {
 			g_print("error in subprocess\n");
-			elem.errors.infoerror = true;
-			elem.errors.infoerror_description = "Errore sconosciuto";
+			elem.err.scan = true;
+			elem.err.scan_description = "Errore sconosciuto";
 		}
 		else {
 			int proc_exitstatus;
@@ -78,8 +78,8 @@ int media_scan(media_t& elem) {
 			
 			if (proc_exitstatus != 0) {
 				/*g_print("child process exited with failure status %d\n", proc_exitstatus);*/
-				elem.errors.infoerror = true;
-				elem.errors.infoerror_description = proc_stdout.str();
+				elem.err.scan = true;
+				elem.err.scan_description = proc_stdout.str();
 			}
 			else {
 				parse_info(proc_stdout, elem.pt);

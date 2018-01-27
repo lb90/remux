@@ -5,6 +5,7 @@
 #include "glibutil.h"
 #include "model.h"
 #include "elements.h"
+#include "settings.h"
 
 extern GtkListStore *liststore;
 
@@ -30,12 +31,16 @@ int model_add(const char *name,
 	                   -1);
 
 	elementv.emplace_back();
-	media_t& e = elementv.back();
-	e.name = name;
-	e.directory = directory;
-	e.path = util_build_filename(e.directory, e.path);
-	
-	
+	media_t& elem = elementv.back();
+
+	elem.name = name;
+	elem.directory = directory;
+	elem.path = util_build_filename(elem.directory, elem.name);
+
+	elem.outname = elem.name;
+	elem.outdirectory = settings::out_dir;
+	elem.outpath = util_build_filename(elem.outdirectory, elem.outname);
+
 	return 0;
 }
 

@@ -10,17 +10,17 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 {
 	builder = gtk_builder_new_from_resource("/org/remux/remux/ui/property.ui");
 	
-	dialog           = GTK_DIALOG(gtk_builder_get_object(builder, "dialog_property"));
-	stack            = GTK_WIDGET(gtk_builder_get_object(builder, "stack"));
-	label_name       = GTK_WIDGET(gtk_builder_get_object(builder, "label_name"));
-	check_ac3ita_aac = GTK_WIDGET(gtk_builder_get_object(builder, "check_ac3ita_aac"));
-	check_intact_ac3 = GTK_WIDGET(gtk_builder_get_object(builder, "check_intact_ac3"));
-	check_intact_dts = GTK_WIDGET(gtk_builder_get_object(builder, "check_intact_dts"));
-	treeview_item    = GTK_WIDGET(gtk_builder_get_object(builder, "treeview_item"));
-	entry_outname    = GTK_WIDGET(gtk_builder_get_object(builder, "entry_outname"));
-	textview_error   = GTK_WIDGET(gtk_builder_get_object(builder, "textview_error"));
-	button_enqueue   = GTK_WIDGET(gtk_builder_get_object(builder, "button_enqueue"));
-	button_skip      = GTK_WIDGET(gtk_builder_get_object(builder, "button_skip"));
+	dialog               = GTK_DIALOG(gtk_builder_get_object(builder, "dialog_property"));
+	stack                = GTK_WIDGET(gtk_builder_get_object(builder, "stack"));
+	label_name           = GTK_WIDGET(gtk_builder_get_object(builder, "label_name"));
+	check_convert_ac3ita_aac = GTK_WIDGET(gtk_builder_get_object(builder, "check_convert_ac3ita_aac"));
+	check_leave_ac3      = GTK_WIDGET(gtk_builder_get_object(builder, "check_leave_ac3"));
+	check_leave_dolby    = GTK_WIDGET(gtk_builder_get_object(builder, "check_leave_dolby"));
+	treeview_item        = GTK_WIDGET(gtk_builder_get_object(builder, "treeview_item"));
+	entry_outname        = GTK_WIDGET(gtk_builder_get_object(builder, "entry_outname"));
+	textview_error       = GTK_WIDGET(gtk_builder_get_object(builder, "textview_error"));
+	button_enqueue       = GTK_WIDGET(gtk_builder_get_object(builder, "button_enqueue"));
+	button_skip          = GTK_WIDGET(gtk_builder_get_object(builder, "button_skip"));
 	
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
 	
@@ -66,20 +66,25 @@ int dialogproperty_t::setcurrentelement(gint n) {
 	if (!curelem->isinit)
 		op::media_scan(n);
 
-	if (curelem->errors.infoerror) {
+	if (curelem->err.scan) {
 		gtk_stack_set_visible_child_name(GTK_STACK(stack), "page_error");
+
 		gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview_error)),
-		                         curelem->errors.infoerror_description.c_str(),
+		                         curelem->err.scan_description.c_str(),
 		                         -1);
 	}
 	else {
 		gtk_stack_set_visible_child_name(GTK_STACK(stack), "page_main");
+
 		gtk_label_set_text(GTK_LABEL(label_name), curelem->name.c_str());
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_ac3ita_aac), curelem->options.ac3ita_aac);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_intact_dts), curelem->options.intact_dts);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_intact_ac3), curelem->options.intact_ac3);
-		basic_model = basic_list_model_new(curelem->itemv.size());
+
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_convert_ac3ita_aac), curelem->opt.convert_ac3ita_aac);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_leave_ac3), curelem->opt.leave_ac3);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_leave_dolby), curelem->opt.leave_dolby);
+
+		basic_model = basic_list_model_new(curelem->items.size());
 		gtk_tree_view_set_model(GTK_TREE_VIEW(treeview_item), GTK_TREE_MODEL(basic_model));
+
 		gtk_entry_set_text(GTK_ENTRY(entry_outname), curelem->outname.c_str());
 	}
 	
@@ -120,7 +125,7 @@ void dialogproperty_t::cell_data_number(GtkTreeViewColumn *,
 	gint n = GPOINTER_TO_INT(iter->user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", self->curelem->itemv[n].number.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->items[n].num.c_str(), NULL);
 	internal_cell_color(ren, n);
 }
 
@@ -133,7 +138,7 @@ void dialogproperty_t::cell_data_name(GtkTreeViewColumn *,
 	gint n = GPOINTER_TO_INT(iter->user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", self->curelem->itemv[n].name.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->items[n].name.c_str(), NULL);
 	internal_cell_color(ren, n);
 }
 
@@ -147,14 +152,14 @@ void dialogproperty_t::cell_data_type(GtkTreeViewColumn *,
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
 	const char *text = "";
-	switch (self->curelem->itemv[n].itemtype) {
-		case ITEMTYPE_SUBTITLE:
+	switch (self->curelem->items[n].type) {
+		case itemtype_subtitle:
 			text = "Sottotitolo";
 			break;
-		case ITEMTYPE_VIDEO:
+		case itemtype_video:
 			text = "Video";
 			break;
-		case ITEMTYPE_AUDIO:
+		case itemtype_audio:
 			text = "Audio";
 			break;
 		default:
@@ -174,7 +179,7 @@ void dialogproperty_t::cell_data_format(GtkTreeViewColumn *,
 	gint n = GPOINTER_TO_INT(iter->user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", self->curelem->itemv[n].codec.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->items[n].codecname.c_str(), NULL);
 	internal_cell_color(ren, n);
 }
 
@@ -187,7 +192,7 @@ void dialogproperty_t::cell_data_language(GtkTreeViewColumn *,
 	gint n = GPOINTER_TO_INT(iter->user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", self->curelem->itemv[n].language.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->items[n].lang.c_str(), NULL);
 	internal_cell_color(ren, n);
 }
 
@@ -201,7 +206,7 @@ void dialogproperty_t::cell_data_isdefault(GtkTreeViewColumn *,
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
 	const char *text;
-	if (self->curelem->itemv[n].want_default)
+	if (self->curelem->items[n].want_default)
 		text = "Sì";
 	else
 		text = "No";
@@ -220,7 +225,7 @@ void dialogproperty_t::cell_data_isforced(GtkTreeViewColumn *,
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
 	const char *text;
-	if (self->curelem->itemv[n].want_forced)
+	if (self->curelem->items[n].want_forced)
 		text = "Sì";
 	else
 		text = "No";

@@ -13,61 +13,63 @@ consider using a case insensitive property tree
 static
 void internal_fill_element(media_t& elem) {
 	if (elem.pt.get("EBML_head.Document_type", "") != "matroska") {
-		elem.errors.infoerror = true;
-		elem.errors.infoerror_description = "Not a matroska file";
+		elem.err.scan = true;
+		elem.err.scan_description = "Not a matroska file";
 		return;
 	}
 	elem.title = elem.pt.get("Segment.Segment_information.Title", "");
 	
-	/*if (elem.pt.find("Segment.Tracks") == elem.pt.not_found())
-		return; */
+	/*TODO (elem.pt.find("Segment.Tracks")*/
 	for (const auto& childpt : elem.pt.get_child("Segment.Tracks")) {
 		if (childpt.first == "Track") {
-			elem.itemv.emplace_back();
-			item_t& item = elem.itemv.back();
+			elem.items.emplace_back();
+			item_t& item = elem.items.back();
 			
-			std::string tracktype_info = childpt.second.get("Track_type", "");
-			if (tracktype_info == "subtitles")
-				item.itemtype = ITEMTYPE_SUBTITLE;
-			else if (tracktype_info == "video")
-				item.itemtype = ITEMTYPE_VIDEO;
-			else if (tracktype_info == "audio")
-				item.itemtype = ITEMTYPE_AUDIO;
+			/*TODO case insensitive comparison */
+			std::string
+			tracktype = childpt.second.get("Track_type", "");
+			if (tracktype == "subtitles")
+				item.type = itemtype_subtitle;
+			else if (tracktype == "video")
+				item.type = itemtype_video;
+			else if (tracktype == "audio")
+				item.type = itemtype_audio;
 			else
-				item.itemtype = ITEMTYPE_UNKNOWN;
+				item.type = itemtype_unknown;
 			
 			item.name = childpt.second.get("Name", "");
-			item.language = childpt.second.get("Language", "");
-			item.uid = childpt.second.get("Track_UID", "");
+			item.lang = childpt.second.get("Language", "");
+			item.uid  = childpt.second.get("Track_UID", "");
 			
-			std::string number_info = childpt.second.get("Track_number", "");
-			item.number = number_info.substr(0, number_info.find(' '));
+			std::string
+			number = childpt.second.get("Track_number", "");
+			item.num = number.substr(0, number.find(' '));
 			
-			item.codec = childpt.second.get("Codec_ID", "");
+			item.codecname = childpt.second.get("Codec_ID", "");
 			
-			int isdefault_info = childpt.second.get("Default_track_flag", -1);
-			if (isdefault_info == -1) {
-				elem.errors.infoerror = true;
-				elem.errors.infoerror_description = "Cannot find info about default flag for track\n"
-				                                    " Number = " + item.number + "\n"
-				                                    " UID = " + item.uid + "\n"
-				                                    " Name = " + item.name + "\n";
+			int isdefault = childpt.second.get("Default_track_flag", -1);
+			if (isdefault == -1) {
+				elem.err.scan = true;
+				elem.err.scan_description = "Cannot find info about default flag for track\n"
+				                            " Number = " + item.num + "\n"
+				                            " UID = " + item.uid + "\n"
+				                            " Name = " + item.name + "\n";
 				return;
 			}
-			item.orig_default = isdefault_info;
-			item.want_default = item.orig_default;
+			item.orig_default = isdefault;
+			item.want_default = isdefault;
 			
-			int isforced_info = childpt.second.get("Forced_track_flag", -1);
-			if (isforced_info == -1) {
-				elem.errors.infoerror = true;
-				elem.errors.infoerror_description = "Cannot find info about forced flag for track\n"
-				                                    " Number = " + item.number + "\n"
-				                                    " UID = " + item.uid + "\n"
-				                                    " Name = " + item.name + "\n";
+			int isforced = childpt.second.get("Forced_track_flag", -1);
+			if (isforced == -1) {
+				elem.err.scan = true;
+				elem.err.scan_description = "Cannot find info about forced flag for track\n"
+				                            " Number = " + item.num + "\n"
+				                            " UID = " + item.uid + "\n"
+				                            " Name = " + item.name + "\n";
 				return;
 			}
-			item.orig_forced = isforced_info;
-			item.want_forced = item.orig_forced;
+			item.orig_forced = isforced;
+			item.want_forced = isforced;
 		}
 	}
 }
@@ -77,8 +79,9 @@ void op::media_scan(int n) {
 	assert(size_t(n) < elementv.size());
 	
 	::media_scan(elementv[n]);
-	if (elementv[n].errors.infoerror)
+	if (elementv[n].err.scan)
 		return;
 
 	internal_fill_element(elementv[n]);
 }
+

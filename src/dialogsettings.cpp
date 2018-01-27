@@ -12,18 +12,18 @@ dialogsettings_t::dialogsettings_t(GtkWindow *window)
 	
 	dialog = GTK_DIALOG(gtk_builder_get_object(builder, "dialog"));
 	
-	entry_mkvtoolnix = GTK_WIDGET(gtk_builder_get_object(builder, "entry_mkvtoolnix"));
-	entry_ac3to      = GTK_WIDGET(gtk_builder_get_object(builder, "entry_ac3to"));
-	entry_ffmpeg     = GTK_WIDGET(gtk_builder_get_object(builder, "entry_ffmpeg"));
+	chooser_mkvtoolnix = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "chooser_mkvtoolnix"));
+	chooser_ac3to      = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "chooser_ac3to"));
+	chooser_ffmpeg     = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "chooser_ffmpeg"));
 	
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
 	
 	g_signal_connect(dialog, "destroy", G_CALLBACK(self_deleter), (gpointer) this);
 	g_signal_connect(dialog, "response", G_CALLBACK(response), (gpointer) this);
 	
-	gtk_entry_set_text(GTK_ENTRY(entry_mkvtoolnix), settings::pt.get("mkvtoolnix", "").c_str());
-	gtk_entry_set_text(GTK_ENTRY(entry_mkvtoolnix), settings::pt.get("ac3to", "").c_str());
-	gtk_entry_set_text(GTK_ENTRY(entry_mkvtoolnix), settings::pt.get("ffmpeg", "").c_str());
+	//gtk_entry_set_text(GTK_ENTRY(entry_mkvtoolnix), settings::pt.get("mkvtoolnix", "").c_str());
+	//gtk_entry_set_text(GTK_ENTRY(entry_mkvtoolnix), settings::pt.get("ac3to", "").c_str());
+	//gtk_entry_set_text(GTK_ENTRY(entry_mkvtoolnix), settings::pt.get("ffmpeg", "").c_str());
 }
 
 void dialogsettings_t::show() {
@@ -35,10 +35,10 @@ void dialogsettings_t::response(GtkDialog *dialog, gint resp_id, gpointer self) 
 	assert(dialog == inst->dialog);
 	
 	if (resp_id == GTK_RESPONSE_OK) {
-		for (const auto& pair : applymap) {
+		/*for (const auto& pair : applymap) {
 			settings::pt[pair.first] = pair.second;
 		}
-		settings::write();
+		settings::write();*/
 	}
 	
 	gtk_widget_destroy(GTK_WIDGET(inst->dialog));

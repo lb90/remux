@@ -14,9 +14,9 @@ private:
 	GtkBuilder *builder;
 	GtkDialog  *dialog;
 	
-	GtkWidget  *entry_mkvtoolnix;
-	GtkWidget  *entry_ac3to;
-	GtkWidget  *entry_ffmpeg;
+	GtkFileChooser  *chooser_mkvtoolnix;
+	GtkFileChooser  *chooser_ac3to;
+	GtkFileChooser  *chooser_ffmpeg;
 	
 	static
 	void response(GtkDialog *dialog, gint resp_id, gpointer self);

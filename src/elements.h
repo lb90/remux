@@ -6,20 +6,28 @@
 #include <boost/property_tree/ptree.hpp>
 
 enum itemtype_t {
-	ITEMTYPE_UNKNOWN = 0,
-	ITEMTYPE_SUBTITLE,
-	ITEMTYPE_VIDEO,
-	ITEMTYPE_AUDIO,
+	itemtype_unknown = 0,
+	itemtype_subtitle,
+	itemtype_video,
+	itemtype_audio,
+};
+enum codectype_t {
+	codectype_unknown = 0,
+	codectype_ac3,
+	codectype_dts
 };
 struct item_t {
-	itemtype_t  itemtype;
+	explicit item_t();
+
+	itemtype_t  type;
 
 	std::string name;
-	std::string language;
+	std::string lang;
 	std::string uid;
-	std::string number;
-	
-	std::string codec;
+	std::string num;
+	int         tid;
+	std::string codecname;
+	codectype_t codectype;
 	
 	bool orig_forced;
 	bool want_forced;
@@ -27,39 +35,46 @@ struct item_t {
 	bool want_default;
 };
 
-struct errors_t {
-	bool infoerror;
-	std::string infoerror_description;
-	bool converterror;
-	std::string converterror_description;
+struct err_t {
+	explicit err_t();
+
+	bool scan;
+	std::string scan_description;
+	bool conv;
+	std::string conv_description;
 	
 	operator bool() const {
-		return infoerror || converterror;
+		return scan || conv;
 	}
 };
-struct options_t {
-	bool ac3ita_aac;
-	bool intact_dts;
-	bool intact_ac3;
+struct opt_t {
+	explicit opt_t();
+
+	bool convert_ac3ita_aac;
+	bool leave_ac3;
+	bool leave_dolby;
 };
 struct media_t {
+	explicit media_t();
+	
+	bool isinit;
+	bool isready;
+
 	std::string name;
 	std::string directory;
 	std::string path;
 	
-	std::string outdirectory;
 	std::string outname;
+	std::string outdirectory;
+	std::string outpath;
 	
 	std::string title;
 	
-	errors_t  errors;
-	options_t options;
-	
-	std::vector<item_t> itemv;
-	
+	opt_t       opt;
+	std::vector<item_t> items;
 	boost::property_tree::ptree pt;
 	
-	bool isinit;
+	err_t       err;
 };
 
 #endif

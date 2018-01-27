@@ -41,10 +41,13 @@ int main(int argc, char **argv) {
 	GtkApplication *gtkapp;
 	int status = 0;
 
-#ifdef _WIN32
+	#ifdef _WIN32
 	GResource *iconsresource = g_resource_load(util_filename_from_install_directory("icons.gresource"), NULL);
 	g_resources_register(iconsresource);
-#endif
+	#endif
+	#ifdef _WIN32
+	g_setenv("GTK_CSD", "1", FALSE);
+	#endif
 
 	g_set_application_name("Remux");
 	gtkapp = gtk_application_new("org.remux.remux", G_APPLICATION_FLAGS_NONE);
