@@ -6,6 +6,7 @@
 #include "dialogsettings.h"
 #include "dialogconversion.h"
 #include "app.h"
+#include "op.h"
 
 void cb_win_open(GSimpleAction*, GVariant*, gpointer userdata) {
 	GtkFileChooserNative *native;
@@ -44,6 +45,9 @@ void cb_win_selinvert(GSimpleAction*, GVariant*, gpointer userdata) {
 }
 
 void cb_win_remove(GSimpleAction*, GVariant*, gpointer userdata) {
+	std::vector<size_t> indexv;
+	treeview_getselection(indexv);
+	op::remove(indexv);
 }
 
 void cb_win_convert(GSimpleAction*, GVariant*, gpointer userdata) {

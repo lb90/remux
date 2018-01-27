@@ -2,6 +2,16 @@
 <!-- Generated with glade 3.21.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkImage" id="image_open">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">gtk-open</property>
+  </object>
+  <object class="GtkImage" id="image_apply">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">gtk-apply</property>
+  </object>
   <object class="GtkApplicationWindow" id="form">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Remux</property>
@@ -26,20 +36,23 @@
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkImageMenuItem">
-                        <property name="label">Apri Cartella...</property>
+                        <property name="label">Apri _Cartella</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="action_name">win.open</property>
+                        <property name="use_underline">True</property>
+                        <property name="image">image_open</property>
                         <property name="use_stock">False</property>
                         <property name="always_show_image">True</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkImageMenuItem">
-                        <property name="label" translatable="yes">Aggiungi File...</property>
+                        <property name="label" translatable="yes">Aggiungi _File...</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="action_name">win.addfiles</property>
+                        <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
                         <property name="always_show_image">True</property>
                       </object>
@@ -117,26 +130,28 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkImageMenuItem">
+                        <property name="label">gtk-delete</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="action_name">win.remove</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkSeparatorMenuItem">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem">
+                      <object class="GtkImageMenuItem">
+                        <property name="label">gtk-properties</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="action_name">win.showproperty</property>
-                        <property name="label" translatable="yes">Proprietà...</property>
-                        <property name="use_underline">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">gtk-delete</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="action_name">win.delete</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="always_show_image">True</property>
@@ -156,6 +171,24 @@
                   <object class="GtkMenu">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImageMenuItem">
+                        <property name="label" translatable="yes">_Converti...</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="action_name">win.convert</property>
+                        <property name="use_underline">True</property>
+                        <property name="image">image_apply</property>
+                        <property name="use_stock">False</property>
+                        <property name="always_show_image">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
                     <child>
                       <object class="GtkMenuItem">
                         <property name="visible">True</property>
@@ -207,19 +240,6 @@
           <packing>
             <property name="left_attach">0</property>
             <property name="top_attach">3</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="exitbutton">
-            <property name="label" translatable="yes">Esci</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="action_name">app.exit</property>
-          </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">4</property>
           </packing>
         </child>
         <child>
@@ -277,6 +297,7 @@
             <property name="can_focus">True</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
+            <property name="shadow_type">in</property>
             <property name="overlay_scrolling">False</property>
             <property name="propagate_natural_width">True</property>
             <property name="propagate_natural_height">True</property>
@@ -331,6 +352,22 @@
           <packing>
             <property name="left_attach">0</property>
             <property name="top_attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkStatusbar">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">10</property>
+            <property name="margin_right">10</property>
+            <property name="margin_start">10</property>
+            <property name="margin_end">10</property>
+            <property name="margin_top">6</property>
+            <property name="margin_bottom">6</property>
+          </object>
+          <packing>
+            <property name="left_attach">0</property>
+            <property name="top_attach">4</property>
           </packing>
         </child>
       </object>

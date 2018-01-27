@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <vector>
+#include <climits>
 #include <gtk/gtk.h>
 #include "glibutil.h"
 #include "model.h"
@@ -44,6 +45,14 @@ int model_add(const char *name,
 	return 0;
 }
 
-int model_remove(const std::vector<int>& indexv) {
-	return 0;
+void model_remove(size_t i) {
+	GtkTreeIter iter;
+	gint n;
+	
+	elementv.erase(elementv.begin() + i);
+	
+	assert(i < INT_MAX);
+	n = int(i);
+	gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(liststore), &iter, NULL, n);
+	gtk_list_store_remove(liststore, &iter);
 }

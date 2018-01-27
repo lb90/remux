@@ -73,3 +73,35 @@ void treeview_select(treeview_select_t sel) {
 	}
 }
 
+void treeview_getselection(std::vector<size_t>& indexv) {
+	indexv.clear();
+
+	GList *list, *auxlist;
+	GtkTreeModel *treemodel = GTK_TREE_MODEL(liststore);
+	list = gtk_tree_selection_get_selected_rows(gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
+	                                            &treemodel);
+
+	if (list) {
+		auxlist = list;
+		
+		for (;;auxlist = auxlist->next) {
+			GtkTreePath *path;
+			gint        *indices, depth, n;
+			
+			if (auxlist == NULL) break;
+			
+			path = (GtkTreePath*) auxlist->data;
+			if (path == NULL) break;
+			
+			indices = gtk_tree_path_get_indices_with_depth(path, &depth);
+			assert(depth == 1);
+			
+			n = indices[0];
+			assert(n >= 0);
+			indexv.push_back(size_t(n));
+		}
+
+		g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+	}
+}
+

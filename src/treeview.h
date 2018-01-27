@@ -1,6 +1,8 @@
 #ifndef REMUX_TREEVIEW_H
 #define REMUX_TREEVIEW_H
 
+#include <cstdlib>
+#include <vector>
 #include <gtk/gtk.h>
 
 enum treeview_select_t {
@@ -12,5 +14,7 @@ enum treeview_select_t {
 int treeview_init(GtkBuilder *builder);
 
 void treeview_select(treeview_select_t sel);
+
+void treeview_getselection(std::vector<size_t>& indexv);
 
 #endif

@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <climits>
+#include <algorithm>
 #include "elements.h"
 #include "model.h"
 #include "mediascan.h"
@@ -83,5 +84,13 @@ void op::media_scan(int n) {
 		return;
 
 	internal_fill_element(elementv[n]);
+}
+
+void op::remove(std::vector<size_t>& indexv) {
+	std::sort(indexv.begin(), indexv.end(), std::greater<size_t>());
+	
+	for (size_t i : indexv) {
+		model_remove(i);
+	}
 }
 
