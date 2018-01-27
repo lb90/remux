@@ -9,13 +9,13 @@ class settings {
 public:
 	static
 	boost::property_tree::ptree pt;
-	static std::string file;
+	static std::string storepath;
 	
 	static void init();
 	static void write();
-	
-	static std::string work_dir;
-	static std::string out_dir;
+
+private:
+	void makedefaults();
 };
 
 #endif

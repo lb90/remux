@@ -13,6 +13,11 @@ void cb_app_exit(GSimpleAction*, GVariant*, gpointer userdata) {
 	g_application_quit(G_APPLICATION(gtkapp));
 }
 
+void cb_activate(GtkApplication* app, gpointer) {
+	if (get_window(NULL))
+		gtk_window_present(get_window(NULL));
+}
+
 void cb_startup(GtkApplication* app, gpointer) {
 	GtkWidget *window;
 	
@@ -53,6 +58,7 @@ int main(int argc, char **argv) {
 	gtkapp = gtk_application_new("org.remux.remux", G_APPLICATION_FLAGS_NONE);
 	
 	g_signal_connect(G_OBJECT(gtkapp), "startup",  G_CALLBACK(cb_startup),  NULL);
+	g_signal_connect(G_OBJECT(gtkapp), "activate",  G_CALLBACK(cb_activate),  NULL);
 	
 	status = g_application_run(G_APPLICATION(gtkapp), argc, argv);
 	g_object_unref(gtkapp);
