@@ -8,7 +8,7 @@ std::string util_build_filename(const std::string& first,
                                 const std::string& second);
 
 #ifdef _WIN32
-std::string util_filename_from_install_directory(const std::string& second);
+std::string util_install_directory();
 #endif
 
 #endif

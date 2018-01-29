@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include "app.h"
 #include "glibutil.h"
 #include "elements.h"
 #include "parseinfo.h"
@@ -18,7 +19,7 @@ int media_scan(media_t& elem) {
 	std::string outputstring;
 
 #ifdef _WIN32
-	argv.emplace_back("mkvinfo.exe");
+	argv.emplace_back(app::mkvinfo_prog);
 	argv.emplace_back("--ui-language");
 	argv.emplace_back("en");
 	argv.emplace_back("--command-line-charset");
