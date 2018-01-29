@@ -24,7 +24,7 @@ void cb_win_open(GSimpleAction*, GVariant*, gpointer userdata) {
 		GtkFileChooser *chooser = GTK_FILE_CHOOSER(native);
 		directoryname = gtk_file_chooser_get_filename(chooser);
 		
-		app_scandirectory(directoryname);
+		app::scandirectory(directoryname);
 		
 		g_free(directoryname);
 	}

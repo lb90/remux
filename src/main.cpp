@@ -30,7 +30,7 @@ void cb_startup(GtkApplication* app, gpointer) {
 	window_init(window);
 	treeview_init(builder);
 	
-	app_init();
+	app::init();
 	
 	gtk_builder_connect_signals(builder, NULL);
 	

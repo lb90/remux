@@ -16,16 +16,20 @@ int media_scan(media_t& elem) {
 	
 	std::vector<std::string> argv;
 	std::string outputstring;
-	
-	argv.emplace_back("C:\\mkvtoolnix\\mkvinfo.exe");
-	argv.emplace_back("--ui-language");
+
 #ifdef _WIN32
+	argv.emplace_back("mkvinfo.exe");
+	argv.emplace_back("--ui-language");
 	argv.emplace_back("en");
-#else
-	argv.emplace_back("en_US");
-#endif
 	argv.emplace_back("--command-line-charset");
 	argv.emplace_back("UTF-16");
+#else
+	argv.emplace_back("mkvinfo");
+	argv.emplace_back("--ui-language");
+	argv.emplace_back("en_US");
+	argv.emplace_back("--command-line-charset");
+	argv.emplace_back("UTF-8");
+#endif
 	argv.emplace_back("--output-charset");
 	argv.emplace_back("UTF-8");
 	argv.emplace_back(elem.path);

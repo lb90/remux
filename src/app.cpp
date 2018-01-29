@@ -4,13 +4,14 @@
 #include "scandirectory.h"
 #include "dialogproperty.h"
 #include "window.h"
+#include "app.h"
 
-void app_scandirectory(const char *directoryname) {
+void app::scandirectory(const char *directoryname) {
 	model_clear();
 	scan_directory(directoryname);
 }
 
-void app_elementactivated(int n) {
+void app::elementactivated(int n) {
 	assert(n >= 0);
 	assert(size_t(n) < elementv.size());
 	dialogproperty_t *dialog = new dialogproperty_t(get_window(NULL));
@@ -19,8 +20,8 @@ void app_elementactivated(int n) {
 	dialog->show();
 }
 
-int app_init() {
-	signalcentre::addhandler("treeview\\rowactivated", app_elementactivated);
+int app::init() {
+	signalcentre::addhandler("treeview\\rowactivated", app::elementactivated);
 
 	return 0;
 }
