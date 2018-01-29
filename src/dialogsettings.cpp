@@ -21,9 +21,13 @@ dialogsettings_t::dialogsettings_t(GtkWindow *window)
 	g_signal_connect(dialog, "destroy", G_CALLBACK(self_deleter), (gpointer) this);
 	g_signal_connect(dialog, "response", G_CALLBACK(response), (gpointer) this);
 	
-	//gtk_entry_set_text(GTK_ENTRY(entry_mkvtoolnix), settings::pt.get("mkvtoolnix", "").c_str());
-	//gtk_entry_set_text(GTK_ENTRY(entry_mkvtoolnix), settings::pt.get("ac3to", "").c_str());
-	//gtk_entry_set_text(GTK_ENTRY(entry_mkvtoolnix), settings::pt.get("ffmpeg", "").c_str());
+	std::string filename;
+	filename = settings::pt.get("dir.mkvtoolnix", "UNEXISTING");
+	gtk_file_chooser_set_filename(chooser_mkvtoolnix, filename.c_str());
+	filename = settings::pt.get("dir.ac3to", "UNEXISTING");
+	gtk_file_chooser_set_filename(chooser_ac3to, filename.c_str());
+	filename = settings::pt.get("dir.ffmpeg", "UNEXISTING");
+	gtk_file_chooser_set_filename(chooser_ffmpeg, filename.c_str());
 }
 
 void dialogsettings_t::show() {
@@ -35,10 +39,19 @@ void dialogsettings_t::response(GtkDialog *dialog, gint resp_id, gpointer self) 
 	assert(dialog == inst->dialog);
 	
 	if (resp_id == GTK_RESPONSE_OK) {
-		/*for (const auto& pair : applymap) {
-			settings::pt[pair.first] = pair.second;
-		}
-		settings::write();*/
+		gchar *filename;
+		
+		filename = gtk_file_chooser_get_filename(inst->chooser_mkvtoolnix);
+		settings::pt.put("dir.mkvtoolnix", filename);
+		g_free(filename);
+		filename = gtk_file_chooser_get_filename(inst->chooser_ac3to);
+		settings::pt.put("dir.ac3to", filename);
+		g_free(filename);
+		filename = gtk_file_chooser_get_filename(inst->chooser_ffmpeg);
+		settings::pt.put("dir.ffmpeg", filename);
+		g_free(filename);
+
+		settings::write();
 	}
 	
 	gtk_widget_destroy(GTK_WIDGET(inst->dialog));

@@ -2,15 +2,47 @@
 <!-- Generated with glade 3.21.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkImage" id="image_open">
+  <object class="GtkImage" id="image_edit_delete">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">gtk-open</property>
+    <property name="icon_name">edit-delete</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_document_properties">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">document-properties</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_application_exit">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">application-exit</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_help_about">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">help-about</property>
+    <property name="use_fallback">True</property>
   </object>
   <object class="GtkImage" id="image_apply">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">gtk-apply</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_open">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">document-open</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_list_add">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">list-add</property>
+    <property name="use_fallback">True</property>
   </object>
   <object class="GtkApplicationWindow" id="form">
     <property name="can_focus">False</property>
@@ -48,11 +80,12 @@
                     </child>
                     <child>
                       <object class="GtkImageMenuItem">
-                        <property name="label" translatable="yes">Aggiungi _File...</property>
+                        <property name="label" translatable="yes">Aggiungi _File</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="action_name">win.addfiles</property>
                         <property name="use_underline">True</property>
+                        <property name="image">image_list_add</property>
                         <property name="use_stock">False</property>
                         <property name="always_show_image">True</property>
                       </object>
@@ -65,12 +98,13 @@
                     </child>
                     <child>
                       <object class="GtkImageMenuItem">
-                        <property name="label">gtk-quit</property>
+                        <property name="label">_Esci</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="action_name">app.exit</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="image">image_application_exit</property>
+                        <property name="use_stock">False</property>
                         <property name="always_show_image">True</property>
                       </object>
                     </child>
@@ -131,12 +165,13 @@
                     </child>
                     <child>
                       <object class="GtkImageMenuItem">
-                        <property name="label">gtk-delete</property>
+                        <property name="label">_Rimuovi</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="action_name">win.remove</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="image">image_edit_delete</property>
+                        <property name="use_stock">False</property>
                         <property name="always_show_image">True</property>
                       </object>
                     </child>
@@ -148,12 +183,13 @@
                     </child>
                     <child>
                       <object class="GtkImageMenuItem">
-                        <property name="label">gtk-properties</property>
+                        <property name="label">_Proprietà</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="action_name">win.showproperty</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="image">image_document_properties</property>
+                        <property name="use_stock">False</property>
                         <property name="always_show_image">True</property>
                       </object>
                     </child>
@@ -213,12 +249,13 @@
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkImageMenuItem">
-                        <property name="label">gtk-about</property>
+                        <property name="label">_Informazioni</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="action_name">win.showabout</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="image">image_help_about</property>
+                        <property name="use_stock">False</property>
                         <property name="always_show_image">True</property>
                       </object>
                     </child>
@@ -253,7 +290,7 @@
                 <property name="action_name">win.open</property>
                 <property name="label" translatable="yes">Apri</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-open</property>
+                <property name="icon_name">document-open</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -278,7 +315,7 @@
                 <property name="action_name">win.convert</property>
                 <property name="label" translatable="yes">Converti</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-apply</property>
+                <property name="icon_name">gtk-apply</property>
               </object>
               <packing>
                 <property name="expand">False</property>

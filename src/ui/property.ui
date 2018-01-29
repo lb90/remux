@@ -239,7 +239,8 @@
                       <object class="GtkImage">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="stock">gtk-go-forward</property>
+                        <property name="icon_name">go-next</property>
+                        <property name="use_fallback">True</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -308,6 +309,7 @@
                         <property name="hexpand">True</property>
                         <property name="pixel_size">60</property>
                         <property name="icon_name">document-send</property>
+                        <property name="use_fallback">True</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -338,7 +340,8 @@
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
                     <property name="pixel_size">100</property>
-                    <property name="icon_name">gtk-dialog-warning</property>
+                    <property name="icon_name">dialog-warning</property>
+                    <property name="use_fallback">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -375,7 +378,8 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="pixel_size">15</property>
-                            <property name="icon_name">gtk-info</property>
+                            <property name="icon_name">dialog-information</property>
+                            <property name="use_fallback">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">0</property>
