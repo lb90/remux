@@ -273,7 +273,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkCheckButton" id="check_leave_ac3">
+                      <object class="GtkCheckButton" id="check_keep_ac3">
                         <property name="label" translatable="yes">Lascia tracce AC3</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -287,7 +287,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkCheckButton" id="check_leave_dolby">
+                      <object class="GtkCheckButton" id="check_keep_dolby">
                         <property name="label" translatable="yes">Lascia tracce DTS</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>

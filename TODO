@@ -1,0 +1,3 @@
+in windows:
+- non puoi usare --ui-language en_US ma devi togliere tutti i file di locale
+- nel lanciare i subprocess devi considerare la cartella del relativo programma da lanciare

@@ -11,10 +11,11 @@ enum itemtype_t {
 	itemtype_video,
 	itemtype_audio,
 };
-enum codectype_t {
-	codectype_unknown = 0,
-	codectype_ac3,
-	codectype_dts
+enum codecid_t {
+	codecid_unknown = 0,
+	codecid_ac3,
+	codecid_dolby,
+	codecid_aac
 };
 struct item_t {
 	explicit item_t();
@@ -27,7 +28,7 @@ struct item_t {
 	std::string num;
 	int         tid;
 	std::string codecname;
-	codectype_t codectype;
+	codecid_t   codecid;
 	
 	bool orig_forced;
 	bool want_forced;
@@ -50,9 +51,9 @@ struct err_t {
 struct opt_t {
 	explicit opt_t();
 
-	bool convert_ac3ita_aac;
-	bool leave_ac3;
-	bool leave_dolby;
+	bool want_convert_ac3ita_aac;
+	bool want_keep_ac3;
+	bool want_keep_dolby;
 };
 struct media_t {
 	explicit media_t();

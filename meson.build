@@ -1,5 +1,6 @@
 
 project('remux', ['c', 'cpp'],
+  default_options : ['cpp_std=c++14'],
   version : '1.0',
   meson_version : '>= 0.42'
 )

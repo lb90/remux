@@ -47,28 +47,19 @@ void internal_fill_element(media_t& elem) {
 			item.num = number.substr(0, number.find(' '));
 			
 			item.codecname = childpt.second.get("Codec_ID", "");
+			/*TODO consider making case insensitive */
+			if (item.codecname.find("AC3") != std::string::npos)
+				item.codecid = codecid_ac3;
+			else if (item.codecname.find("DTS") != std::string::npos)
+				item.codecid = codecid_dolby;
+			else if (item.codecname.find("AAC") != std::string::npos)
+				item.codecid = codecid_aac;
 			
-			int isdefault = childpt.second.get("Default_track_flag", -1);
-			if (isdefault == -1) {
-				elem.err.scan = true;
-				elem.err.scan_description = "Cannot find info about default flag for track\n"
-				                            " Number = " + item.num + "\n"
-				                            " UID = " + item.uid + "\n"
-				                            " Name = " + item.name + "\n";
-				return;
-			}
+			int isdefault = childpt.second.get("Default_track_flag", 0);
 			item.orig_default = isdefault;
 			item.want_default = isdefault;
 			
-			int isforced = childpt.second.get("Forced_track_flag", -1);
-			if (isforced == -1) {
-				elem.err.scan = true;
-				elem.err.scan_description = "Cannot find info about forced flag for track\n"
-				                            " Number = " + item.num + "\n"
-				                            " UID = " + item.uid + "\n"
-				                            " Name = " + item.name + "\n";
-				return;
-			}
+			int isforced = childpt.second.get("Forced_track_flag", 0);
 			item.orig_forced = isforced;
 			item.want_forced = isforced;
 		}

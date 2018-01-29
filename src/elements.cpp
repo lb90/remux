@@ -18,9 +18,9 @@ media_t::media_t()
  {}
 
 opt_t::opt_t()
- : convert_ac3ita_aac(false),
-   leave_ac3(false),
-   leave_dolby(false)
+ : want_convert_ac3ita_aac(false),
+   want_keep_ac3(false),
+   want_keep_dolby(false)
  {}
 
 err_t::err_t()
@@ -38,7 +38,7 @@ item_t::item_t()
    num(),
    tid(-1),
    codecname(),
-   codectype(codectype_unknown),
+   codecid(codecid_unknown),
    orig_forced(false),
    want_forced(false),
    orig_default(false),

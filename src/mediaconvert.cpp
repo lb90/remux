@@ -7,6 +7,7 @@
 #include <gio/gio.h>
 #include <boost/algorithm/string.hpp>
 #include "model.h"
+#include "launchprocess.h"
 #include "mediaconvert.h"
 
 mediaconvert::convert_context_t::convert_context_t(media_t& elem)
@@ -32,52 +33,6 @@ gboolean util_callable_call(gpointer userdata) {
 	(*callable)();
 	
 	delete callable;
-}
-
-int mediaconvert::launchprocess(const std::vector<std::string>& argv,
-                                std::vector& outstring) {
-	GSubprocess *subproc = NULL;
-	GError      *errspec = NULL;
-	
-	std::vector<const char*> c_array;
-	
-	for (const auto& arg : argv)
-		c_array.push_back(arg.c_str());
-	c_array.push_back(NULL);
-
-	subproc = g_subprocess_newv(c_array.data(),
-	                            G_SUBPROCESS_FLAGS_STDOUT_PIPE,
-	                            &errspec);
-
-	if (subproc == NULL) {
-		outstring = (errspec && errspec->message && errspec->message[0]) ?
-		               errspec->message : "Errore sconosciuto";
-		return -1;
-	}
-	else {
-		if (!g_subprocess_wait(subproc, NULL, NULL)) {
-			g_print("error in subprocess\n");
-			outstring = "Errore sconosciuto";
-			return -1;
-		}
-		else {
-			int process_exitstatus;
-			std::stringstream process_stdout;
-
-			get_stdout_sstream(subproc, process_stdout); /*TODO or stderr */
-			process_exitstatus = g_subprocess_get_exit_status(subproc);
-			
-			if (process_exitstatus != 0) {
-				outstring = "errror. exit code: " + std::to_string(process_exitstatus) + "\n";
-				outstring += process_stdout.str();
-				return -1;
-			}
-			else {
-				outstring += process_stdout.str();
-				return 0;
-			}
-		}
-	}
 }
 
 void mediaconvert::convert(std::function) {
@@ -111,7 +66,7 @@ int mediaconvert::set_attributes(std::string& outstring) {
 	edit_argv.emplace_back("-s");
 	edit_argv.emplace_back("flag-forced=1");
 	
-	code = launchprocess(edit_argv, outstring);
+	code = launch_process(edit_argv, outstring);
 	if (code != 0)
 		return -1;
 	
@@ -182,7 +137,7 @@ int mediaconvert::remove_add_tracks(std::string& outstring) {
 		merge_argv.emplace_back(trackorder);
 	}
 	
-	code = launchprocess(merge_argv, outstring);
+	code = launch_process(merge_argv, outstring);
 	if (code != 0)
 		return -1;
 	
@@ -220,7 +175,7 @@ int mediaconvert::ac3ita_aac_convert(std::string& outstring) {
 		convert_argv.emplace_back(cvtctx.outfile_aac);
 	}
 	
-	code = launchprocess(convert_argv, outstring);
+	code = launch_process(convert_argv, outstring);
 	if (code != 0)
 		return -1;
 	
@@ -240,7 +195,7 @@ int mediaconvert::ac3ita_aac_extract(std::string& outstring) {
 	extract_argv.emplace_back("tracks");
 	extract_argv.emplace_back(ac3ita_tid + ":" + outfile_ac3);
 	
-	code = launchprocess(extract_argv, outstring);
+	code = launch_process(extract_argv, outstring);
 	if (code != 0)
 		return -1;
 	

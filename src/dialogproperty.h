@@ -24,8 +24,8 @@ private:
 	
 	GtkWidget  *label_name;
 	GtkWidget  *check_convert_ac3ita_aac;
-	GtkWidget  *check_leave_ac3;
-	GtkWidget  *check_leave_dolby;
+	GtkWidget  *check_keep_ac3;
+	GtkWidget  *check_keep_dolby;
 	GtkWidget  *treeview_item;
 	GtkWidget  *entry_outname;
 	

@@ -41,6 +41,8 @@ int model_add(const char *name,
 	elem.outname = elem.name;
 	elem.outdirectory = util_build_filename(elem.directory, "Remux");
 	elem.outpath = util_build_filename(elem.outdirectory, elem.outname);
+	
+	
 
 	return 0;
 }

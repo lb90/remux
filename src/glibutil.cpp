@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cassert>
+#include <stdexcept>
 #include "glibutil.h"
 
 std::string util_build_filename(const std::string& first,

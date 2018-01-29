@@ -14,8 +14,8 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	stack                = GTK_WIDGET(gtk_builder_get_object(builder, "stack"));
 	label_name           = GTK_WIDGET(gtk_builder_get_object(builder, "label_name"));
 	check_convert_ac3ita_aac = GTK_WIDGET(gtk_builder_get_object(builder, "check_convert_ac3ita_aac"));
-	check_leave_ac3      = GTK_WIDGET(gtk_builder_get_object(builder, "check_leave_ac3"));
-	check_leave_dolby    = GTK_WIDGET(gtk_builder_get_object(builder, "check_leave_dolby"));
+	check_keep_ac3       = GTK_WIDGET(gtk_builder_get_object(builder, "check_keep_ac3"));
+	check_keep_dolby     = GTK_WIDGET(gtk_builder_get_object(builder, "check_keep_dolby"));
 	treeview_item        = GTK_WIDGET(gtk_builder_get_object(builder, "treeview_item"));
 	entry_outname        = GTK_WIDGET(gtk_builder_get_object(builder, "entry_outname"));
 	textview_error       = GTK_WIDGET(gtk_builder_get_object(builder, "textview_error"));
@@ -78,9 +78,9 @@ int dialogproperty_t::setcurrentelement(gint n) {
 
 		gtk_label_set_text(GTK_LABEL(label_name), curelem->name.c_str());
 
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_convert_ac3ita_aac), curelem->opt.convert_ac3ita_aac);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_leave_ac3), curelem->opt.leave_ac3);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_leave_dolby), curelem->opt.leave_dolby);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_convert_ac3ita_aac), curelem->opt.want_convert_ac3ita_aac);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_keep_ac3), curelem->opt.want_keep_ac3);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_keep_dolby), curelem->opt.want_keep_dolby);
 
 		basic_model = basic_list_model_new(curelem->items.size());
 		gtk_tree_view_set_model(GTK_TREE_VIEW(treeview_item), GTK_TREE_MODEL(basic_model));

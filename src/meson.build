@@ -19,6 +19,12 @@ src = [
   'glibutil.cpp'
 ]
 
+if host_machine.system() == 'windows'
+  src += 'launchprocess_win32.cpp'
+else
+  src += 'launchprocess_glib.cpp'
+endif
+
 res = gnome.compile_resources('res', 'res.gresource.xml')
 src += res
 
