@@ -55,6 +55,26 @@ void model_remove(size_t i) {
 	
 	assert(i < INT_MAX);
 	n = int(i);
-	gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(liststore), &iter, NULL, n);
+	
+	gboolean ret = FALSE;
+	ret = gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(liststore), &iter, NULL, n);
+	assert(ret);
 	gtk_list_store_remove(liststore, &iter);
 }
+
+void model_enqueue(size_t i) {
+	GtkTreeIter iter;
+	gint n;
+
+	assert(i < elementv.size());
+
+	elementv[i].isready = true;
+	
+	assert(i < INT_MAX);
+	n = int(i);
+	gboolean ret = FALSE;
+	ret = gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(liststore), &iter, NULL, n);
+	assert(ret);
+	//gtk_list_store_remove(liststore, &iter); /*TODO*/
+}
+

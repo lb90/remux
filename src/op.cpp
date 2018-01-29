@@ -77,6 +77,14 @@ void op::media_scan(int n) {
 	internal_fill_element(elementv[n]);
 }
 
+void op::enqueue(int n) {
+	if (n < 0)
+		return;
+
+	assert(size_t(n) < elementv.size());
+	model_enqueue(size_t(n));
+}
+
 void op::remove(std::vector<size_t>& indexv) {
 	std::sort(indexv.begin(), indexv.end(), std::greater<size_t>());
 	

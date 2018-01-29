@@ -8,6 +8,7 @@ class op {
 public:
 	static void media_scan(int n);
 	static void remove(std::vector<size_t>& indexv);
+	static void enqueue(int n);
 };
 
 #endif

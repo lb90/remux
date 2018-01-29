@@ -25,6 +25,8 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
 	
 	g_signal_connect(dialog, "destroy", G_CALLBACK(self_deleter), (gpointer) this);
+	g_signal_connect(button_enqueue, "clicked", G_CALLBACK(cb_enqueue), (gpointer) this);
+	g_signal_connect(button_skip, "clicked", G_CALLBACK(cb_skip), (gpointer) this);
 	
 	GtkTreeViewColumn *col;
 	GtkCellRenderer   *ren;
@@ -62,6 +64,7 @@ int dialogproperty_t::setcurrentelement(gint n) {
 
 	cancel();
 	curelem = &(elementv[n]);
+	curn = n;
 	
 	if (!curelem->isinit)
 		op::media_scan(n);
@@ -84,6 +87,7 @@ int dialogproperty_t::setcurrentelement(gint n) {
 
 		basic_model = basic_list_model_new(curelem->items.size());
 		gtk_tree_view_set_model(GTK_TREE_VIEW(treeview_item), GTK_TREE_MODEL(basic_model));
+		g_object_unref(basic_model);
 
 		gtk_entry_set_text(GTK_ENTRY(entry_outname), curelem->outname.c_str());
 	}
@@ -92,13 +96,40 @@ int dialogproperty_t::setcurrentelement(gint n) {
 }
 
 int dialogproperty_t::cancel() {
-/*	gtk_label_set_text(GTK_LABEL(label_name), "");
-	gtk_*/
+	gtk_label_set_text(GTK_LABEL(label_name), "");
+	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview_item), NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry_outname), "");
 
 	curn = -1;
 	curelem = nullptr;
 
 	return 0;
+}
+
+void dialogproperty_t::gonext() {
+	int n = curn;
+
+	cancel();
+
+	assert(n >= 0);
+	if (size_t(n + 1) < elementv.size())
+		setcurrentelement(n + 1);
+	else
+		gtk_widget_destroy(GTK_WIDGET(dialog));
+}
+
+void dialogproperty_t::cb_enqueue(GtkButton *, gpointer self) {
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	
+	op::enqueue(inst->curn);
+	
+	inst->gonext();
+}
+
+void dialogproperty_t::cb_skip(GtkButton *, gpointer self) {
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	
+	inst->gonext();
 }
 
 dialogproperty_t::~dialogproperty_t() {
@@ -108,6 +139,7 @@ dialogproperty_t::~dialogproperty_t() {
 void dialogproperty_t::self_deleter(GtkDialog *dialog, gpointer self) {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
 	assert(dialog == inst->dialog);
+
 	delete inst;
 }
 

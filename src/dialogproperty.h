@@ -39,8 +39,16 @@ private:
 	int      curn;
 	media_t *curelem;
 	
+	void gonext();
+	
 	static
 	void self_deleter(GtkDialog *dialog, gpointer self);
+	
+	static
+	void cb_enqueue(GtkButton *, gpointer self);
+	
+	static
+	void cb_skip(GtkButton *, gpointer self);
 	
 	static
 	void
