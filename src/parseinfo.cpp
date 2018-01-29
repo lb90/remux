@@ -10,6 +10,13 @@
 
 typedef boost::property_tree::ptree pt_t;
 
+#ifdef _WIN32
+void check_remove_cr(std::string& line) {
+	if (line[line.size() - 1] == '\r')
+		line = line.substr(0, line.size() - 1);
+}
+#endif
+
 bool check_indent(const std::string& line, size_t level) {
 	assert(level < line.size());
 	
@@ -54,6 +61,9 @@ int parse_info(std::stringstream& info,
 	
 	std::string line;
 	while (std::getline(info, line)) {
+#ifdef _WIN32
+		check_remove_cr(line);
+#endif
 		if (line.empty()) continue;
 		
 		level = line.find('+');
