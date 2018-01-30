@@ -50,6 +50,10 @@ int do_merge(const media_t& elem, const item_t& item,
 	}
 	argv.push_back("-o")
 	argv.push_back(convertctx.outname);
+	
+	
+	
+	
 	if (convertctx.want_keep_audio_tid.empty())
 		argv.push_back("-A");
 	else {
