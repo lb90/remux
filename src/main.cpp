@@ -48,8 +48,8 @@ int main(int argc, char **argv) {
 	int status = 0;
 
 	#ifdef _WIN32
-	GResource *iconsresource = g_resource_load(util_filename_from_install_directory("icons.gresource").c_str(), NULL);
-	g_resources_register(iconsresource);
+	/*GResource *iconsresource = g_resource_load(util_filename_from_install_directory("icons.gresource").c_str(), NULL);
+	g_resources_register(iconsresource);*/
 	#endif
 	#ifdef _WIN32
 	g_setenv("GTK_CSD", "1", FALSE);

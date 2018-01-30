@@ -1,7 +1,10 @@
-#include "config.h"
 #include <cstdlib>
+#include <cassert>
+#include <climits>
 #include <gtk/gtk.h>
+#include "config.h"
 #include "window.h"
+#include "signalcentre.h"
 #include "treeview.h"
 #include "dialogsettings.h"
 #include "dialogconversion.h"
@@ -58,6 +61,20 @@ void cb_win_convert(GSimpleAction*, GVariant*, gpointer userdata) {
 }
 
 void cb_win_showproperty(GSimpleAction*, GVariant*, gpointer userdata) {
+	std::vector<size_t> indexv;
+
+	treeview_getselection(indexv);
+
+	if (indexv.empty())
+		return;
+	if (indexv.size() == 1) {
+		size_t i = indexv[0];
+		assert(i < INT_MAX);
+		signalcentre::emit("element\\activate", int(i));
+	}
+	else {
+		/*TODO*/
+	}
 }
 
 void cb_win_showsettings(GSimpleAction*, GVariant*, gpointer userdata) {

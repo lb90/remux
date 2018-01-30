@@ -11,22 +11,16 @@ public:
 	static void convert();
 
 private:
-	class convert_context_t {
-	public:
-		convert_context_t(media_t& elem);
-
-		media_t&    elem;
-		std::string outfile_ac3;
-		std::string outfile_aac;
-		size_t      ac3itaidx;
-		
-		std::vector<std::string> producedv;
-	};
-
 	std::thread                   thread;
 	std::function<void(int, int)> progresscallback;
 
 	static void convert(size_t i);
+	
+	struct convertcontext_t {
+		std::vector<std::string> outsiders;
+		std::vector<size_t> keep_audio_tids;
+		std::vector<size_t> keep_video_tids;
+	};
 };
 
 #endif

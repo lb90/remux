@@ -27,8 +27,9 @@ int model_add(const char *name,
 	GtkTreeIter iter;
 	gtk_list_store_append(liststore, &iter);
 	gtk_list_store_set(liststore, &iter,
-	                   0, (gchar *) name,
-	                   1, (gchar *) directory,
+	                   0, (gchar *) "",//"view-refresh",
+	                   1, (gchar *) name,
+	                   2, (gchar *) directory,
 	                   -1);
 
 	elementv.emplace_back();
@@ -41,8 +42,6 @@ int model_add(const char *name,
 	elem.outname = elem.name;
 	elem.outdirectory = util_build_filename(elem.directory, "Remux");
 	elem.outpath = util_build_filename(elem.outdirectory, elem.outname);
-	
-	
 
 	return 0;
 }
@@ -75,6 +74,6 @@ void model_enqueue(size_t i) {
 	gboolean ret = FALSE;
 	ret = gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(liststore), &iter, NULL, n);
 	assert(ret);
-	//gtk_list_store_remove(liststore, &iter); /*TODO*/
+	gtk_list_store_set(liststore, &iter, 0, "gtk-apply", -1);
 }
 

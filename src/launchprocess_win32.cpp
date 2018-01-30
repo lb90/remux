@@ -38,7 +38,8 @@ std::string util_argv_to_commandline(const std::vector<std::string>& argv) {
 	
 	if (argv.empty()) return "";
 
-	commandline = argv[0];
+	std::string quote = "\"";
+	commandline = quote + argv[0] + quote;
 	for (size_t i = 1; i < argv.size(); i++) {
 		commandline += std::string(" ") + argv[i];
 	}

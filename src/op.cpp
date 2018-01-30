@@ -2,6 +2,7 @@
 #include <cassert>
 #include <climits>
 #include <algorithm>
+#include <boost/lexical_cast.hpp>
 #include "elements.h"
 #include "model.h"
 #include "mediascan.h"
@@ -45,6 +46,22 @@ void internal_fill_element(media_t& elem) {
 			std::string
 			number = childpt.second.get("Track_number", "");
 			item.num = number.substr(0, number.find(' '));
+			try {
+				item.tid = boost::lexical_cast<int>(item.num) - 1;
+			}
+			catch (const boost::bad_lexical_cast& e) {
+				item.tid = -1;
+			}
+			if (item.tid < 0) {
+				elem.err.scan = true;
+				elem.arr.scan_description = "invalid track number ("
+				                            + item.num
+				                            + ") for track with\n"
+				                            " - name: "
+				                            + item.name + "\n"
+				                            " - uid: "
+				                            + item.uid + "\n";
+			}
 			
 			item.codecname = childpt.second.get("Codec_ID", "");
 			/*TODO consider making case insensitive */
@@ -62,6 +79,8 @@ void internal_fill_element(media_t& elem) {
 			int isforced = childpt.second.get("Forced_track_flag", 0);
 			item.orig_forced = isforced;
 			item.want_forced = isforced;
+			
+			item.langid = item.lang;
 		}
 	}
 }

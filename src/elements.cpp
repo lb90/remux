@@ -18,7 +18,8 @@ media_t::media_t()
  {}
 
 opt_t::opt_t()
- : want_convert_ac3ita_aac(false),
+ : ok_convert_ac3ita_aac(false),
+   want_convert_ac3ita_aac(false),
    want_keep_ac3(false),
    want_keep_dolby(false)
  {}
@@ -34,14 +35,15 @@ item_t::item_t()
  : type(itemtype_unknown),
    name(),
    lang(),
+   langid(),
    uid(),
    num(),
    tid(-1),
    codecname(),
    codecid(codecid_unknown),
-   orig_forced(false),
+   original_forced(false),
    want_forced(false),
-   orig_default(false),
+   original_default(false),
    want_default(false)
  {}
 

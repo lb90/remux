@@ -8,6 +8,7 @@ src = [
   'scandirectory.cpp',
   'mediascan.cpp',
   'parseinfo.cpp',
+  'mediaconvert.cpp',
   'signalcentre.cpp',
   'treeview.cpp',
   'window.cpp',
@@ -28,10 +29,14 @@ endif
 res = gnome.compile_resources('res', 'res.gresource.xml')
 src += res
 
+gui = false
+if get_option('buildtype') == 'release'
+  gui = true
+
 executable('remux',
            sources : src,
            dependencies : deps,
            include_directories : inc,
-           gui_app : true,
+           gui_app : gui,
            install : true)
 

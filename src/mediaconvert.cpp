@@ -216,26 +216,66 @@ int mediaconvert::ac3ita_aac(std::string& outstring) {
 	return 0;
 }
 
-int mediaconvert::convert(size_t i, std::string& outstring) {
-	std::string outstring;
-	int         code;
+void do_keep(const item_t& item, convertcontext_t& convertctx) {
+	convertcontext.keep_audio_tids.push_back(item.tid);
+}
+
+void do_convert(const media_t& elem, const item_t& item,
+                convertcontext_t& convertctx)
+{
 	
-	assert(i >= 0);
-	assert(i < elementv.size());
 	
-	media_t& elem = elementv[i];
+	convertctx.outsiders.emplace_back( path to out );
+}
+
+bool have_to_keep(const media_t& elem, const item_t& item) {
+	if (elem.opt.want_keep_ac3 &&
+	    item.type == itemtype_audio &&
+	    item.codecid == codecid_ac3)
+		return true;
+	else if (elem.opt.want_keep_dolby &&
+	         item.type == itemtype_audio &&
+	         item.codecid == codecid_dolby)
+		return true;
+	else return false;
+}
+
+bool have_to_convert(const media_t& elem, const item_t& item) {
+	if (elem.ok_convert_ac3ita_aac &&
+	    elem.want_convert_ac3ita_aac)
+		if (item.type == itemtype_audio &&
+		    item.codecid == codecid_ac3 &&
+		    item.langid == "it")
+			return true;
+
+	return false;
+}
+
+int mediaconvert::process(size_t n, std::string& outstring) {
+	convertcontext_t convertctx;
+	int code;
+
+	assert(n < elementv.size());
+	media_t& elem = elementv[n];
 	
-	if (elem.options.ac3ita_aac) {
-		code = mediaconvert::ac3ita_aac(outstring);
-		if (code != 0)
-			return -1;
+	for (size_t i = 0; i < elem.items.size(); i++) {
+		const item_t& item = elem.items[i];
+
+		if (item.type == itemtype_audio) {
+			if (have_to_convert(elem, item) {
+				code = do_convert(elem, item, convertctx);
+				if (code != 0) return -1;
+			}
+			else if (have_to_keep(elem, item) {
+				do_keep(elem, item, convertctx);
+			}
+		}
 	}
 	
-	code = mediaconvert::remove_add_tracks(outstring);
+	code = do_merge(elem, convertctx);
 	if (code != 0)
 		return -1;
-	
-	code = mediaconvert::set_attributes(outstring);
+	code = do_propedit(elem, convertctx);
 	if (code != 0)
 		return -1;
 	

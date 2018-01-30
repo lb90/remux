@@ -24,16 +24,17 @@ struct item_t {
 
 	std::string name;
 	std::string lang;
+	std::string langid;
 	std::string uid;
 	std::string num;
 	int         tid;
 	std::string codecname;
 	codecid_t   codecid;
 	
-	bool orig_forced;
-	bool want_forced;
-	bool orig_default;
-	bool want_default;
+	bool original_forced;
+	bool     want_forced;
+	bool original_default;
+	bool     want_default;
 };
 
 struct err_t {
@@ -51,6 +52,7 @@ struct err_t {
 struct opt_t {
 	explicit opt_t();
 
+	bool ok_convert_ac3ita_aac;
 	bool want_convert_ac3ita_aac;
 	bool want_keep_ac3;
 	bool want_keep_dolby;

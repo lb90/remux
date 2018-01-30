@@ -16,7 +16,7 @@ std::string util_build_filename(const std::string& first,
 }
 
 #ifdef _WIN32
-std::string util_install_directory(const std::string& second) {
+std::string util_install_directory() {
 	std::string instdir;
 	gchar *install_directory;
 	

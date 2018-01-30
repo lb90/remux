@@ -4,6 +4,7 @@
 #include "dialogproperty.h"
 #include "model.h"
 #include "elements.h"
+#include "treeview.h"
 #include "op.h"
 
 dialogproperty_t::dialogproperty_t(GtkWindow *window)
@@ -65,6 +66,8 @@ int dialogproperty_t::setcurrentelement(gint n) {
 	cancel();
 	curelem = &(elementv[n]);
 	curn = n;
+	
+	treeview_select_n(curn);
 	
 	if (!curelem->isinit)
 		op::media_scan(n);

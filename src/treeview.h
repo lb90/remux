@@ -14,6 +14,7 @@ enum treeview_select_t {
 int treeview_init(GtkBuilder *builder);
 
 void treeview_select(treeview_select_t sel);
+void treeview_select_n(int n);
 
 void treeview_getselection(std::vector<size_t>& indexv);
 

@@ -37,7 +37,7 @@ void app::elementactivated(int n) {
 }
 
 int app::init() {
-	signalcentre::addhandler("treeview\\rowactivated", app::elementactivated);
+	signalcentre::addhandler("element\\activate", app::elementactivated);
 	
 	#ifdef _WIN32
 	install_dir = util_install_directory();
@@ -51,17 +51,17 @@ int app::init() {
 	
 	if (set_mkvtoolnix.empty()) {
 		std::string intree = util_build_filename(install_dir, "mkvtoolnix");
-		if (g_file_test(intree.c_str(), G_FILE_TEST_DIRECTORY))
+		if (g_file_test(intree.c_str(), G_FILE_TEST_IS_DIR))
 			mkvtoolnix_dir = intree;
 	}
 	if (set_ac3to.empty()) {
 		std::string intree = util_build_filename(install_dir, "ac3to");
-		if (g_file_test(intree.c_str(), G_FILE_TEST_DIRECTORY))
+		if (g_file_test(intree.c_str(), G_FILE_TEST_IS_DIR))
 			ac3to_dir = intree;
 	}
 	if (set_ffmpeg.empty()) {
 		std::string intree = util_build_filename(install_dir, "ffmpeg");
-		if (g_file_test(intree.c_str(), G_FILE_TEST_DIRECTORY))
+		if (g_file_test(intree.c_str(), G_FILE_TEST_IS_DIR))
 			ffmpeg_dir = intree;
 	}
 	#endif
@@ -86,7 +86,7 @@ int app::init() {
 	
 	#ifdef _WIN32
 	if (ac3to_dir.empty())
-		ac3to_prog = "ac3to"
+		ac3to_prog = "ac3to";
 	else
 		ac3to_prog = util_build_filename(mkvtoolnix_dir, "ac3to");
 	
