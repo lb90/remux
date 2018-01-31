@@ -46,8 +46,22 @@ item_t::item_t()
    isdefault(false)
  {}
 
+item_t::item_t(const item_t& i)
+ : type(i.type),
+   name(i.name),
+   lang(i.lang),
+   langid(i.langid),
+   uid(i.uid),
+   num(i.num),
+   tid(i.tid),
+   codecname(i.codecname),
+   codecid(i.codecid),
+   isforced(i.isforced),
+   isdefault(i.isdefault)
+ {}
+
 newitem_t::newitem_t(const item_t& backitem, size_t backn)
- : item_t(),
+ : item_t(backitem),
    backitem(backitem),
    backn(backn),
    want(true)

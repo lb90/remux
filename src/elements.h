@@ -20,6 +20,7 @@ enum codecid_t {
 };
 struct item_t {
 	explicit item_t();
+	explicit item_t(const item_t&);
 
 	itemtype_t  type;
 
@@ -84,7 +85,8 @@ struct media_t {
 	std::string title;
 	
 	opt_t       opt;
-	std::vector<item_t> items;
+	std::vector<item_t>     items;
+	std::vector<newitems_t> newitems;
 	boost::property_tree::ptree pt;
 	
 	err_t       err;
