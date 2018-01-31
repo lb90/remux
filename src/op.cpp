@@ -44,8 +44,8 @@ void internal_fill_element(media_t& elem) {
 		if (childpt.first == "") {
 			const boost::property_tree::ptree& trackpt = childpt.second;
 
-			elem.items.emplace_back();
-			item_t& item = elem.items.back();
+			elem.origitems.emplace_back();
+			origitem_t& item = elem.origitems.back();
 			
 			item.name = trackpt.get("properties.track_name", "");
 			item.uid  = trackpt.get("properties.uid", "");
@@ -108,6 +108,10 @@ void internal_fill_element(media_t& elem) {
 			item.isdefault = trackpt.get("properties.default_track", true); /*TODO*/
 			item.isforced  = trackpt.get("properties.forced_track", true); /*TODO*/
 		}
+	}
+	
+	for (const origitem_t& item : elem.origitems) {
+		elem.destitems.emplace_back(item);
 	}
 }
 

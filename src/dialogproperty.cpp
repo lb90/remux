@@ -48,12 +48,88 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 		gtk_tree_view_column_set_cell_data_func(col, ren, c.second, (gpointer) this, NULL);
 	}
 	
+	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_isdefault"));
+	g_signal_connect(ren, "toggled", G_CALLBACK(cb_toggled_isdefault), (gpointer) this);
+	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_isforced"));
+	g_signal_connect(ren, "toggled", G_CALLBACK(cb_toggled_isforced), (gpointer) this);
+	
+	g_signal_connect(check_keep_ac3, "toggled", G_CALLBACK(cb_keep_ac3), (gpointer) this);
+	g_signal_connect(check_keep_dolby, "toggled", G_CALLBACK(cb_keep_dolby), (gpointer) this);
+	
 	curn = -1;
 	curelem = nullptr;
 }
 
 void dialogproperty_t::show() {
 	gtk_window_present(GTK_WINDOW(dialog));
+}
+
+gboolean dialogproperty_t::filter_visible_func(GtkTreeModel *childmodel, GtkTreeIter *iter, gpointer self) {
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	int n = GPOINTER_TO_INT(iter->user_data);
+	
+	if (n < 0 || size_t(n) >= inst->curelem->destitems.size())
+		return TRUE;
+	
+	return inst->curelem->destitems[n].want;
+}
+
+void dialogproperty_t::setnewtreeviewmodel(int numrows) {
+	BasicListModel *basic_model;
+	GtkTreeModelFilter *filter_model;
+
+	basic_model = basic_list_model_new(curelem->destitems.size());
+	filter_model = GTK_TREE_MODEL_FILTER(gtk_tree_model_filter_new(GTK_TREE_MODEL(basic_model), NULL));
+	g_object_unref(basic_model);
+	
+	gtk_tree_model_filter_set_visible_func(filter_model, filter_visible_func, this, NULL);
+
+	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview_item), GTK_TREE_MODEL(filter_model));
+	g_object_unref(filter_model);
+}
+
+void dialogproperty_t::cb_toggled_isdefault(GtkCellRendererToggle *ren, gchar *pathstr, gpointer self) {
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	GtkTreePath *path;
+	gint *indices, depth, n;
+	
+	path = gtk_tree_path_new_from_string(pathstr);
+	if (path) {
+		depth = gtk_tree_path_get_depth(path);
+		assert(depth == 1);
+		indices = gtk_tree_path_get_indices(path);
+		assert(indices);
+		n = indices[0];
+		assert(n >= 0);
+		assert(size_t(n) < inst->curelem->destitems.size());
+		
+		inst->curelem->destitems[n].isdefault
+		  = !inst->curelem->destitems[n].isdefault;
+		gtk_tree_path_free(path);
+		path = NULL;
+	}
+}
+
+void dialogproperty_t::cb_toggled_isforced(GtkCellRendererToggle *ren, gchar *pathstr, gpointer self) {
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	GtkTreePath *path;
+	gint *indices, depth, n;
+	
+	path = gtk_tree_path_new_from_string(pathstr);
+	if (path) {
+		depth = gtk_tree_path_get_depth(path);
+		assert(depth == 1);
+		indices = gtk_tree_path_get_indices(path);
+		assert(indices);
+		n = indices[0];
+		assert(n >= 0);
+		assert(size_t(n) < inst->curelem->destitems.size());
+		
+		inst->curelem->destitems[n].isforced
+		  = !inst->curelem->destitems[n].isforced;
+		gtk_tree_path_free(path);
+		path = NULL;
+	}
 }
 
 int dialogproperty_t::setcurrentelement(gint n) {
@@ -88,9 +164,8 @@ int dialogproperty_t::setcurrentelement(gint n) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_keep_ac3), curelem->opt.want_keep_ac3);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_keep_dolby), curelem->opt.want_keep_dolby);
 
-		basic_model = basic_list_model_new(curelem->items.size());
-		gtk_tree_view_set_model(GTK_TREE_VIEW(treeview_item), GTK_TREE_MODEL(basic_model));
-		g_object_unref(basic_model);
+		assert(curelem->destitems.size() < INT_MAX);
+		setnewtreeviewmodel(int(curelem->destitems.size()));
 
 		gtk_entry_set_text(GTK_ENTRY(entry_outname), curelem->outname.c_str());
 	}
@@ -119,6 +194,38 @@ void dialogproperty_t::gonext() {
 		setcurrentelement(n + 1);
 	else
 		gtk_widget_destroy(GTK_WIDGET(dialog));
+}
+
+void dialogproperty_t::cb_keep_ac3(GtkToggleButton* toggle, gpointer self) {
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	
+	for (destitem_t& item : inst->curelem->destitems) {
+		if (item.type == itemtype_audio &&
+		    item.codecid == codecid_ac3)
+
+			item.want = gtk_toggle_button_get_active(toggle);
+	}
+	
+	gtk_tree_model_filter_refilter(
+	  GTK_TREE_MODEL_FILTER(
+	    gtk_tree_view_get_model(
+	      GTK_TREE_VIEW(inst->treeview_item))));
+}
+
+void dialogproperty_t::cb_keep_dolby(GtkToggleButton* toggle, gpointer self) {
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	
+	for (destitem_t& item : inst->curelem->destitems) {
+		if (item.type == itemtype_audio &&
+		    item.codecid == codecid_dolby)
+
+			item.want = gtk_toggle_button_get_active(toggle);
+	}
+	
+	gtk_tree_model_filter_refilter(
+	  GTK_TREE_MODEL_FILTER(
+	    gtk_tree_view_get_model(
+	      GTK_TREE_VIEW(inst->treeview_item))));
 }
 
 void dialogproperty_t::cb_enqueue(GtkButton *, gpointer self) {
@@ -153,41 +260,54 @@ void internal_cell_color(GtkCellRenderer *ren, gint n) {
 
 void dialogproperty_t::cell_data_number(GtkTreeViewColumn *,
 	                                    GtkCellRenderer *ren,
-	                                    GtkTreeModel *,
+	                                    GtkTreeModel *filter_model,
 	                                    GtkTreeIter *iter,
 	                                    gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->user_data);
+	GtkTreeIter it;
+	gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(filter_model),
+	                                                 &it,
+	                                                 iter);
+	gint n = GPOINTER_TO_INT(it.user_data);
+
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", self->curelem->items[n].num.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->destitems[n].num.c_str(), NULL);
 	internal_cell_color(ren, n);
 }
 
 void dialogproperty_t::cell_data_name(GtkTreeViewColumn *,
 	                                  GtkCellRenderer *ren,
-	                                  GtkTreeModel *,
+	                                  GtkTreeModel *filter_model,
 	                                  GtkTreeIter *iter,
 	                                  gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->user_data);
+	GtkTreeIter it;
+	gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(filter_model),
+	                                                 &it,
+	                                                 iter);
+	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", self->curelem->items[n].name.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->destitems[n].name.c_str(), NULL);
 	internal_cell_color(ren, n);
 }
 
 void dialogproperty_t::cell_data_type(GtkTreeViewColumn *,
 	                                  GtkCellRenderer *ren,
-	                                  GtkTreeModel *,
+	                                  GtkTreeModel *filter_model,
 	                                  GtkTreeIter *iter,
 	                                  gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->user_data);
+	GtkTreeIter it;
+	gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(filter_model),
+	                                                 &it,
+	                                                 iter);
+	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
 	const char *text = "";
-	switch (self->curelem->items[n].type) {
+	switch (self->curelem->destitems[n].type) {
 		case itemtype_subtitle:
 			text = "Sottotitolo";
 			break;
@@ -207,40 +327,52 @@ void dialogproperty_t::cell_data_type(GtkTreeViewColumn *,
 
 void dialogproperty_t::cell_data_codec(GtkTreeViewColumn *,
 	                                   GtkCellRenderer *ren,
-	                                   GtkTreeModel *,
+	                                   GtkTreeModel *filter_model,
 	                                   GtkTreeIter *iter,
 	                                   gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->user_data);
+	GtkTreeIter it;
+	gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(filter_model),
+	                                                 &it,
+	                                                 iter);
+	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", self->curelem->items[n].codecname.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->destitems[n].codecname.c_str(), NULL);
 	internal_cell_color(ren, n);
 }
 
 void dialogproperty_t::cell_data_language(GtkTreeViewColumn *,
 	                                      GtkCellRenderer *ren,
-	                                      GtkTreeModel *,
+	                                      GtkTreeModel *filter_model,
 	                                      GtkTreeIter *iter,
 	                                      gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->user_data);
+	GtkTreeIter it;
+	gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(filter_model),
+	                                                 &it,
+	                                                 iter);
+	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	g_object_set(ren, "text", self->curelem->items[n].lang.c_str(), NULL);
+	g_object_set(ren, "text", self->curelem->destitems[n].lang.c_str(), NULL);
 	internal_cell_color(ren, n);
 }
 
 void dialogproperty_t::cell_data_isdefault(GtkTreeViewColumn *,
 	                                       GtkCellRenderer *ren,
-	                                       GtkTreeModel *,
+	                                       GtkTreeModel *filter_model,
 	                                       GtkTreeIter *iter,
 	                                       gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->user_data);
+	GtkTreeIter it;
+	gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(filter_model),
+	                                                 &it,
+	                                                 iter);
+	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	gboolean bstate = self->curelem->items[n].isdefault;
+	gboolean bstate = self->curelem->destitems[n].isdefault;
 	
 	g_object_set(ren, "active", bstate, NULL);
 	internal_cell_color(ren, n);
@@ -248,14 +380,18 @@ void dialogproperty_t::cell_data_isdefault(GtkTreeViewColumn *,
 
 void dialogproperty_t::cell_data_isforced(GtkTreeViewColumn *,
 	                                      GtkCellRenderer *ren,
-	                                      GtkTreeModel *,
+	                                      GtkTreeModel *filter_model,
 	                                      GtkTreeIter *iter,
 	                                      gpointer inst)
 {
-	gint n = GPOINTER_TO_INT(iter->user_data);
+	GtkTreeIter it;
+	gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(filter_model),
+	                                                 &it,
+	                                                 iter);
+	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 
-	gboolean bstate = self->curelem->items[n].isforced;
+	gboolean bstate = self->curelem->destitems[n].isforced;
 
 	g_object_set(ren, "active", bstate, NULL);
 	internal_cell_color(ren, n);

@@ -34,15 +34,32 @@ private:
 	GtkWidget  *button_enqueue;
 	GtkWidget  *button_skip;
 	
-	BasicListModel *basic_model;
-	
 	int      curn;
 	media_t *curelem;
 	
 	void gonext();
+
+	void setnewtreeviewmodel(int numrows);
+	
+	static
+	gboolean filter_visible_func(GtkTreeModel *childmodel,
+	                             GtkTreeIter *iter,
+	                             gpointer self);
+
+	static
+	void cb_toggled_isdefault(GtkCellRendererToggle *ren, gchar *pathstr, gpointer self);
+	
+	static
+	void cb_toggled_isforced(GtkCellRendererToggle *ren, gchar *pathstr, gpointer self);
 	
 	static
 	void self_deleter(GtkDialog *dialog, gpointer self);
+	
+	static
+	void cb_keep_ac3(GtkToggleButton* toggle, gpointer self);
+	
+	static
+	void cb_keep_dolby(GtkToggleButton* toggle, gpointer self);
 	
 	static
 	void cb_enqueue(GtkButton *, gpointer self);

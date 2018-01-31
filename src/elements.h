@@ -18,9 +18,8 @@ enum codecid_t {
 	codecid_dolby,
 	codecid_aac
 };
-struct item_t {
-	explicit item_t();
-	explicit item_t(const item_t&);
+struct coreitem_t {
+	explicit coreitem_t();
 
 	itemtype_t  type;
 
@@ -37,15 +36,18 @@ struct item_t {
 	bool isdefault;
 };
 
-struct newitem_t
- : public item_t
+class origitem_t
+ : public coreitem_t
 {
-	explicit newitem_t(const item_t& backitem,
-	                   size_t backn);
+};
+
+struct destitem_t
+ : public coreitem_t
+{
+	explicit destitem_t(const origitem_t& orig);
 	
-	const item_t& backitem;
-	size_t        backn;
-	bool          want;
+	const origitem_t& orig;
+	bool              want;
 };
 
 struct err_t {
@@ -85,8 +87,8 @@ struct media_t {
 	std::string title;
 	
 	opt_t       opt;
-	std::vector<item_t>     items;
-	std::vector<newitems_t> newitems;
+	std::vector<origitem_t>  origitems;
+	std::vector<destitem_t>  destitems;
 	boost::property_tree::ptree pt;
 	
 	err_t       err;

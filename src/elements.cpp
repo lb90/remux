@@ -13,7 +13,8 @@ media_t::media_t()
    outpath(),
    title(),
    opt(),
-   items(),
+   origitems(),
+   destitems(),
    pt(),
    err()
  {}
@@ -32,7 +33,7 @@ err_t::err_t()
    conv_description()
  {}
 
-item_t::item_t()
+coreitem_t::coreitem_t()
  : type(itemtype_unknown),
    name(),
    lang(),
@@ -46,25 +47,9 @@ item_t::item_t()
    isdefault(false)
  {}
 
-item_t::item_t(const item_t& i)
- : type(i.type),
-   name(i.name),
-   lang(i.lang),
-   langid(i.langid),
-   uid(i.uid),
-   num(i.num),
-   tid(i.tid),
-   codecname(i.codecname),
-   codecid(i.codecid),
-   isforced(i.isforced),
-   isdefault(i.isdefault)
+destitem_t::destitem_t(const origitem_t& orig)
+ : coreitem_t(orig),
+   orig(orig),
+   want(true)
  {}
 
-newitem_t::newitem_t(const item_t& backitem, size_t backn)
- : item_t(backitem),
-   backitem(backitem),
-   backn(backn),
-   want(true)
-{
-	/*TODO error checking */
-}
