@@ -3,10 +3,11 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include "app.h"
 #include "glibutil.h"
 #include "elements.h"
-#include "parseinfo.h"
 #include "launchprocess.h"
 #include "mediascan.h"
 
@@ -18,21 +19,8 @@ int media_scan(media_t& elem) {
 	std::vector<std::string> argv;
 	std::string outputstring;
 
-#ifdef _WIN32
-	argv.emplace_back(app::mkvinfo_prog);
-	argv.emplace_back("--ui-language");
-	argv.emplace_back("en");
-	argv.emplace_back("--command-line-charset");
-	argv.emplace_back("UTF-16");
-#else
-	argv.emplace_back("mkvinfo");
-	argv.emplace_back("--ui-language");
-	argv.emplace_back("en_US");
-	argv.emplace_back("--command-line-charset");
-	argv.emplace_back("UTF-8");
-#endif
-	argv.emplace_back("--output-charset");
-	argv.emplace_back("UTF-8");
+	argv.emplace_back(app::mkvmerge_prog);
+	argv.emplace_back("-J");
 	argv.emplace_back(elem.path);
 
 	code = launch_process(argv, outputstring, true);
@@ -41,8 +29,15 @@ int media_scan(media_t& elem) {
 		elem.err.scan_description = outputstring;
 	}
 	else {
-		std::stringstream sstream(outputstring);
-		parse_info(sstream, elem.pt);
+		try {
+			std::stringstream sstream(outputstring);
+			boost::property_tree::read_json(sstream, elem.pt);
+		}
+		catch (boost::property_tree::json_parser::json_parser_error e) {
+			elem.err.scan = true;
+			elem.err.scan_description = "error parsing json\n";
+			elem.err.scan_description += e.what();
+		}
 	}
 
 	return 0;

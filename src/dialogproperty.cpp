@@ -35,7 +35,7 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 		std::make_pair("number",    cell_data_number),
 		std::make_pair("name",      cell_data_name),
 		std::make_pair("type",      cell_data_type),
-		std::make_pair("format",    cell_data_format),
+		std::make_pair("codec",     cell_data_codec),
 		std::make_pair("language",  cell_data_language),
 		std::make_pair("isdefault", cell_data_isdefault),
 		std::make_pair("isforced",  cell_data_isforced)
@@ -205,11 +205,11 @@ void dialogproperty_t::cell_data_type(GtkTreeViewColumn *,
 	internal_cell_color(ren, n);
 }
 
-void dialogproperty_t::cell_data_format(GtkTreeViewColumn *,
-	                                  GtkCellRenderer *ren,
-	                                  GtkTreeModel *,
-	                                  GtkTreeIter *iter,
-	                                  gpointer inst)
+void dialogproperty_t::cell_data_codec(GtkTreeViewColumn *,
+	                                   GtkCellRenderer *ren,
+	                                   GtkTreeModel *,
+	                                   GtkTreeIter *iter,
+	                                   gpointer inst)
 {
 	gint n = GPOINTER_TO_INT(iter->user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
@@ -240,13 +240,9 @@ void dialogproperty_t::cell_data_isdefault(GtkTreeViewColumn *,
 	gint n = GPOINTER_TO_INT(iter->user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	
-	const char *text;
-	if (self->curelem->items[n].want_default)
-		text = "Sì";
-	else
-		text = "No";
+	gboolean bstate = self->curelem->items[n].isdefault;
 	
-	g_object_set(ren, "text", text, NULL);
+	g_object_set(ren, "active", bstate, NULL);
 	internal_cell_color(ren, n);
 }
 
@@ -258,14 +254,10 @@ void dialogproperty_t::cell_data_isforced(GtkTreeViewColumn *,
 {
 	gint n = GPOINTER_TO_INT(iter->user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
-	
-	const char *text;
-	if (self->curelem->items[n].want_forced)
-		text = "Sì";
-	else
-		text = "No";
-	
-	g_object_set(ren, "text", text, NULL);
+
+	gboolean bstate = self->curelem->items[n].isforced;
+
+	g_object_set(ren, "active", bstate, NULL);
 	internal_cell_color(ren, n);
 }
 

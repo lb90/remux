@@ -7,8 +7,7 @@ src = [
   'elements.cpp',
   'scandirectory.cpp',
   'mediascan.cpp',
-  'parseinfo.cpp',
-  'mediaconvert.cpp',
+#  'mediaconvert.cpp',
   'signalcentre.cpp',
   'treeview.cpp',
   'window.cpp',
@@ -32,6 +31,7 @@ src += res
 gui = false
 if get_option('buildtype') == 'release'
   gui = true
+endif
 
 executable('remux',
            sources : src,

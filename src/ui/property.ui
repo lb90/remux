@@ -13,6 +13,40 @@
     <property name="can_focus">False</property>
     <property name="icon_name">object-rotate-right</property>
   </object>
+  <object class="GtkListStore" id="liststore_cell_codec">
+    <columns>
+      <!-- column-name codec -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">AAC</col>
+      </row>
+      <row>
+        <col id="0">AC3</col>
+      </row>
+      <row>
+        <col id="0">DTS</col>
+      </row>
+      <row>
+        <col id="0">MP3</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="liststore_cell_language">
+    <columns>
+      <!-- column-name language -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">ita</col>
+      </row>
+      <row>
+        <col id="0">eng</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkDialog" id="dialog_property">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Proprietà</property>
@@ -109,8 +143,6 @@
                     <property name="margin_top">20</property>
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
-                    <property name="hscrollbar_policy">always</property>
-                    <property name="vscrollbar_policy">always</property>
                     <property name="shadow_type">in</property>
                     <property name="overlay_scrolling">False</property>
                     <property name="propagate_natural_width">True</property>
@@ -125,7 +157,6 @@
                         <child>
                           <object class="GtkTreeViewColumn" id="col_number">
                             <property name="resizable">True</property>
-                            <property name="title" translatable="yes">Numero Traccia</property>
                             <property name="clickable">True</property>
                             <child>
                               <object class="GtkCellRendererText" id="ren_number">
@@ -143,6 +174,7 @@
                             <child>
                               <object class="GtkCellRendererText" id="ren_name">
                                 <property name="cell_background_rgba">rgb(217,225,242)</property>
+                                <property name="editable">True</property>
                               </object>
                             </child>
                           </object>
@@ -151,6 +183,7 @@
                           <object class="GtkTreeViewColumn" id="col_type">
                             <property name="resizable">True</property>
                             <property name="title" translatable="yes">Tipo</property>
+                            <property name="expand">True</property>
                             <property name="clickable">True</property>
                             <child>
                               <object class="GtkCellRendererText" id="ren_type">
@@ -160,13 +193,17 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkTreeViewColumn" id="col_format">
+                          <object class="GtkTreeViewColumn" id="col_codec">
                             <property name="resizable">True</property>
                             <property name="title" translatable="yes">Formato</property>
+                            <property name="expand">True</property>
                             <property name="clickable">True</property>
                             <child>
-                              <object class="GtkCellRendererText" id="ren_format">
+                              <object class="GtkCellRendererCombo" id="ren_codec">
                                 <property name="cell_background_rgba">rgb(217,225,242)</property>
+                                <property name="editable">True</property>
+                                <property name="model">liststore_cell_codec</property>
+                                <property name="text_column">0</property>
                               </object>
                             </child>
                           </object>
@@ -177,8 +214,11 @@
                             <property name="title" translatable="yes">Lingua</property>
                             <property name="clickable">True</property>
                             <child>
-                              <object class="GtkCellRendererText" id="ren_language">
+                              <object class="GtkCellRendererCombo" id="ren_language">
                                 <property name="cell_background_rgba">rgb(217,225,242)</property>
+                                <property name="editable">True</property>
+                                <property name="model">liststore_cell_language</property>
+                                <property name="text_column">0</property>
                               </object>
                             </child>
                           </object>
@@ -189,7 +229,7 @@
                             <property name="title" translatable="yes">Predefinito</property>
                             <property name="clickable">True</property>
                             <child>
-                              <object class="GtkCellRendererText" id="ren_isdefault">
+                              <object class="GtkCellRendererToggle" id="ren_isdefault">
                                 <property name="cell_background_rgba">rgb(217,225,242)</property>
                               </object>
                             </child>
@@ -201,7 +241,7 @@
                             <property name="title" translatable="yes">Forzato</property>
                             <property name="clickable">True</property>
                             <child>
-                              <object class="GtkCellRendererText" id="ren_isforced">
+                              <object class="GtkCellRendererToggle" id="ren_isforced">
                                 <property name="cell_background_rgba">rgb(217,225,242)</property>
                               </object>
                             </child>

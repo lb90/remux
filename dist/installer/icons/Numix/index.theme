@@ -1,0 +1,21 @@
+[Icon Theme]
+Name=Numix
+
+Comment=Icon theme from Numix Project
+
+Inherits=gnome,hicolor
+
+Example=folder
+
+Directories=32/actions,32/status
+
+[32/actions]
+Size=32
+Context=Actions
+Type=Fixed
+
+[32/status]
+Size=32
+Context=Status
+Type=Fixed
+

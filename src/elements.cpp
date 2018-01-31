@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include "model.h"
 #include "elements.h"
 
 media_t::media_t()
@@ -41,9 +42,15 @@ item_t::item_t()
    tid(-1),
    codecname(),
    codecid(codecid_unknown),
-   original_forced(false),
-   want_forced(false),
-   original_default(false),
-   want_default(false)
+   isforced(false),
+   isdefault(false)
  {}
 
+newitem_t::newitem_t(const item_t& backitem, size_t backn)
+ : item_t(),
+   backitem(backitem),
+   backn(backn),
+   want(true)
+{
+	/*TODO error checking */
+}

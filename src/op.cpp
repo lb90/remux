@@ -2,7 +2,6 @@
 #include <cassert>
 #include <climits>
 #include <algorithm>
-#include <boost/lexical_cast.hpp>
 #include "elements.h"
 #include "model.h"
 #include "mediascan.h"
@@ -14,73 +13,100 @@ consider using a case insensitive property tree
 
 static
 void internal_fill_element(media_t& elem) {
-	if (elem.pt.get("EBML_head.Document_type", "") != "matroska") {
+	std::string error_condition = elem.pt.get("errors", "");
+	if (!error_condition.empty()) {
+		elem.err.scan = true;
+		elem.err.scan_description = error_condition;
+		return;
+	}
+	
+	if (!elem.pt.get("container.recognized", false)) {
+		elem.err.scan = true;
+		elem.err.scan_description = "format not recognized";
+		return;
+	}
+	if (!elem.pt.get("container.supported", false)) {
+		elem.err.scan = true;
+		elem.err.scan_description = "format not suported";
+		return;
+	}
+
+	std::string document_type = elem.pt.get("container.type", "");
+	if (document_type != "Matroska") {
 		elem.err.scan = true;
 		elem.err.scan_description = "Not a matroska file";
 		return;
 	}
-	elem.title = elem.pt.get("Segment.Segment_information.Title", "");
+
+	elem.title = elem.pt.get("container.title", "");
 	
-	/*TODO (elem.pt.find("Segment.Tracks")*/
-	for (const auto& childpt : elem.pt.get_child("Segment.Tracks")) {
-		if (childpt.first == "Track") {
+	for (const auto& childpt : elem.pt.get_child("tracks")) { /*TODO*/
+		if (childpt.first == "") {
+			const boost::property_tree::ptree& trackpt = childpt.second;
+
 			elem.items.emplace_back();
 			item_t& item = elem.items.back();
 			
-			/*TODO case insensitive comparison */
-			std::string
-			tracktype = childpt.second.get("Track_type", "");
-			if (tracktype == "subtitles")
-				item.type = itemtype_subtitle;
-			else if (tracktype == "video")
+			item.name = trackpt.get("properties.track_name", "");
+			item.uid  = trackpt.get("properties.uid", "");
+			item.num  = trackpt.get("properties.number", "");
+			item.lang = trackpt.get("properties.language", "");
+
+			std::string track_type;
+			track_type = trackpt.get("type", "");
+			if (track_type == "video") /*TODO*/
 				item.type = itemtype_video;
-			else if (tracktype == "audio")
+			else if (track_type == "audio")
 				item.type = itemtype_audio;
-			else
-				item.type = itemtype_unknown;
-			
-			item.name = childpt.second.get("Name", "");
-			item.lang = childpt.second.get("Language", "");
-			item.uid  = childpt.second.get("Track_UID", "");
-			
-			std::string
-			number = childpt.second.get("Track_number", "");
-			item.num = number.substr(0, number.find(' '));
-			try {
-				item.tid = boost::lexical_cast<int>(item.num) - 1;
+			else if (track_type == "subtitles")
+				item.type = itemtype_subtitle;
+			else if (track_type == "button") {
+				item.type = itemtype_button;
 			}
-			catch (const boost::bad_lexical_cast& e) {
-				item.tid = -1;
-			}
-			if (item.tid < 0) {
+			else {
 				elem.err.scan = true;
-				elem.arr.scan_description = "invalid track number ("
-				                            + item.num
-				                            + ") for track with\n"
+				elem.err.scan_description = "Invalid track type ("
+				                            + track_type + ") "
+				                            "for track with:\n"
 				                            " - name: "
 				                            + item.name + "\n"
+				                            " - number: "
+				                            + item.num + "\n"
 				                            " - uid: "
 				                            + item.uid + "\n";
+				return;
 			}
 			
-			item.codecname = childpt.second.get("Codec_ID", "");
-			/*TODO consider making case insensitive */
-			if (item.codecname.find("AC3") != std::string::npos)
+			item.tid = trackpt.get("id", -1);
+			if (item.tid < 0) {
+				elem.err.scan = true;
+				elem.err.scan_description = "Invalid track id ("
+				                            + std::to_string(item.tid)
+				                             + ") "
+				                            "for track with:\n"
+				                            " - name: "
+				                            + item.name + "\n"
+				                            " - number: "
+				                            + item.num + "\n"
+				                            " - uid: "
+				                            + item.uid + "\n";
+				return;
+			}
+			
+			item.codecname = trackpt.get("codec", "");
+			if (item.codecname == "AC-3")
 				item.codecid = codecid_ac3;
-			else if (item.codecname.find("DTS") != std::string::npos)
+			else if (item.codecname == "EAC-3")
+				item.codecid = codecid_ac3;
+			else if (item.codecname == "DTS") /*TODO*/
 				item.codecid = codecid_dolby;
-			else if (item.codecname.find("AAC") != std::string::npos)
+			else if (item.codecname == "AAC")
 				item.codecid = codecid_aac;
+			else
+				item.codecid = codecid_unknown;
 			
-			int isdefault = childpt.second.get("Default_track_flag", 0);
-			item.orig_default = isdefault;
-			item.want_default = isdefault;
-			
-			int isforced = childpt.second.get("Forced_track_flag", 0);
-			item.orig_forced = isforced;
-			item.want_forced = isforced;
-			
-			item.langid = item.lang;
+			item.isdefault = trackpt.get("properties.default_track", true); /*TODO*/
+			item.isforced  = trackpt.get("properties.forced_track", true); /*TODO*/
 		}
 	}
 }

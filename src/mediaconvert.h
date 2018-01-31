@@ -8,19 +8,20 @@
 
 class mediaconvert {
 public:
-	static void convert();
+	static void start();
 
 private:
-	std::thread                   thread;
-	std::function<void(int, int)> progresscallback;
-
-	static void convert(size_t i);
-	
 	struct convertcontext_t {
 		std::vector<std::string> outsiders;
 		std::vector<size_t> keep_audio_tids;
 		std::vector<size_t> keep_video_tids;
 	};
+	
+	std::function<void(int, int)> progresscallback;
+
+	static void convert(size_t i);
+	
+	std::thread *t;
 };
 
 #endif

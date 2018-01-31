@@ -7,9 +7,10 @@
 
 enum itemtype_t {
 	itemtype_unknown = 0,
-	itemtype_subtitle,
 	itemtype_video,
 	itemtype_audio,
+	itemtype_subtitle,
+	itemtype_button
 };
 enum codecid_t {
 	codecid_unknown = 0,
@@ -31,10 +32,19 @@ struct item_t {
 	std::string codecname;
 	codecid_t   codecid;
 	
-	bool original_forced;
-	bool     want_forced;
-	bool original_default;
-	bool     want_default;
+	bool isforced;
+	bool isdefault;
+};
+
+struct newitem_t
+ : public item_t
+{
+	explicit newitem_t(const item_t& backitem,
+	                   size_t backn);
+	
+	const item_t& backitem;
+	size_t        backn;
+	bool          want;
 };
 
 struct err_t {

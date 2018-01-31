@@ -24,10 +24,9 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button_pause">
-                <property name="label">gtk-media-pause</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
+                <property name="use_underline">True</property>
                 <property name="always_show_image">True</property>
               </object>
               <packing>
@@ -37,10 +36,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button">
+              <object class="GtkButton" id="button_main">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_underline">True</property>
                 <property name="always_show_image">True</property>
               </object>
               <packing>
@@ -151,5 +151,29 @@
     <child>
       <placeholder/>
     </child>
+  </object>
+  <object class="GtkImage" id="image_button_done">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">dialog-ok</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_button_pause">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-playback-pause</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_button_start">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-playback-start</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_button_stop">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-playback-stop</property>
+    <property name="use_fallback">True</property>
   </object>
 </interface>

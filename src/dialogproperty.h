@@ -73,11 +73,11 @@ private:
 	               gpointer);
 	static
 	void
-	cell_data_format(GtkTreeViewColumn *,
-	                 GtkCellRenderer *ren,
-	                 GtkTreeModel *,
-	                 GtkTreeIter *iter,
-	                 gpointer);
+	cell_data_codec(GtkTreeViewColumn *,
+	                GtkCellRenderer *ren,
+	                GtkTreeModel *,
+	                GtkTreeIter *iter,
+	                gpointer);
 	static
 	void
 	cell_data_language(GtkTreeViewColumn *,

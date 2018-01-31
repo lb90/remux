@@ -4,6 +4,7 @@
 #include <string>
 #include <stdexcept>
 #include <functional>
+#include <thread>
 #include "app.h"
 #include "model.h"
 #include "launchprocess.h"
@@ -26,7 +27,27 @@ std::string util_plain_comma_list(const std::vector<size_t>& indexv) {
 int do_propedit(const media_t& elem, const item_t& item,
                 convertcontext_t& convertctx)
 {
+	std::vector<std::string> argv;
 	
+	argv.emplace_back(app::mkvpropedit_prog);
+	argv.emplace_back(convertctx.finalpath);
+
+	if (elem.have_video) {
+		argv.emplace_back("-e");
+		argv.emplace_back("track:v1");
+		argv.emplace_back("-s");
+		argv.emplace_back("--set");
+	}
+	if (elem.have_audio) {
+		argv.emplace_back("--edit");
+		argv.emplace_back("--edit");
+		argv.emplace_back("--edit");
+	}
+	if (elem.have_subtitles) {
+		argv.emplace_back("--edit");
+		argv.emplace_back("--edit");
+		argv.emplace_back("--edit");
+	}
 }
 
 int do_merge(const media_t& elem, const item_t& item,
@@ -187,5 +208,51 @@ int mediaconvert::process(size_t n, std::string& outstring) {
 		return -1;
 	
 	return 0;
+}
+
+void processall() {
+	std::vector<size_t> indexv;
+
+	for (size_t i = 0; i < elementv.size(); i++)
+		if (elementv[i].ready)
+			indexv.push_back(i);
+	
+	if (indexv.empty()) {
+		//util_message("Non sono presenti media in coda");
+		return;
+	}
+	
+	for (size_t i : indexv) {
+		std::string outstring;
+		convert(i, outstring);
+		//g_idle_add(util_callable_call, &progresscallcallback);
+	}
+}
+
+void processall_start() {
+	processall();
+	
+	g_idle_add(finishthreadcb);
+}
+
+bool mediaconvert::utilcallnotif(void *) {
+	
+
+	return FALSE;
+}
+
+bool mediaconvert::finishthreadcb(void*) {
+	assert(t != nullptr);
+	t->join();
+	delete t;
+	t = nullptr;
+	
+	return FALSE;
+}
+
+void mediaconvert::start() {
+	if (t != nullptr)
+		throw std::logic_error("convert process already started");
+	t = new std::thread(processall_start);
 }
 
