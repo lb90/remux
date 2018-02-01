@@ -13,12 +13,14 @@ public:
 		std::function<void(std::string)> text();
 		std::function<void(void)>        done();
 	};
-	
-	explicit     mediaconvert(const callback_t& callback);
+	//explicit     mediaconvert(const callback_t& callback);
+	explicit     mediaconvert();
 	void         start();
 private:
 	void         do_process(media_t& elem);
+public:
 	void         do_processall();
+private:
 
 	callback_t   callback;
 	std::thread *worker;

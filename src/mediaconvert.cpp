@@ -13,6 +13,11 @@
 #include "launchprocess.h"
 #include "mediaconvert.h"
 
+mediaconvert::mediaconvert()
+ : callback(),
+   worker(nullptr)
+ {}
+
 void mediaconvert::do_process(media_t& elem) {
 	int code;
 	bool bcode;
@@ -28,7 +33,7 @@ void mediaconvert::do_process(media_t& elem) {
 			if (item.isdefault != item.orig.isdefault)
 				jargs.push_isdefault(item.isdefault);
 			if (item.isforced != item.orig.isforced)
-				jargs.push_isdefault(item.isdefault);
+				jargs.push_isforced(item.isforced);
 			if (item.name != item.orig.name)
 				jargs.push_trackname(item.name);
 			if (item.lang != item.orig.lang)

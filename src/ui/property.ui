@@ -61,6 +61,7 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Proprietà</property>
     <property name="modal">True</property>
+    <property name="window_position">center</property>
     <property name="default_width">910</property>
     <property name="default_height">500</property>
     <property name="destroy_with_parent">True</property>
@@ -300,6 +301,7 @@
                                 <child>
                                   <object class="GtkCellRendererText" id="ren_number">
                                     <property name="cell_background_rgba">rgb(217,225,242)</property>
+                                    <property name="foreground_rgba">rgb(164,0,0)</property>
                                   </object>
                                 </child>
                               </object>
@@ -314,6 +316,7 @@
                                   <object class="GtkCellRendererText" id="ren_name">
                                     <property name="cell_background_rgba">rgb(217,225,242)</property>
                                     <property name="editable">True</property>
+                                    <property name="foreground_rgba">rgb(164,0,0)</property>
                                   </object>
                                 </child>
                               </object>
@@ -341,6 +344,7 @@
                                   <object class="GtkCellRendererCombo" id="ren_codec">
                                     <property name="cell_background_rgba">rgb(217,225,242)</property>
                                     <property name="editable">True</property>
+                                    <property name="foreground_rgba">rgb(164,0,0)</property>
                                     <property name="model">liststore_cell_codec</property>
                                     <property name="text_column">0</property>
                                   </object>
@@ -357,6 +361,7 @@
                                   <object class="GtkCellRendererCombo" id="ren_language">
                                     <property name="cell_background_rgba">rgb(217,225,242)</property>
                                     <property name="editable">True</property>
+                                    <property name="foreground_rgba">rgb(164,0,0)</property>
                                     <property name="model">liststore_cell_language</property>
                                     <property name="text_column">0</property>
                                   </object>

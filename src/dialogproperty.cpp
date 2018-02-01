@@ -357,8 +357,12 @@ void dialogproperty_t::cell_data_number(GtkTreeViewColumn *,
 	gint n = GPOINTER_TO_INT(it.user_data);
 
 	dialogproperty_t *self = (dialogproperty_t*) inst;
-	
-	g_object_set(ren, "text", self->curelem->destitems[n].num.c_str(), NULL);
+	const destitem_t& item = self->curelem->destitems[n];
+	g_object_set(ren, "text", item.num.c_str(), NULL);
+	if (item.num != item.orig.num)
+		g_object_set(ren, "foreground-set", TRUE, NULL);
+	else
+		g_object_set(ren, "foreground-set", FALSE, NULL);
 	internal_cell_color(ren, n);
 }
 
@@ -374,8 +378,12 @@ void dialogproperty_t::cell_data_name(GtkTreeViewColumn *,
 	                                                 iter);
 	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
-	
-	g_object_set(ren, "text", self->curelem->destitems[n].name.c_str(), NULL);
+	const destitem_t& item = self->curelem->destitems[n];
+	g_object_set(ren, "text", item.name.c_str(), NULL);
+	if (item.name != item.orig.name)
+		g_object_set(ren, "foreground-set", TRUE, NULL);
+	else
+		g_object_set(ren, "foreground-set", FALSE, NULL);
 	internal_cell_color(ren, n);
 }
 
@@ -391,9 +399,9 @@ void dialogproperty_t::cell_data_type(GtkTreeViewColumn *,
 	                                                 iter);
 	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
-	
+	const destitem_t& item = self->curelem->destitems[n];
 	const char *text = "";
-	switch (self->curelem->destitems[n].type) {
+	switch (item.type) {
 		case itemtype_subtitle:
 			text = "Sottotitolo";
 			break;
@@ -423,8 +431,12 @@ void dialogproperty_t::cell_data_codec(GtkTreeViewColumn *,
 	                                                 iter);
 	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
-	
-	g_object_set(ren, "text", self->curelem->destitems[n].codecname.c_str(), NULL);
+	const destitem_t& item = self->curelem->destitems[n];
+	g_object_set(ren, "text", item.codecname.c_str(), NULL);
+	if (item.codecid != item.orig.codecid)
+		g_object_set(ren, "foreground-set", TRUE, NULL);
+	else
+		g_object_set(ren, "foreground-set", FALSE, NULL);
 	internal_cell_color(ren, n);
 }
 
@@ -440,8 +452,12 @@ void dialogproperty_t::cell_data_language(GtkTreeViewColumn *,
 	                                                 iter);
 	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
-	
-	g_object_set(ren, "text", self->curelem->destitems[n].lang.c_str(), NULL);
+	const destitem_t& item = self->curelem->destitems[n];
+	g_object_set(ren, "text", item.lang.c_str(), NULL);
+	if (item.lang != item.orig.lang)
+		g_object_set(ren, "foreground-set", TRUE, NULL);
+	else
+		g_object_set(ren, "foreground-set", FALSE, NULL);
 	internal_cell_color(ren, n);
 }
 
@@ -457,8 +473,8 @@ void dialogproperty_t::cell_data_isdefault(GtkTreeViewColumn *,
 	                                                 iter);
 	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
-	
-	gboolean bstate = self->curelem->destitems[n].isdefault;
+	const destitem_t& item = self->curelem->destitems[n];
+	gboolean bstate = item.isdefault;
 	
 	g_object_set(ren, "active", bstate, NULL);
 	internal_cell_color(ren, n);
@@ -476,8 +492,8 @@ void dialogproperty_t::cell_data_isforced(GtkTreeViewColumn *,
 	                                                 iter);
 	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
-
-	gboolean bstate = self->curelem->destitems[n].isforced;
+	const destitem_t& item = self->curelem->destitems[n];
+	gboolean bstate = item.isforced;
 
 	g_object_set(ren, "active", bstate, NULL);
 	internal_cell_color(ren, n);

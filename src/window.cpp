@@ -10,6 +10,8 @@
 #include "dialogconversion.h"
 #include "app.h"
 #include "op.h"
+#include "mediaconvert.h" /*TEMP*/
+#include "model.h" /*TEMP*/
 
 void cb_win_open(GSimpleAction*, GVariant*, gpointer userdata) {
 	GtkFileChooserNative *native;
@@ -54,10 +56,14 @@ void cb_win_remove(GSimpleAction*, GVariant*, gpointer userdata) {
 }
 
 void cb_win_convert(GSimpleAction*, GVariant*, gpointer userdata) {
-	GtkWindow *window = GTK_WINDOW(userdata);
+	//GtkWindow *window = GTK_WINDOW(userdata);
 
-	dialogconversion_t *dialog = new dialogconversion_t(window);
-	dialog->show();
+	//dialogconversion_t *dialog = new dialogconversion_t(window);
+	//dialog->show();
+	mediaconvert mc;
+	mc.do_processall();
+	if (elementv[0].err.conv)
+		g_print("%s\n", elementv[0].err.conv_description.c_str());
 }
 
 void cb_win_showproperty(GSimpleAction*, GVariant*, gpointer userdata) {

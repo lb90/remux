@@ -33,7 +33,7 @@ std::string util_escape_json(const std::string &s) {
 void jsonargs::push_isdefault(bool isdefault) {
 	args.emplace_back("--default-track");
 	if (isdefault)
-		args.emplace_back("0");
+		args.emplace_back("0:1");
 	else
 		args.emplace_back("-1:0");
 }
@@ -41,19 +41,19 @@ void jsonargs::push_isdefault(bool isdefault) {
 void jsonargs::push_isforced(bool isforced) {
 	args.emplace_back("--forced-track");
 	if (isforced)
-		args.emplace_back("0");
+		args.emplace_back("0:1");
 	else
 		args.emplace_back("-1:0");
 }
 
 void jsonargs::push_trackname(const std::string& trackname) {
 	args.emplace_back("--track-name"); /*TODO review*/
-	args.emplace_back(trackname);
+	args.emplace_back("-1:" + trackname);
 }
 
 void jsonargs::push_language(const std::string& language) {
 	args.emplace_back("--language");
-	args.emplace_back(language);
+	args.emplace_back("-1:" + language);
 }
 
 void jsonargs::push(const std::string& arg) {
@@ -61,19 +61,27 @@ void jsonargs::push(const std::string& arg) {
 }
 
 void jsonargs::push_only_audio() {
-	args.emplace_back("-DSB"); /*TODO*/
+	args.emplace_back("-D"); /*TODO*/
+	args.emplace_back("-S");
+	args.emplace_back("-B");
 }
 
 void jsonargs::push_only_video() {
-	args.emplace_back("-ASB");
+	args.emplace_back("-A");
+	args.emplace_back("-S");
+	args.emplace_back("-B");
 }
 
 void jsonargs::push_only_subtitle() {
-	args.emplace_back("-ADB");
+	args.emplace_back("-A");
+	args.emplace_back("-D");
+	args.emplace_back("-B");
 }
 
 void jsonargs::push_only_button() {
-	args.emplace_back("-ADS");
+	args.emplace_back("-A");
+	args.emplace_back("-D");
+	args.emplace_back("-S");
 }
 
 void jsonargs::push_audio_tid(int tid) {
@@ -103,8 +111,14 @@ void jsonargs::push_output(const std::string& output) {
 
 void jsonargs::savejson(std::stringstream& sstream) {
 	sstream << "[\n";
-	for (const std::string& arg : args) {
-		sstream << util_escape_json(arg) << "\n";
+	for (size_t i = 0; i < args.size(); i++) {
+		sstream << "  ";
+		sstream << "\"";
+		sstream << util_escape_json(args[i]);
+		sstream << "\"";
+		if (i +1 != args.size())
+			sstream << ",";
+		sstream << "\n";
 	}
 	sstream << "]\n";
 }
