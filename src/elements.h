@@ -48,6 +48,8 @@ struct destitem_t
 	
 	const origitem_t& orig;
 	bool              want;
+	
+	std::string       outpath;
 };
 
 struct err_t {

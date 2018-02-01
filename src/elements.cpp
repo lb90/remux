@@ -50,6 +50,7 @@ coreitem_t::coreitem_t()
 destitem_t::destitem_t(const origitem_t& orig)
  : coreitem_t(orig),
    orig(orig),
-   want(true)
+   want(true),
+   outpath()
  {}
 

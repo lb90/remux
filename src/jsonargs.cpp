@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include "jsonargs.h"
 
 /* https://stackoverflow.com/questions/7724448/simple-json-string-escape-for-c */
 static
@@ -50,7 +51,7 @@ void jsonargs::push_trackname(const std::string& trackname) {
 	args.emplace_back(trackname);
 }
 
-void jsonargs::push_trackname(const std::string& language) {
+void jsonargs::push_language(const std::string& language) {
 	args.emplace_back("--language");
 	args.emplace_back(language);
 }
@@ -67,7 +68,7 @@ void jsonargs::push_only_video() {
 	args.emplace_back("-ASB");
 }
 
-void jsonargs::push_only_subtitles() {
+void jsonargs::push_only_subtitle() {
 	args.emplace_back("-ADB");
 }
 
@@ -85,7 +86,7 @@ void jsonargs::push_video_tid(int tid) {
 	args.emplace_back(std::to_string(tid));
 }
 
-void jsonargs::push_subtitles_tid(int tid) {
+void jsonargs::push_subtitle_tid(int tid) {
 	args.emplace_back("-s");
 	args.emplace_back(std::to_string(tid));
 }
@@ -95,8 +96,16 @@ void jsonargs::push_button_tid(int tid) {
 	args.emplace_back(std::to_string(tid));
 }
 
-void jsonargs::savejson(std::ostringstream sstream) {
-	for (const std::string& arg : args)
-		sstream << util_escape_json(arg);
+void jsonargs::push_output(const std::string& output) {
+	args.emplace_back("-o");
+	args.emplace_back(output);
+}
+
+void jsonargs::savejson(std::stringstream& sstream) {
+	sstream << "[\n";
+	for (const std::string& arg : args) {
+		sstream << util_escape_json(arg) << "\n";
+	}
+	sstream << "]\n";
 }
 

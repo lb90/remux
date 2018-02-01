@@ -36,6 +36,7 @@ void get_stdout_sstream(GSubprocess *subproc, std::stringstream& sstream) {
 int launch_process(const std::vector<std::string>& argv, std::string& outstring, bool want_stdout) {
 	GSubprocess *subproc = NULL;
 	GError      *errspec = NULL;
+	int          ret = 0;
 	
 	std::vector<const char*> c_array;
 	
@@ -50,13 +51,13 @@ int launch_process(const std::vector<std::string>& argv, std::string& outstring,
 	if (subproc == NULL) {
 		outstring = (errspec && errspec->message && errspec->message[0]) ?
 		               errspec->message : "Errore sconosciuto";
-		return -1;
+		ret = -1;
 	}
 	else {
 		if (!g_subprocess_wait(subproc, NULL, NULL)) {
 			g_print("error in subprocess\n");
 			outstring = "Errore sconosciuto";
-			return -1;
+			ret = -1;
 		}
 		else {
 			int exitstatus;
@@ -70,9 +71,13 @@ int launch_process(const std::vector<std::string>& argv, std::string& outstring,
 			}
 			
 			if (exitstatus != 0)
-				return -1;
-			else return 0;
+				ret = -1;
 		}
 	}
+	
+	if (subproc)
+		g_object_unref(subproc);
+	
+	return ret;
 }
 

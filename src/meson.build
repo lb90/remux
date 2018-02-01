@@ -8,7 +8,7 @@ src = [
   'scandirectory.cpp',
   'mediascan.cpp',
   'mediaconvert.cpp',
-  'jsonargs.cpp'
+  'jsonargs.cpp',
   'signalcentre.cpp',
   'treeview.cpp',
   'window.cpp',

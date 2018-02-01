@@ -3,11 +3,12 @@
 
 #include <vector>
 #include <string>
-#include <ostream>
+#include <sstream>
 
 class jsonargs {
 	std::vector<std::string> args;
 
+public:
 	void push_isdefault(bool isdefault);
 	void push_isforced(bool isforced);
 	void push_trackname(const std::string& trackname);
@@ -15,12 +16,19 @@ class jsonargs {
 	
 	void push(const std::string& arg);
 	
-	void push_audio();
-	void push_video();
-	void push_subtitles();
-	void push_button();
+	void push_only_video();
+	void push_only_audio();
+	void push_only_subtitle();
+	void push_only_button();
 	
-	void savejson(std::ostringstream sstream);
+	void push_video_tid(int tid);
+	void push_audio_tid(int tid);
+	void push_subtitle_tid(int tid);
+	void push_button_tid(int tid);
+	
+	void push_output(const std::string& output);
+	
+	void savejson(std::stringstream& sstream);
 };
 
 #endif
