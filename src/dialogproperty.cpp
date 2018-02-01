@@ -48,6 +48,12 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 		gtk_tree_view_column_set_cell_data_func(col, ren, c.second, (gpointer) this, NULL);
 	}
 	
+	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_name"));
+	g_signal_connect(ren, "edited", G_CALLBACK(cb_edited_name), (gpointer) this);
+	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_codec"));
+	g_signal_connect(ren, "edited", G_CALLBACK(cb_edited_codec), (gpointer) this);
+	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_language"));
+	g_signal_connect(ren, "edited", G_CALLBACK(cb_edited_language), (gpointer) this);
 	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_isdefault"));
 	g_signal_connect(ren, "toggled", G_CALLBACK(cb_toggled_isdefault), (gpointer) this);
 	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_isforced"));
@@ -88,6 +94,84 @@ void dialogproperty_t::setnewtreeviewmodel(int numrows) {
 	g_object_unref(filter_model);
 }
 
+void dialogproperty_t::cb_edited_name(GtkCellRendererText *ren,
+                                      gchar               *pathstr,
+                                      gchar               *new_text,
+                                      gpointer             self)
+{
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	GtkTreePath *path;
+	gint *indices, depth, n;
+	
+	path = gtk_tree_path_new_from_string(pathstr);
+	if (path) {
+		depth = gtk_tree_path_get_depth(path);
+		assert(depth == 1);
+		indices = gtk_tree_path_get_indices(path);
+		assert(indices);
+		n = indices[0];
+		assert(n >= 0);
+		assert(size_t(n) < inst->curelem->destitems.size());
+		
+		inst->curelem->destitems[n].name = new_text;
+
+		gtk_tree_path_free(path);
+		path = NULL;
+	}
+}
+
+void dialogproperty_t::cb_edited_codec(GtkCellRendererText *ren,
+                                       gchar               *pathstr,
+                                       gchar               *new_text,
+                                       gpointer             self)
+{
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	GtkTreePath *path;
+	gint *indices, depth, n;
+	
+	path = gtk_tree_path_new_from_string(pathstr);
+	if (path) {
+		depth = gtk_tree_path_get_depth(path);
+		assert(depth == 1);
+		indices = gtk_tree_path_get_indices(path);
+		assert(indices);
+		n = indices[0];
+		assert(n >= 0);
+		assert(size_t(n) < inst->curelem->destitems.size());
+		
+		inst->curelem->destitems[n].codecname = new_text;
+
+		gtk_tree_path_free(path);
+		path = NULL;
+	}
+}
+
+void dialogproperty_t::cb_edited_language(GtkCellRendererText *ren,
+                                         gchar               *pathstr,
+                                         gchar               *new_text,
+                                         gpointer             self)
+{
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	GtkTreePath *path;
+	gint *indices, depth, n;
+	
+	path = gtk_tree_path_new_from_string(pathstr);
+	if (path) {
+		depth = gtk_tree_path_get_depth(path);
+		assert(depth == 1);
+		indices = gtk_tree_path_get_indices(path);
+		assert(indices);
+		n = indices[0];
+		assert(n >= 0);
+		assert(size_t(n) < inst->curelem->destitems.size());
+		
+		inst->curelem->destitems[n].lang = new_text;
+
+		gtk_tree_path_free(path);
+		path = NULL;
+	}
+}
+
 void dialogproperty_t::cb_toggled_isdefault(GtkCellRendererToggle *ren, gchar *pathstr, gpointer self) {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
 	GtkTreePath *path;
@@ -105,6 +189,7 @@ void dialogproperty_t::cb_toggled_isdefault(GtkCellRendererToggle *ren, gchar *p
 		
 		inst->curelem->destitems[n].isdefault
 		  = !inst->curelem->destitems[n].isdefault;
+
 		gtk_tree_path_free(path);
 		path = NULL;
 	}
@@ -255,7 +340,8 @@ void dialogproperty_t::self_deleter(GtkDialog *dialog, gpointer self) {
 
 static
 void internal_cell_color(GtkCellRenderer *ren, gint n) {
-	g_object_set(ren, "cell-background-set", (n%2) ? TRUE : FALSE, NULL);
+	/*g_object_set(ren, "cell-background-set", (n%2) ? TRUE : FALSE, NULL);*/
+	g_object_set(ren, "cell-background-set", FALSE, NULL);
 }
 
 void dialogproperty_t::cell_data_number(GtkTreeViewColumn *,

@@ -47,6 +47,24 @@ private:
 	                             gpointer self);
 
 	static
+	void cb_edited_name(GtkCellRendererText *ren,
+                        gchar               *pathstr,
+                        gchar               *new_text,
+                        gpointer             self);
+
+	static
+	void cb_edited_codec(GtkCellRendererText *ren,
+                         gchar               *pathstr,
+                         gchar               *new_text,
+                         gpointer             self);
+
+	static
+	void cb_edited_language(GtkCellRendererText *ren,
+                            gchar               *pathstr,
+                            gchar               *new_text,
+                            gpointer             self);
+
+	static
 	void cb_toggled_isdefault(GtkCellRendererToggle *ren, gchar *pathstr, gpointer self);
 	
 	static

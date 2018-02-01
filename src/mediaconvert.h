@@ -1,27 +1,29 @@
 #ifndef REMUX_MEDIACONVERT_H
 #define REMUX_MEDIACONVERT_H
 
-#include <vector>
 #include <string>
 #include <thread>
 #include <functional>
 
 class mediaconvert {
 public:
-	static void start();
+	explicit     mediaconvert(const callback_t& callback);
+	void         start();
 
 private:
-	struct convertcontext_t {
-		std::vector<std::string> outsiders;
-		std::vector<size_t> keep_audio_tids;
-		std::vector<size_t> keep_video_tids;
+	void         do_processall();
+
+	class callback_t {
+		std::function<void(int, int)>    newelement();
+		std::function<void(std::string)> text();
+		std::function<void(void)>        done();
 	};
 	
-	std::function<void(int, int)> progresscallback;
-
-	static void convert(size_t i);
+	callback_t   callback;
+	std::thread  worker;
 	
-	std::thread *t;
+	void         worker_start;
+	bool         callback_worker_is_ending(void*);
 };
 
 #endif
