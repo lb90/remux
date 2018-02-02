@@ -11,7 +11,7 @@
   <object class="GtkImage" id="image_apply">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">gtk-apply</property>
+    <property name="icon_name">dialog-ok</property>
     <property name="use_fallback">True</property>
   </object>
   <object class="GtkImage" id="image_document_properties">
@@ -315,7 +315,7 @@
                 <property name="action_name">win.convert</property>
                 <property name="label" translatable="yes">Converti</property>
                 <property name="use_underline">True</property>
-                <property name="icon_name">gtk-apply</property>
+                <property name="icon_name">dialog-ok</property>
               </object>
               <packing>
                 <property name="expand">False</property>

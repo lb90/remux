@@ -74,6 +74,6 @@ void model_enqueue(size_t i) {
 	gboolean ret = FALSE;
 	ret = gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(liststore), &iter, NULL, n);
 	assert(ret);
-	gtk_list_store_set(liststore, &iter, 0, "gtk-apply", -1);
+	gtk_list_store_set(liststore, &iter, 0, "dialog-ok", -1);
 }
 
