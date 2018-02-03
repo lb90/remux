@@ -93,11 +93,10 @@ int mediaconvert::do_extract(media_t& elem, destitem_t& item,
 	communicate(progressdata(0, 0, nullptr, "estrazione traccia " + item.num));
 
 	argv.emplace_back(app::mkvextract_prog);
-#ifdef _WIN32
 	argv.emplace_back("--command-line-charset");
+#ifdef _WIN32
 	argv.emplace_back("UTF-16");
 #else
-	argv.emplace_back("--command-line-charset");
 	argv.emplace_back("UTF-8");
 #endif
 	argv.emplace_back("--output-charset");
@@ -114,6 +113,7 @@ int mediaconvert::do_extract(media_t& elem, destitem_t& item,
 		elem.err.conv_description = outputstring;
 		return -1;
 	}
+	communicate(progressdata(0, 0, nullptr, "ok!"));
 
 	return 0;
 }
@@ -340,7 +340,7 @@ void mediaconvert::do_processall() {
 	}
 
 	assert(indexv.size() < INT_MAX);
-	communicate(progressdata(int(indexv.size()), int(indexv.size()), nullptr, ""));
+	communicate(progressdata(int(indexv.size()), int(indexv.size()), nullptr, "", true));
 }
 
 int mediaconvert::callback_worker_is_ending(void* self) {
