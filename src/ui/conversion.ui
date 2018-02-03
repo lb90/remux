@@ -2,6 +2,33 @@
 <!-- Generated with glade 3.21.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkImage" id="image_button_done">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">dialog-ok</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_button_pause">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-playback-pause</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_button_start">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-playback-start</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_button_stop">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-playback-stop</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkTextBuffer" id="textbuffer1">
+    <property name="text" translatable="yes">Processing...</property>
+  </object>
   <object class="GtkDialog" id="dialog">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Conversione</property>
@@ -24,8 +51,11 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button_pause">
+                <property name="label" translatable="yes">_Pausa</property>
+                <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="image">image_button_pause</property>
                 <property name="use_underline">True</property>
                 <property name="always_show_image">True</property>
               </object>
@@ -36,10 +66,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button_main">
+              <object class="GtkButton" id="button_close">
+                <property name="label" translatable="yes">_Chiudi</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="image">image_button_stop</property>
                 <property name="use_underline">True</property>
                 <property name="always_show_image">True</property>
               </object>
@@ -66,36 +98,10 @@
             <property name="row_spacing">10</property>
             <property name="column_spacing">5</property>
             <child>
-              <object class="GtkLabel" id="label">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="hexpand">True</property>
-                <attributes>
-                  <attribute name="weight" value="bold"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">0</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkStack" id="stack">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <child>
-                  <object class="GtkImage">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="icon_name">dialog-ok</property>
-                    <property name="use_fallback">True</property>
-                    <property name="icon_size">6</property>
-                  </object>
-                  <packing>
-                    <property name="name">page_success</property>
-                    <property name="title" translatable="yes">page_success</property>
-                  </packing>
-                </child>
+                <property name="transition_type">slide-left</property>
                 <child>
                   <object class="GtkGrid">
                     <property name="visible">True</property>
@@ -106,12 +112,13 @@
                       <object class="GtkImage">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="icon_name">system-run</property>
+                        <property name="pixel_size">55</property>
+                        <property name="icon_name">applications-development</property>
                         <property name="icon_size">6</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
+                        <property name="top_attach">1</property>
                       </packing>
                     </child>
                     <child>
@@ -119,19 +126,84 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
                         <property name="show_text">True</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="hexpand">True</property>
+                        <attributes>
+                          <attribute name="weight" value="bold"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
                         <property name="top_attach">0</property>
+                        <property name="width">2</property>
                       </packing>
                     </child>
                   </object>
                   <packing>
                     <property name="name">page_convert</property>
                     <property name="title" translatable="yes">page_convert</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="pixel_size">68</property>
+                    <property name="icon_name">dialog-ok</property>
+                    <property name="use_fallback">True</property>
+                    <property name="icon_size">6</property>
+                  </object>
+                  <packing>
+                    <property name="name">page_done</property>
+                    <property name="title" translatable="yes">page_done</property>
                     <property name="position">1</property>
                   </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkExpander">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <child>
+                  <object class="GtkScrolledWindow">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="shadow_type">in</property>
+                    <child>
+                      <object class="GtkTextView" id="textview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="vscroll_policy">natural</property>
+                        <property name="editable">False</property>
+                        <property name="cursor_visible">False</property>
+                        <property name="buffer">textbuffer1</property>
+                        <property name="accepts_tab">False</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Dettagli</property>
+                  </object>
                 </child>
               </object>
               <packing>
@@ -151,29 +223,5 @@
     <child>
       <placeholder/>
     </child>
-  </object>
-  <object class="GtkImage" id="image_button_done">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">dialog-ok</property>
-    <property name="use_fallback">True</property>
-  </object>
-  <object class="GtkImage" id="image_button_pause">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">media-playback-pause</property>
-    <property name="use_fallback">True</property>
-  </object>
-  <object class="GtkImage" id="image_button_start">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">media-playback-start</property>
-    <property name="use_fallback">True</property>
-  </object>
-  <object class="GtkImage" id="image_button_stop">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">media-playback-stop</property>
-    <property name="use_fallback">True</property>
   </object>
 </interface>

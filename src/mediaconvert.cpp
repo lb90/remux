@@ -2,11 +2,11 @@
 #include <cassert>
 #include <vector>
 #include <string>
-#include <fstream>
 #include <stdexcept>
-#include <functional>
 #include <thread>
 #include <glib.h>
+#include <glib/gstdio.h>
+#include "glibutil.h"
 #include "app.h"
 #include "model.h"
 #include "jsonargs.h"
@@ -14,16 +14,138 @@
 #include "mediaconvert.h"
 
 mediaconvert::mediaconvert()
- : callback(),
-   worker(nullptr)
+ : progressd(),
+   progressd_lock(),
+   worker(worker_start, this)
  {}
+/*
+int mediaconvert::do_convert_ffmpeg(media_t& elem, desitem_t& item) {
+	std::vector<std::string> argv;
+	
+	argv.emplace_back(app::ffmpeg_prog);
+	argv.emplace_back("-i");
+	argv.emplace_back(tmpextractpath);
+	argv.emplace_back(item.outpath);
+	
+	std::string outputstring;
+	code = launch_process(argv, outputstring);
+	if (code != 0) {
+		elem.err.conv = true;
+		elem.err.conv_description = outputstring;
+		return -1;
+	}
 
+	return 0;
+}
+
+#ifdef _WIN32
+int mediaconvert::do_convert_ac3to(media_t& elem, desitem_t& item) {
+	std::vector<std::string> argv;
+	
+	argv.emplace_back(app::ffmpeg_prog);
+	argv.emplace_back(tmpextractpath);
+	argv.emplace_back(item.outpath);
+	
+	std::string outputstring;
+	code = launch_process(argv, outputstring);
+	if (code != 0) {
+		elem.err.conv = true;
+		elem.err.conv_description = outputstring;
+		return -1;
+	}
+
+	return 0;
+}
+#endif
+
+int mediaconvert::do_convert(media_t& elem, desitem_t& item) {
+	std::string tid_string = std::to_string(item.tid);
+	std::string base = "item_" + tid_string;
+
+	std::string extension;
+	switch (item.codecid) {
+		case codecid_mp3:
+			extension = ".mp3";
+			break;
+		case codecid_ac3:
+			extension = ".ac3";
+			break;
+		case codecid_eac3:
+			extension = ".eac3";
+			break;
+		case codecid_aac:
+			extension = ".aac";
+			break;
+		case codecid_flac:
+			extension = ".flac";
+			break;
+		case codecid_dts:
+			extension = ".dts";
+			break;
+		default:
+			elem.
+			return -1;
+	}
+
+	item.outpath = util_build_filename(elem.outdirectory, base + extension);
+
+#ifdef _WIN32
+	if (item.orig.codecgroup == codecgroup_ac3) { *//*TODO check ac3to can convert to type *//*
+		return do_convert_ac3to(elem, item, );
+	}
+#endif
+	return do_convert_ffmpeg(elem, item);
+}
+
+int mediaconvert::do_extract(media_t& elem, desitem_t& item) {
+	std::vector<std::string> argv;
+
+	argv.emplace_back(app::mkvextract_prog);
+#ifdef _WIN32
+	argv.emplace_back("--command-line-charset");
+	argv.emplace_back("UTF-16");
+#else
+	argv.emplace_back("--command-line-charset");
+	argv.emplace_back("UTF-8");
+#endif
+	argv.emplace_back("--output-charset");
+	argv.emplace_back("UTF-8");
+
+	argv.emplace_back(elem.path);
+	argv.emplace_back("tracks");
+	
+	std::string tmpextractpath = util_build_filename(elem.outdirectory, "tmpextract");
+	argv.emplace_back(tid_string + ":" + tmpextractpath);
+	
+	std::string outputstring;
+	code = launch_process(argv, outputstring);
+	if (code != 0) {
+		elem.err.conv = true;
+		elem.err.conv_description = outputstring;
+		return -1;
+	}
+
+	return 0;
+}
+
+int mediaconvert::check_do_extract_convert(media_t& elem, desitem_t& item) {
+}
+*/
 void mediaconvert::do_process(media_t& elem) {
 	int code;
 	bool bcode;
 	
+	for (const destitem_t& item : elem.destitems) {
+		if (!item.want)
+			continue;
+		
+		//check_do_extract_convert(elem, item);
+	}
+	
 	jsonargs jargs;
 	jargs.push_output(elem.outpath);
+	
+	jargs.push_title(elem.title);
 
 	for (const destitem_t& item : elem.destitems) {
 		if (!item.want)
@@ -135,40 +257,52 @@ void mediaconvert::do_process(media_t& elem) {
 	}
 }
 
+void mediaconvert::communicate(const progressdata_t& commdata) {
+	std::lock_guard<std::mutex> lock(progressd_lock);
+	progressd.emplace_back(commdata);
+}
+
 void mediaconvert::do_processall() {
 	std::vector<size_t> indexv;
 	int code;
 
-	for (size_t i = 0; i < elementv.size(); i++)
-		if (elementv[i].isready)
-			indexv.push_back(i);
-	
-	/*if (indexv.empty())
-		return;*/
-	
-	for (size_t i : indexv) {
+	for (size_t i = 0; i < elementv.size(); i++) {
 		media_t& elem = elementv[i];
+		if (elem.isready && !elem.err.scan)
+			indexv.push_back(i);
+	}
+	
+	for (size_t i = 0; i < indexv.size(); i++) {
+		size_t idx = indexv[i];
+		media_t& elem = elementv[idx];
 		
-		do_process(elementv[i]);
+		progressdata_t commdata;
+		assert(indexv.size() < INT_MAX);
+		commdata.total = int(indexv.size());
+		commdata.n = int(i);
+		commdata.elem = &elem;
 		
-		/* cleanup temporary files */
-		/*for (const destitem_t& item : elem.destitems) {
+		communicate(commdata);
+		do_process(elem);
+		
+		for (const destitem_t& item : elem.destitems) {
 			if (!item.outpath.empty())
 				g_remove(item.outpath.c_str());
-		}*/
-		
-		//g_idle_add(util_callable_call, &progresscallcallback);
+		}
 	}
+	
+	progressdata_t commdata;
+	assert(indexv.size() < INT_MAX);
+	commdata.total = int(indexv.size());
+	commdata.n = int(indexv.size());
+	commdata.elem = nullptr;
+		
+	communicate(commdata);
 }
 
 int mediaconvert::callback_worker_is_ending(void* self) {
 	mediaconvert *inst = (mediaconvert*) self;
-
-	assert(inst->worker != nullptr);
-	inst->worker->join();
-	delete inst->worker;
-	inst->worker = nullptr;
-	
+	inst->worker.join();
 	return FALSE;
 }
 
@@ -177,11 +311,5 @@ void mediaconvert::worker_start(void *self) {
 	inst->do_processall();
 	
 	g_idle_add(callback_worker_is_ending, self);
-}
-
-void mediaconvert::start() {
-	if (worker != nullptr)
-		throw std::logic_error("convert process already started");
-	worker = new std::thread(worker_start, this);
 }
 

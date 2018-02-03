@@ -104,6 +104,11 @@ void jsonargs::push_button_tid(int tid) {
 	args.emplace_back(std::to_string(tid));
 }
 
+void jsonargs::push_title(const std::string& title) {
+	args.emplace_back("--title");
+	args.emplace_back(title);
+}
+
 void jsonargs::push_output(const std::string& output) {
 	args.emplace_back("-o");
 	args.emplace_back(output);

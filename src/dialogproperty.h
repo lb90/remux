@@ -24,8 +24,8 @@ private:
 	
 	GtkWidget  *label_name;
 	GtkWidget  *check_convert_ac3ita_aac;
-	GtkWidget  *check_keep_ac3;
-	GtkWidget  *check_keep_dolby;
+	GtkWidget  *check_remove_ac3;
+	GtkWidget  *check_remove_dolby;
 	GtkWidget  *treeview_item;
 	GtkWidget  *entry_outname;
 	
@@ -33,6 +33,7 @@ private:
 	
 	GtkWidget  *button_enqueue;
 	GtkWidget  *button_skip;
+	GtkWidget  *button_op;
 	
 	int      curn;
 	media_t *curelem;
@@ -74,16 +75,16 @@ private:
 	void self_deleter(GtkDialog *dialog, gpointer self);
 	
 	static
-	void cb_keep_ac3(GtkToggleButton* toggle, gpointer self);
-	
-	static
-	void cb_keep_dolby(GtkToggleButton* toggle, gpointer self);
-	
-	static
 	void cb_enqueue(GtkButton *, gpointer self);
 	
 	static
 	void cb_skip(GtkButton *, gpointer self);
+	
+	static
+	void cb_op(GtkButton *, gpointer self);
+	
+	static
+	void cb_reset(GtkButton *, gpointer self);
 	
 	static
 	void

@@ -99,11 +99,19 @@ void internal_fill_element(media_t& elem) {
 			else if (item.codecname == "EAC-3")
 				item.codecid = codecid_ac3;
 			else if (item.codecname == "DTS") /*TODO*/
-				item.codecid = codecid_dolby;
-			else if (item.codecname == "AAC")
+				item.codecid = codecid_dts;
+			else if (item.codecname == "AAC") /*TODO*/
 				item.codecid = codecid_aac;
+			else if (item.codecname == "TRUE-HD") /*TODO*/
+				item.codecid = codecid_truehd;
+			else if (item.codecname == "MP2") /*TODO*/
+				item.codecid = codecid_mp2;
+			else if (item.codecname == "MP3") /*TODO*/
+				item.codecid = codecid_mp3;
+			else if (item.codecname == "FLAC") /*TODO*/
+				item.codecid = codecid_flac;
 			else
-				item.codecid = codecid_unknown;
+				item.codecid = codecid_other;
 			
 			item.isdefault = trackpt.get("properties.default_track", true); /*TODO*/
 			item.isforced  = trackpt.get("properties.forced_track", true); /*TODO*/

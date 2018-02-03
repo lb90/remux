@@ -2,28 +2,32 @@
 #define REMUX_MEDIACONVERT_H
 
 #include <string>
+#include <deque>
 #include <thread>
-#include <functional>
+#include <mutex>
 #include "elements.h"
 
 class mediaconvert {
 public:
-	class callback_t {
-		std::function<void(int, int)>    newelement();
-		std::function<void(std::string)> text();
-		std::function<void(void)>        done();
+	struct progressdata_t {
+		int         total;
+		int         n;
+		media_t    *elem;
+		std::string text;
 	};
-	//explicit     mediaconvert(const callback_t& callback);
+
 	explicit     mediaconvert();
 	void         start();
+
+	std::deque<progressdata_t> progressd;
+	std::mutex                 progressd_lock;
+
 private:
 	void         do_process(media_t& elem);
-public:
 	void         do_processall();
-private:
+	void         communicate(const progressdata_t& commdata);
 
-	callback_t   callback;
-	std::thread *worker;
+	std::thread  worker;
 	
 	static void  worker_start(void*);
 	static int   callback_worker_is_ending(void*);

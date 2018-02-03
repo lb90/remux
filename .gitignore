@@ -2,6 +2,7 @@
 build/
 samples/
 backup/
+dist/installer/data/
 
 *.ui~
 

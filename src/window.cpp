@@ -56,14 +56,10 @@ void cb_win_remove(GSimpleAction*, GVariant*, gpointer userdata) {
 }
 
 void cb_win_convert(GSimpleAction*, GVariant*, gpointer userdata) {
-	//GtkWindow *window = GTK_WINDOW(userdata);
+	GtkWindow *window = GTK_WINDOW(userdata);
 
-	//dialogconversion_t *dialog = new dialogconversion_t(window);
-	//dialog->show();
-	mediaconvert mc;
-	mc.do_processall();
-	if (elementv[0].err.conv)
-		g_print("%s\n", elementv[0].err.conv_description.c_str());
+	dialogconversion *dialog = new dialogconversion(window);
+	dialog->show();
 }
 
 void cb_win_showproperty(GSimpleAction*, GVariant*, gpointer userdata) {

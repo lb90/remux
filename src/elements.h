@@ -15,8 +15,16 @@ enum itemtype_t {
 enum codecid_t {
 	codecid_unknown = 0,
 	codecid_ac3,
-	codecid_dolby,
-	codecid_aac
+	codecid_eac3,
+	codecid_dts,
+	codecid_truehd,
+	codecid_aac,
+	codecid_mp2,
+	codecid_mp3,
+	codecid_vorbis,
+	codecid_flac,
+	codecid_pcm,
+	codecid_other
 };
 struct coreitem_t {
 	explicit coreitem_t();
@@ -64,14 +72,6 @@ struct err_t {
 		return scan || conv;
 	}
 };
-struct opt_t {
-	explicit opt_t();
-
-	bool ok_convert_ac3ita_aac;
-	bool want_convert_ac3ita_aac;
-	bool want_keep_ac3;
-	bool want_keep_dolby;
-};
 struct media_t {
 	explicit media_t();
 	
@@ -87,8 +87,7 @@ struct media_t {
 	std::string outpath;
 	
 	std::string title;
-	
-	opt_t       opt;
+
 	std::vector<origitem_t>  origitems;
 	std::vector<destitem_t>  destitems;
 	boost::property_tree::ptree pt;

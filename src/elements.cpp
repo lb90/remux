@@ -12,18 +12,10 @@ media_t::media_t()
    outdirectory(),
    outpath(),
    title(),
-   opt(),
    origitems(),
    destitems(),
    pt(),
    err()
- {}
-
-opt_t::opt_t()
- : ok_convert_ac3ita_aac(false),
-   want_convert_ac3ita_aac(false),
-   want_keep_ac3(false),
-   want_keep_dolby(false)
  {}
 
 err_t::err_t()

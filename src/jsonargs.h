@@ -9,6 +9,9 @@ class jsonargs {
 	std::vector<std::string> args;
 
 public:
+	void push_output(const std::string& output);
+	void push_title(const std::string& title);
+
 	void push_isdefault(bool isdefault);
 	void push_isforced(bool isforced);
 	void push_trackname(const std::string& trackname);
@@ -25,8 +28,6 @@ public:
 	void push_audio_tid(int tid);
 	void push_subtitle_tid(int tid);
 	void push_button_tid(int tid);
-	
-	void push_output(const std::string& output);
 	
 	void savejson(std::stringstream& sstream);
 };
