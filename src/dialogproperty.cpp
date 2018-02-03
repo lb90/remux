@@ -345,7 +345,29 @@ void dialogproperty_t::cb_edited_codec(GtkCellRendererText *ren,
 		assert(n >= 0);
 		assert(size_t(n) < inst->curelem->destitems.size());
 		
-		inst->curelem->destitems[n].codecname = new_text;
+		std::string newtext = new_text;
+		if (newtext == "AC-3")
+			inst->curelem->destitems[n].codecid = codecid_ac3;
+		else if (newtext == "EAC-3")
+			inst->curelem->destitems[n].codecid = codecid_eac3;
+		else if (newtext == "DTS")
+			inst->curelem->destitems[n].codecid = codecid_dts;
+		else if (newtext == "TrueHD")
+			inst->curelem->destitems[n].codecid = codecid_truehd;
+		else if (newtext == "AAC")
+			inst->curelem->destitems[n].codecid = codecid_aac;
+		else if (newtext == "MP2")
+			inst->curelem->destitems[n].codecid = codecid_mp2;
+		else if (newtext == "MP3")
+			inst->curelem->destitems[n].codecid = codecid_mp3;
+		else if (newtext == "Vorbis")
+			inst->curelem->destitems[n].codecid = codecid_vorbis;
+		else if (newtext == "FLAC")
+			inst->curelem->destitems[n].codecid = codecid_flac;
+		else if (newtext == "PCM")
+			inst->curelem->destitems[n].codecid = codecid_pcm;
+		else
+			inst->curelem->destitems[n].codecid = codecid_other;
 
 		gtk_tree_path_free(path);
 		path = NULL;
@@ -353,9 +375,9 @@ void dialogproperty_t::cb_edited_codec(GtkCellRendererText *ren,
 }
 
 void dialogproperty_t::cb_edited_language(GtkCellRendererText *ren,
-                                         gchar               *pathstr,
-                                         gchar               *new_text,
-                                         gpointer             self)
+                                          gchar               *pathstr,
+                                          gchar               *new_text,
+                                          gpointer             self)
 {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
 	GtkTreePath *path;
@@ -440,13 +462,8 @@ void dialogproperty_t::cell_data_number(GtkTreeViewColumn *,
 	                                                 iter);
 	gint n = GPOINTER_TO_INT(it.user_data);
 
-	dialogproperty_t *self = (dialogproperty_t*) inst;
-	const destitem_t& item = self->curelem->destitems[n];
-	g_object_set(ren, "text", item.num.c_str(), NULL);
-	if (item.num != item.orig.num)
-		g_object_set(ren, "foreground-set", TRUE, NULL);
-	else
-		g_object_set(ren, "foreground-set", FALSE, NULL);
+	g_object_set(ren, "text", std::to_string(n+1).c_str(), NULL);
+
 	internal_cell_color(ren, n);
 }
 
@@ -463,11 +480,12 @@ void dialogproperty_t::cell_data_name(GtkTreeViewColumn *,
 	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	const destitem_t& item = self->curelem->destitems[n];
-	g_object_set(ren, "text", item.name.c_str(), NULL);
+	
+	std::string text = item.name;
 	if (item.name != item.orig.name)
-		g_object_set(ren, "foreground-set", TRUE, NULL);
-	else
-		g_object_set(ren, "foreground-set", FALSE, NULL);
+		text = "<span foreground=\"#a40000\">" + text + "</span>";
+	g_object_set(ren, "markup", text.c_str(), NULL);
+
 	internal_cell_color(ren, n);
 }
 
@@ -537,7 +555,7 @@ void dialogproperty_t::cell_data_codec(GtkTreeViewColumn *,
 			text = "TrueHD";
 			break;
 		case codecid_aac:
-			text = "AAC;
+			text = "AAC";
 			break;
 		case codecid_mp2:
 			text = "MP2";
@@ -559,7 +577,7 @@ void dialogproperty_t::cell_data_codec(GtkTreeViewColumn *,
 	}
 
 	if (item.codecid != item.orig.codecid)
-		text = "<span foreground=\"red\">" + text + "</span>"
+		text = "<span foreground=\"#a40000\">" + text + "</span>";
 	
 	g_object_set(ren, "markup", text.c_str(), NULL);
 
@@ -579,11 +597,14 @@ void dialogproperty_t::cell_data_language(GtkTreeViewColumn *,
 	gint n = GPOINTER_TO_INT(it.user_data);
 	dialogproperty_t *self = (dialogproperty_t*) inst;
 	const destitem_t& item = self->curelem->destitems[n];
-	g_object_set(ren, "text", item.lang.c_str(), NULL);
+
+	std::string text;
+	text = item.lang;
 	if (item.lang != item.orig.lang)
-		g_object_set(ren, "foreground-set", TRUE, NULL);
-	else
-		g_object_set(ren, "foreground-set", FALSE, NULL);
+		text = "<span foreground=\"#a40000\">" + text + "</span>";
+	
+	g_object_set(ren, "markup", text.c_str(), NULL);
+	
 	internal_cell_color(ren, n);
 }
 

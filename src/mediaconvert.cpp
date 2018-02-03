@@ -18,29 +18,41 @@ mediaconvert::mediaconvert()
    progressd_lock(),
    worker(worker_start, this)
  {}
-/*
-int mediaconvert::do_convert_ffmpeg(media_t& elem, desitem_t& item) {
+
+int mediaconvert::do_convert_ffmpeg(media_t& elem, destitem_t& item,
+                                   const std::string& extractedpath,
+                                   const std::string& convertedpath)
+{
 	std::vector<std::string> argv;
+	
+	communicate(progressdata(0, 0, nullptr, "conversione con ffmpeg..."));
 	
 	argv.emplace_back(app::ffmpeg_prog);
 	argv.emplace_back("-i");
-	argv.emplace_back(tmpextractpath);
-	argv.emplace_back(item.outpath);
+	argv.emplace_back(extractedpath);
+	argv.emplace_back(convertedpath);
 	
 	std::string outputstring;
 	code = launch_process(argv, outputstring);
 	if (code != 0) {
 		elem.err.conv = true;
 		elem.err.conv_description = outputstring;
+		communicate(progressdata(0, 0, nullptr, outputstring));
 		return -1;
 	}
+	communicate(progressdata(0, 0, nullptr, "ok!"));
 
 	return 0;
 }
 
 #ifdef _WIN32
-int mediaconvert::do_convert_ac3to(media_t& elem, desitem_t& item) {
+int mediaconvert::do_convert_ac3to(media_t& elem, destitem_t& item,
+                                   const std::string& extractedpath,
+                                   const std::string& convertedpath)
+{
 	std::vector<std::string> argv;
+	
+	communicate(progressdata(0, 0, nullptr, "conversione con eac3to..."));
 	
 	argv.emplace_back(app::ffmpeg_prog);
 	argv.emplace_back(tmpextractpath);
@@ -51,54 +63,69 @@ int mediaconvert::do_convert_ac3to(media_t& elem, desitem_t& item) {
 	if (code != 0) {
 		elem.err.conv = true;
 		elem.err.conv_description = outputstring;
+		communicate(progressdata(0, 0, nullptr, outputstring));
 		return -1;
 	}
+	communicate(progressdata(0, 0, nullptr, "ok!"));
 
 	return 0;
 }
 #endif
 
-int mediaconvert::do_convert(media_t& elem, desitem_t& item) {
+int mediaconvert::do_convert(media_t& elem, destitem_t& item) {
 	std::string tid_string = std::to_string(item.tid);
 	std::string base = "item_" + tid_string;
 
 	std::string extension;
 	switch (item.codecid) {
-		case codecid_mp3:
-			extension = ".mp3";
-			break;
 		case codecid_ac3:
 			extension = ".ac3";
 			break;
 		case codecid_eac3:
 			extension = ".eac3";
 			break;
+		case codecid_dts:
+			extension = ".dts";
+			break;
+		case codecid_truehd:
+			extension = ".thd";
+			break;
 		case codecid_aac:
 			extension = ".aac";
+			break;
+		case codecid_mp2:
+			extension = ".mp2";
+			break;
+		case codecid_mp3:
+			extension = ".mp3";
+			break;
+		case codecid_vorbis:
+			extension = ".ogg";
 			break;
 		case codecid_flac:
 			extension = ".flac";
 			break;
-		case codecid_dts:
-			extension = ".dts";
+		case codecid_pcm:
+			extension = ".wav";
 			break;
 		default:
-			elem.
 			return -1;
 	}
 
 	item.outpath = util_build_filename(elem.outdirectory, base + extension);
 
 #ifdef _WIN32
-	if (item.orig.codecgroup == codecgroup_ac3) { *//*TODO check ac3to can convert to type *//*
-		return do_convert_ac3to(elem, item, );
+	if (item.orig.codecid == codecid_ac3 || item.orig.codecid == codecid_eac3) { /*TODO check ac3to can convert to type */
+		return do_convert_ac3to(elem, item);
 	}
 #endif
 	return do_convert_ffmpeg(elem, item);
 }
 
-int mediaconvert::do_extract(media_t& elem, desitem_t& item) {
+int mediaconvert::do_extract(media_t& elem, destitem_t& item) {
 	std::vector<std::string> argv;
+	
+	communicate(progressdata(0, 0, nullptr, "estrazione traccia " + item.num));
 
 	argv.emplace_back(app::mkvextract_prog);
 #ifdef _WIN32
@@ -114,7 +141,7 @@ int mediaconvert::do_extract(media_t& elem, desitem_t& item) {
 	argv.emplace_back(elem.path);
 	argv.emplace_back("tracks");
 	
-	std::string tmpextractpath = util_build_filename(elem.outdirectory, "tmpextract");
+	std::string tmpextractpath = util_build_filename(elem.outdirectory, "tmpextract"); /*TODO*/
 	argv.emplace_back(tid_string + ":" + tmpextractpath);
 	
 	std::string outputstring;
@@ -128,9 +155,19 @@ int mediaconvert::do_extract(media_t& elem, desitem_t& item) {
 	return 0;
 }
 
-int mediaconvert::check_do_extract_convert(media_t& elem, desitem_t& item) {
+int mediaconvert::check_do_extract_convert(media_t& elem, destitem_t& item) {
+	int code;
+
+	if (item.codecid != item.orig.codecid) {
+		code = do_extract(elem, item);
+		if (code != 0)
+			return -1;
+		code = do_convert(elem, item);
+		if (code != 0)
+			return -1;
+	}
 }
-*/
+
 void mediaconvert::do_process(media_t& elem) {
 	int code;
 	bool bcode;
@@ -139,7 +176,7 @@ void mediaconvert::do_process(media_t& elem) {
 		if (!item.want)
 			continue;
 		
-		//check_do_extract_convert(elem, item);
+		check_do_extract_convert(elem, item);
 	}
 	
 	jsonargs jargs;
@@ -217,8 +254,9 @@ void mediaconvert::do_process(media_t& elem) {
 	GError *errspec = NULL;
 	
 	jargs.savejson(sstream);
-	bcode = g_file_set_contents("/tmp/remuxmkvargs.json", /*TODO*/
-	                            sstream.str().c_str(), /*TODO*/
+	std::string jsonpath = util_build_filename(g_get_tmp_dir(), "remuxmkvargs.json"); /*TODO free?*/
+	bcode = g_file_set_contents(jsonpath.c_str(),
+	                            sstream.str().c_str(),
 	                            -1,
 	                            &errspec);
 	if (bcode == FALSE) {
@@ -241,7 +279,7 @@ void mediaconvert::do_process(media_t& elem) {
 	argv.push_back("--output-charset");
 	argv.push_back("UTF-8");
 #endif
-	argv.push_back("@/tmp/remuxmkvargs.json"); /*TODO*/
+	argv.push_back("@" + jsonpath);
 	
 	std::string outputstr;
 	code = launch_process(argv, outputstr, false);
@@ -276,13 +314,9 @@ void mediaconvert::do_processall() {
 		size_t idx = indexv[i];
 		media_t& elem = elementv[idx];
 		
-		progressdata_t commdata;
 		assert(indexv.size() < INT_MAX);
-		commdata.total = int(indexv.size());
-		commdata.n = int(i);
-		commdata.elem = &elem;
+		communicate(progressdata_t(int(indexv.size(), int(i), &elem, ""));
 		
-		communicate(commdata);
 		do_process(elem);
 		
 		for (const destitem_t& item : elem.destitems) {
@@ -290,14 +324,9 @@ void mediaconvert::do_processall() {
 				g_remove(item.outpath.c_str());
 		}
 	}
-	
-	progressdata_t commdata;
+
 	assert(indexv.size() < INT_MAX);
-	commdata.total = int(indexv.size());
-	commdata.n = int(indexv.size());
-	commdata.elem = nullptr;
-		
-	communicate(commdata);
+	communicate(progressdata(int(indexv.size()), int(indexv.size()), nullptr, ""));
 }
 
 int mediaconvert::callback_worker_is_ending(void* self) {

@@ -9,7 +9,17 @@
 
 class mediaconvert {
 public:
-	struct progressdata_t {
+	struct progressdata {
+		progressdata(int total,
+		             int n,
+		             media_t* elem,
+		             std::string& text)
+		 : total(total),
+		   n(n),
+		   elem(elem),
+		   text(text)
+		 { }
+
 		int         total;
 		int         n;
 		media_t    *elem;
@@ -19,13 +29,13 @@ public:
 	explicit     mediaconvert();
 	void         start();
 
-	std::deque<progressdata_t> progressd;
-	std::mutex                 progressd_lock;
+	std::deque<progressdata> progressd;
+	std::mutex               progressd_lock;
 
 private:
 	void         do_process(media_t& elem);
 	void         do_processall();
-	void         communicate(const progressdata_t& commdata);
+	void         communicate(const progressdata& commdata);
 
 	std::thread  worker;
 	
