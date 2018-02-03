@@ -67,7 +67,7 @@ int dialogconversion::check_do_communication(gpointer self) {
 		gtk_label_set_text(GTK_LABEL(inst->label), commdata.elem->name.c_str());
 		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(inst->progressbar), float(commdata.n) / float(commdata.total));
 	}
-	else {
+	if (commdata.done) {
 		inst->done();
 		return FALSE;
 	}

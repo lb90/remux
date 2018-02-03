@@ -55,7 +55,7 @@ int app::init() {
 			mkvtoolnix_dir = intree;
 	}
 	if (set_ac3to.empty()) {
-		std::string intree = util_build_filename(install_dir, "ac3to");
+		std::string intree = util_build_filename(install_dir, "eac3to");
 		if (g_file_test(intree.c_str(), G_FILE_TEST_IS_DIR))
 			ac3to_dir = intree;
 	}
@@ -82,13 +82,13 @@ int app::init() {
 	if (ffmpeg_dir.empty())
 		ffmpeg_prog = "ffmpeg";
 	else
-		ffmpeg_prog = util_build_filename(mkvtoolnix_dir, "ffmpeg");
+		ffmpeg_prog = util_build_filename(ffmpeg_dir, "ffmpeg");
 	
 	#ifdef _WIN32
 	if (ac3to_dir.empty())
-		ac3to_prog = "ac3to";
+		ac3to_prog = "eac3to";
 	else
-		ac3to_prog = util_build_filename(mkvtoolnix_dir, "ac3to");
+		ac3to_prog = util_build_filename(ac3to_dir, "eac3to");
 	
 	mkvinfo_prog += ".exe";
 	mkvextract_prog += ".exe";

@@ -24,6 +24,7 @@ int mediaconvert::do_convert_ffmpeg(media_t& elem, destitem_t& item,
                                    const std::string& convertedpath)
 {
 	std::vector<std::string> argv;
+	int code;
 	
 	communicate(progressdata(0, 0, nullptr, "conversione con ffmpeg..."));
 	
@@ -51,6 +52,7 @@ int mediaconvert::do_convert_ac3to(media_t& elem, destitem_t& item,
                                    const std::string& convertedpath)
 {
 	std::vector<std::string> argv;
+	int code;
 	
 	communicate(progressdata(0, 0, nullptr, "conversione con eac3to..."));
 	
@@ -72,11 +74,55 @@ int mediaconvert::do_convert_ac3to(media_t& elem, destitem_t& item,
 }
 #endif
 
-int mediaconvert::do_convert(media_t& elem, destitem_t& item) {
-	std::string tid_string = std::to_string(item.tid);
-	std::string base = "item_" + tid_string;
+int mediaconvert::do_convert(media_t& elem, destitem_t& item,
+                             const std::string& extractedpath,
+                             const std::string& convertedpath) {
+#ifdef _WIN32
+	if (item.orig.codecid == codecid_ac3 || item.orig.codecid == codecid_eac3) { /*TODO check ac3to can convert to type */
+		return do_convert_ac3to(elem, item, extractedpath, convertedpath);
+	}
+#endif
+	return do_convert_ffmpeg(elem, item, extractedpath, convertedpath);
+}
 
+int mediaconvert::do_extract(media_t& elem, destitem_t& item,
+                             const std::string& extractedpath) {
+	std::vector<std::string> argv;
+	int code;
+	
+	communicate(progressdata(0, 0, nullptr, "estrazione traccia " + item.num));
+
+	argv.emplace_back(app::mkvextract_prog);
+#ifdef _WIN32
+	argv.emplace_back("--command-line-charset");
+	argv.emplace_back("UTF-16");
+#else
+	argv.emplace_back("--command-line-charset");
+	argv.emplace_back("UTF-8");
+#endif
+	argv.emplace_back("--output-charset");
+	argv.emplace_back("UTF-8");
+
+	argv.emplace_back(elem.path);
+	argv.emplace_back("tracks");
+	argv.emplace_back(std::to_string(item.tid)+":"+extractedpath);
+	
+	std::string outputstring;
+	code = launch_process(argv, outputstring);
+	if (code != 0) {
+		elem.err.conv = true;
+		elem.err.conv_description = outputstring;
+		return -1;
+	}
+
+	return 0;
+}
+
+int mediaconvert::do_extract_convert(media_t& elem, destitem_t& item) {
+	int code;
+	
 	std::string extension;
+
 	switch (item.codecid) {
 		case codecid_ac3:
 			extension = ".ac3";
@@ -112,71 +158,40 @@ int mediaconvert::do_convert(media_t& elem, destitem_t& item) {
 			return -1;
 	}
 
-	item.outpath = util_build_filename(elem.outdirectory, base + extension);
-
-#ifdef _WIN32
-	if (item.orig.codecid == codecid_ac3 || item.orig.codecid == codecid_eac3) { /*TODO check ac3to can convert to type */
-		return do_convert_ac3to(elem, item);
-	}
-#endif
-	return do_convert_ffmpeg(elem, item);
-}
-
-int mediaconvert::do_extract(media_t& elem, destitem_t& item) {
-	std::vector<std::string> argv;
+	std::string extractedpath = util_build_filename(elem.outdirectory, "tmpextract"); /*TODO*/
+	std::string convertedpath = util_build_filename(elem.outdirectory, "track_" + std::to_string(item.tid) + extension);
 	
-	communicate(progressdata(0, 0, nullptr, "estrazione traccia " + item.num));
-
-	argv.emplace_back(app::mkvextract_prog);
-#ifdef _WIN32
-	argv.emplace_back("--command-line-charset");
-	argv.emplace_back("UTF-16");
-#else
-	argv.emplace_back("--command-line-charset");
-	argv.emplace_back("UTF-8");
-#endif
-	argv.emplace_back("--output-charset");
-	argv.emplace_back("UTF-8");
-
-	argv.emplace_back(elem.path);
-	argv.emplace_back("tracks");
-	
-	std::string tmpextractpath = util_build_filename(elem.outdirectory, "tmpextract"); /*TODO*/
-	argv.emplace_back(tid_string + ":" + tmpextractpath);
-	
-	std::string outputstring;
-	code = launch_process(argv, outputstring);
-	if (code != 0) {
-		elem.err.conv = true;
-		elem.err.conv_description = outputstring;
+	code = do_extract(elem, item, extractedpath);
+	if (code != 0)
 		return -1;
-	}
-
+	code = do_convert(elem, item, extractedpath, convertedpath);
+	g_remove(extractedpath.c_str());
+	if (code != 0)
+		return -1;
+		
+	item.outpath = convertedpath;
+	
 	return 0;
 }
 
 int mediaconvert::check_do_extract_convert(media_t& elem, destitem_t& item) {
-	int code;
-
-	if (item.codecid != item.orig.codecid) {
-		code = do_extract(elem, item);
-		if (code != 0)
-			return -1;
-		code = do_convert(elem, item);
-		if (code != 0)
-			return -1;
-	}
+	if (item.codecid != item.orig.codecid)
+		return do_extract_convert(elem, item);
+	
+	return 0;
 }
 
 void mediaconvert::do_process(media_t& elem) {
 	int code;
 	bool bcode;
 	
-	for (const destitem_t& item : elem.destitems) {
+	for (destitem_t& item : elem.destitems) {
 		if (!item.want)
 			continue;
 		
-		check_do_extract_convert(elem, item);
+		code = check_do_extract_convert(elem, item);
+		if (code != 0)
+			return;
 	}
 	
 	jsonargs jargs;
@@ -295,14 +310,13 @@ void mediaconvert::do_process(media_t& elem) {
 	}
 }
 
-void mediaconvert::communicate(const progressdata_t& commdata) {
+void mediaconvert::communicate(const progressdata& commdata) {
 	std::lock_guard<std::mutex> lock(progressd_lock);
 	progressd.emplace_back(commdata);
 }
 
 void mediaconvert::do_processall() {
 	std::vector<size_t> indexv;
-	int code;
 
 	for (size_t i = 0; i < elementv.size(); i++) {
 		media_t& elem = elementv[i];
@@ -315,7 +329,7 @@ void mediaconvert::do_processall() {
 		media_t& elem = elementv[idx];
 		
 		assert(indexv.size() < INT_MAX);
-		communicate(progressdata_t(int(indexv.size(), int(i), &elem, ""));
+		communicate(progressdata(int(indexv.size()), int(i), &elem, ""));
 		
 		do_process(elem);
 		
