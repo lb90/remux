@@ -9,17 +9,13 @@
 #include "window.h"
 #include "app.h"
 
-#ifdef _WIN32
 std::string app::install_dir;
-std::string app::ac3to_dir;
-std::string app::ac3to_prog;
-#endif
+
 std::string app::mkvtoolnix_dir;
-std::string app::mkvinfo_prog;
+std::string app::ffmpeg_dir;
+
 std::string app::mkvextract_prog;
 std::string app::mkvmerge_prog;
-std::string app::mkvpropedit_prog;
-std::string app::ffmpeg_dir;
 std::string app::ffmpeg_prog;
 
 void app::scandirectory(const char *directoryname) {
@@ -60,16 +56,12 @@ int app::init() {
 #endif
 	
 	if (mkvtoolnix_dir.empty()) {
-		mkvinfo_prog = "mkvinfo";
 		mkvextract_prog = "mkvextract";
 		mkvmerge_prog = "mkvmerge";
-		mkvpropedit_prog = "mkvpropedit";
 	}
 	else {
-		mkvinfo_prog = util_build_filename(mkvtoolnix_dir, "mkvinfo");
 		mkvextract_prog = util_build_filename(mkvtoolnix_dir, "mkvextract");
 		mkvmerge_prog = util_build_filename(mkvtoolnix_dir, "mkvmerge");
-		mkvpropedit_prog = util_build_filename(mkvtoolnix_dir, "mkvpropedit");
 	}
 	
 	if (ffmpeg_dir.empty())
@@ -78,10 +70,8 @@ int app::init() {
 		ffmpeg_prog = util_build_filename(ffmpeg_dir, "ffmpeg");
 	
 #ifdef _WIN32
-	mkvinfo_prog += ".exe";
 	mkvextract_prog += ".exe";
 	mkvmerge_prog += ".exe";
-	mkvpropedit_prog += ".exe";
 	ffmpeg_prog += ".exe";
 #endif
 

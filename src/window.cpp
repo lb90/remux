@@ -87,13 +87,24 @@ void cb_win_showsettings(GSimpleAction*, GVariant*, gpointer userdata) {
 }
 
 void cb_win_showabout(GSimpleAction*, GVariant*, gpointer userdata) {
-	GtkWidget *window = (GtkWidget *) userdata;
+	GtkWindow *window = GTK_WINDOW(userdata);
+	GtkAboutDialog *dialog;
 	
-	gtk_show_about_dialog(GTK_WINDOW(window),
-	                      "program-name", "Remux",
-	                      "version",      REMUX_VERSION,
-	                      "website",      "github.com/lb90",
-	                      NULL);
+	dialog = GTK_ABOUT_DIALOG(gtk_about_dialog_new());
+	
+	gtk_about_dialog_set_program_name(dialog, "Remux");
+	gtk_about_dialog_set_version(dialog, REMUX_VERSION);
+	gtk_about_dialog_set_website_label(dialog, "GitHub");
+	gtk_about_dialog_set_website(dialog, "http://github.com/lb90");
+	const char* authors[] = {
+		"Luca Bacci",
+		NULL
+	};
+	gtk_about_dialog_set_authors(dialog, authors);
+	gtk_about_dialog_set_logo_icon_name(dialog, "audio-x-generic");
+	
+	gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
+	gtk_widget_show(GTK_WIDGET(dialog));
 }
 
 GtkWindow *get_window(GtkWindow *registerw) {

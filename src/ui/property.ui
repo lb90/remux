@@ -422,6 +422,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Sposta traccia sopra</property>
                                     <property name="image">image_go_up</property>
                                   </object>
                                   <packing>
@@ -434,6 +435,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <property name="tooltip_text" translatable="yes">Sposta traccia sotto</property>
                                     <property name="image">image_go_down</property>
                                   </object>
                                   <packing>
@@ -452,6 +454,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Reset allo stato orginale</property>
                                 <property name="valign">end</property>
                                 <property name="vexpand">True</property>
                                 <property name="image">image_reset</property>
