@@ -33,7 +33,11 @@ void get_stdout_sstream(GSubprocess *subproc, std::stringstream& sstream) {
 	}
 }
 
-int launch_process(const std::vector<std::string>& argv, std::string& outstring, bool want_stdout) {
+int launch_process(const std::vector<std::string>& argv,
+                   std::string& outstring,
+                   std::string& errstring,
+                   int *status)
+{
 	GSubprocess *subproc = NULL;
 	GError      *errspec = NULL;
 	int          ret = 0;
@@ -64,14 +68,13 @@ int launch_process(const std::vector<std::string>& argv, std::string& outstring,
 			std::stringstream proc_stdout;
 
 			exitstatus = g_subprocess_get_exit_status(subproc);
+			if (status)
+				*status = exitstatus;
+
+			get_stdout_sstream(subproc, proc_stdout);
+			outstring += proc_stdout.str();
 			
-			if (exitstatus != 0 || want_stdout) {
-				get_stdout_sstream(subproc, proc_stdout);
-				outstring += proc_stdout.str();
-			}
-			
-			if (exitstatus != 0)
-				ret = -1;
+			ret = 0;
 		}
 	}
 	

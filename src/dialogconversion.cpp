@@ -102,35 +102,15 @@ void dialogconversion::cb_want_close(GtkButton *, gpointer self) {
 void dialogconversion::cb_want_pause(GtkButton *, gpointer self) {
 }
 
-/*
-void dialogconversion::setelement(int n) {
-	assert(n >= 0);
-	assert(size_t(n) < elementv.size());
-	
-	const media_t& elem = elementv[n];
-	
-	gtk_label_set_text(GTK_LABEL(label), elem.name.c_str());
-}
-
-void dialogconversion::setprogress(float fraction) {
-	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(progressbar), fraction);
-}
-
-void dialogconversion_t::setdone() {
-	state = state_done;
-
-	gtk_stack_set_visible_child_name(GTK_STACK(stack), "page_success");
-	
-	gtk_widget_set_visible(button_pause, FALSE);
-	gtk_button_set_text(GTK_BUTTON(button), "_Esci");
-	gtk_button_set_image(GTK_BUTTON(button), image_button_done);
-	
-}
-
-void dialogconversion::dopause() {
-}
-*/
 dialogconversion::~dialogconversion() {
+	if (mc) {
+		/* signal want to end */
+		/* mc->cleanup(); */
+		mc->worker.join();
+		delete mc;
+		mc = nullptr;
+	}
+
 	g_object_unref(builder);
 }
 

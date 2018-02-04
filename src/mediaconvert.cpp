@@ -29,16 +29,29 @@ int mediaconvert::do_convert_ffmpeg(media_t& elem, destitem_t& item,
 	communicate(progressdata(0, 0, nullptr, "conversione con ffmpeg..."));
 	
 	argv.emplace_back(app::ffmpeg_prog);
+	argv.emplace_back("-y"); /* overwrite existing files (always say yes) */
 	argv.emplace_back("-i");
-	argv.emplace_back(extractedpath);
-	argv.emplace_back(convertedpath);
+	argv.emplace_back("\""+extractedpath+"\""); /*TODO for unix*/
+	argv.emplace_back("\""convertedpath"\"");
 	
 	std::string outputstring;
-	code = launch_process(argv, outputstring);
+	int status = 0;
+	code = launch_process(argv, outputstring, false, &status);
 	if (code != 0) {
 		elem.err.conv = true;
-		elem.err.conv_description = outputstring;
-		communicate(progressdata(0, 0, nullptr, outputstring));
+		elem.err.conv_description = "errore nell'apertura del processo";
+		if (!outputstring.empty())
+			elem.err.conv_description += ": " + outputstring;
+		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
+		return -1;
+	}
+	if (status != 0) {
+		elem.err.conv = true;
+		elem.err.conv_description = "il processo è uscito con il codice di errore ";
+		elem.err.conv_description += std::to_string(status);
+		if (!outputstring.empty())
+			elem.err.conv_description += ": " + outputstring;
+		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
 		return -1;
 	}
 	communicate(progressdata(0, 0, nullptr, "ok!"));
@@ -56,16 +69,28 @@ int mediaconvert::do_convert_ac3to(media_t& elem, destitem_t& item,
 	
 	communicate(progressdata(0, 0, nullptr, "conversione con eac3to..."));
 	
-	argv.emplace_back(app::ffmpeg_prog);
-	argv.emplace_back(tmpextractpath);
-	argv.emplace_back(item.outpath);
+	argv.emplace_back(app::ac3to_prog);
+	argv.emplace_back("\""+extractedpath+"\"");
+	argv.emplace_back("\""+convertedpath+"\"");
 	
 	std::string outputstring;
-	code = launch_process(argv, outputstring);
+	int status = 0;
+	code = launch_process(argv, outputstring, false, &status);
 	if (code != 0) {
 		elem.err.conv = true;
-		elem.err.conv_description = outputstring;
-		communicate(progressdata(0, 0, nullptr, outputstring));
+		elem.err.conv_description = "errore nell'apertura del processo";
+		if (!outputstring.empty())
+			elem.err.conv_description += ": " + outputstring;
+		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
+		return -1;
+	}
+	if (status != 0) {
+		elem.err.conv = true;
+		elem.err.conv_description = "il processo è uscito con il codice di errore ";
+		elem.err.conv_description += std::to_string(status);
+		if (!outputstring.empty())
+			elem.err.conv_description += ": " + outputstring;
+		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
 		return -1;
 	}
 	communicate(progressdata(0, 0, nullptr, "ok!"));
@@ -104,13 +129,34 @@ int mediaconvert::do_extract(media_t& elem, destitem_t& item,
 
 	argv.emplace_back(elem.path);
 	argv.emplace_back("tracks");
-	argv.emplace_back(std::to_string(item.tid)+":"+extractedpath);
+	argv.emplace_back("\""+std::to_string(item.tid)+":"+extractedpath+"\""); /*TODO*/
+	/* on unix you could have \" in file system names */
 	
 	std::string outputstring;
-	code = launch_process(argv, outputstring);
+	int status = 0;
+	code = launch_process(argv, outputstring, false, &status);
 	if (code != 0) {
 		elem.err.conv = true;
-		elem.err.conv_description = outputstring;
+		elem.err.conv_description = "errore nell'apertura del processo";
+		if (!outputstring.empty())
+			elem.err.conv_description += ": " + outputstring;
+		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
+		return -1;
+	}
+	if (status == 1) {
+		std::string warning;
+		warning = "warning da mkvextract";
+		if (!outputstring.empty())
+			warning += ": " + outputstring;
+		communicate(progressdata(0, 0, nullptr, warning));
+	}
+	else if (status != 0) {
+		elem.err.conv = true;
+		elem.err.conv_description = "il processo è uscito con il codice di errore ";
+		elem.err.conv_description += std::to_string(status);
+		if (!outputstring.empty())
+			elem.err.conv_description += ": " + outputstring;
+		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
 		return -1;
 	}
 	communicate(progressdata(0, 0, nullptr, "ok!"));
@@ -281,7 +327,7 @@ void mediaconvert::do_process(media_t& elem) {
 			elem.err.conv_description += ": ";
 			elem.err.conv_description += errspec->message;
 		}
-		elem.err.conv_description += "\n";
+		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
 		return;
 	}
 		
@@ -294,20 +340,39 @@ void mediaconvert::do_process(media_t& elem) {
 	argv.push_back("--output-charset");
 	argv.push_back("UTF-8");
 #endif
-	argv.push_back("@" + jsonpath);
+	argv.push_back("\"@"+jsonpath+"\"");
 	
-	std::string outputstr;
-	code = launch_process(argv, outputstr, false);
+	communicate(progressdata(0, 0, nullptr, "unisco le tracce..."));
+	
+	std::string outputstring;
+	int status = 0;
+	code = launch_process(argv, outputstring, false, &status);
 	if (code != 0) {
 		elem.err.conv = true;
-		elem.err.conv_description = "error in mkvmerge";
-		if (!outputstr.empty()) {
-			elem.err.conv_description += ": ";
-			elem.err.conv_description += outputstr;
-		}
-		elem.err.conv_description += "\n";
+		elem.err.conv_description = "errore nell'apertura del processo";
+		if (!outputstring.empty())
+			elem.err.conv_description += ": " + outputstring;
+		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
 		return;
 	}
+	if (status == 1) {
+		std::string warning;
+		warning = "warning da mkvmerge";
+		if (!outputstring.empty())
+			warning += ": " + outputstring;
+		communicate(progressdata(0, 0, nullptr, warning));
+	}
+	else if (status != 0) {
+		elem.err.conv = true;
+		elem.err.conv_description = "il processo è uscito con il codice di errore ";
+		elem.err.conv_description += std::to_string(status);
+		if (!outputstring.empty())
+			elem.err.conv_description += ": " + outputstring;
+		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
+		return;
+	}
+	
+	communicate(progressdata(0, 0, nullptr, "ok!"));
 }
 
 void mediaconvert::communicate(const progressdata& commdata) {
@@ -343,16 +408,8 @@ void mediaconvert::do_processall() {
 	communicate(progressdata(int(indexv.size()), int(indexv.size()), nullptr, "", true));
 }
 
-int mediaconvert::callback_worker_is_ending(void* self) {
-	mediaconvert *inst = (mediaconvert*) self;
-	inst->worker.join();
-	return FALSE;
-}
-
 void mediaconvert::worker_start(void *self) {
 	mediaconvert *inst = (mediaconvert*) self;
 	inst->do_processall();
-	
-	g_idle_add(callback_worker_is_ending, self);
 }
 

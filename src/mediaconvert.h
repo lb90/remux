@@ -34,6 +34,7 @@ public:
 
 	std::deque<progressdata> progressd;
 	std::mutex               progressd_lock;
+	std::thread              worker;
 
 private:
 	int          do_convert_ffmpeg(media_t& elem, destitem_t& item,
@@ -55,11 +56,8 @@ private:
 	void         do_process(media_t& elem);
 	void         do_processall();
 	void         communicate(const progressdata& commdata);
-
-	std::thread  worker;
 	
 	static void  worker_start(void*);
-	static int   callback_worker_is_ending(void*);
 };
 
 #endif

@@ -72,12 +72,11 @@ int read_pipe(HANDLE hstdout_rd, std::string& outputstring) {
 				std::string description;
 				get_lasterror_description(lasterror, description);
 				outputstring += description;
-				outputstring += "\n";
 				ret = -1;
 				break;
 			}
 		}
-							
+
 		outputstring += buf;
 	}
 	delete[] buf;
@@ -86,7 +85,10 @@ int read_pipe(HANDLE hstdout_rd, std::string& outputstring) {
 	return ret;
 }
 
-int launch_process(const std::vector<std::string>& argv, std::string& outputstring, bool want_stdout)
+int launch_process(const std::vector<std::string>& argv,
+                   std::string& outputstring,
+                   std::string& errstring,
+                   int *status)
 {
 	SECURITY_ATTRIBUTES sec = {};
 	PROCESS_INFORMATION proc = {};
@@ -133,7 +135,6 @@ int launch_process(const std::vector<std::string>& argv, std::string& outputstri
 			outputstring += ": ";
 			outputstring += errspec->message;
 		}
-		outputstring += "\n";
 		ret = -1;
 	}
 	else {
@@ -144,7 +145,6 @@ int launch_process(const std::vector<std::string>& argv, std::string& outputstri
 				outputstring += ": ";
 				outputstring += errspec->message;
 			}
-			outputstring += "\n";
 			ret = -1;
 		}
 		else {
@@ -165,7 +165,6 @@ int launch_process(const std::vector<std::string>& argv, std::string& outputstri
 				std::string description;
 				get_lasterror_description(lasterror, description);
 				outputstring += description;
-				outputstring += "\n";
 				ret = -1;
 			}
 			else {
@@ -184,7 +183,6 @@ int launch_process(const std::vector<std::string>& argv, std::string& outputstri
 						std::string description;
 						get_lasterror_description(lasterror, description);
 						outputstring += description;
-						outputstring += "\n";
 						ret = -1;
 					}
 
@@ -196,13 +194,12 @@ int launch_process(const std::vector<std::string>& argv, std::string& outputstri
 						std::string description;
 						get_lasterror_description(lasterror, description);
 						outputstring += description;
-						outputstring += "\n";
 						ret = -1;
 					}
 					else {
-						if (exitcode != 0) {
-							ret = -1;
-						}
+						if (status)
+							*status = exitcode;
+						ret = 0;
 					}
 				}
 			}

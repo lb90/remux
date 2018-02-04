@@ -21,7 +21,7 @@ int media_scan(media_t& elem) {
 
 	argv.emplace_back(app::mkvmerge_prog);
 	argv.emplace_back("-J");
-	argv.emplace_back(elem.path);
+	argv.emplace_back("\""+elem.path+"\"");
 
 	code = launch_process(argv, outputstring, true);
 	if (code < 0) {

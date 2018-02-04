@@ -187,6 +187,10 @@ void dialogproperty_t::cb_op(GtkButton *, gpointer self) {
 			nonvideoitems.emplace_back(item);
 	}
 	
+	for (const destitem_t& item : videoitems) {
+		item.lang = "ita";
+	}
+	
 	if (want_convert_ac3ita_aac) {
 		std::vector<destitem_t> ac3itaitems;
 		std::vector<destitem_t> nonac3itaitems;
@@ -445,9 +449,37 @@ void dialogproperty_t::cb_toggled_isforced(GtkCellRendererToggle *ren, gchar *pa
 	}
 }
 
-static void internal_cell_color(GtkCellRenderer *ren, gint n) {
-	/*g_object_set(ren, "cell-background-set", (n%2) ? TRUE : FALSE, NULL);*/
-	g_object_set(ren, "cell-background-set", FALSE, NULL);
+static void internal_cell_color(GtkCellRenderer *ren, itemtype_t type) {
+	static GdkRGBA lightpurple = {};
+	static GdkRGBA lightorange = {};
+	static GdkRGBA lightyellow = {};
+	static bool firstrun = true;
+	
+	if (firstrun) {
+		gdk_rgba_parse(&lightpurple, "rgb(183,192,232)");
+		gdk_rgba_parse(&lightorange, "rgb(242,213,170)");
+		gdk_rgba_parse(&lightyellow, "rgb(240,235,190)");
+		firstrun = false;
+	}
+	
+	g_object_set(ren, "cell-background-set", TRUE, NULL);
+	switch (type) {
+		case itemtype_video:
+			g_object_set(ren, "cell-background-rgba", &lightpurple, NULL);
+			break;
+		case itemtype_audio:
+			g_object_set(ren, "cell-background-rgba", &lightorange, NULL);
+			break;
+		case itemtype_subtitle:
+			g_object_set(ren, "cell-background-rgba", &lightyellow, NULL);
+			break;
+		case itemtype_button:
+			/*TODO*/
+			//g_object_set(ren, "cell-background-rgba", &lightpurple, NULL);
+			break;
+		default:
+			g_object_set(ren, "cell-background-set", FALSE, NULL);
+	}
 }
 
 void dialogproperty_t::cell_data_number(GtkTreeViewColumn *,
@@ -461,10 +493,12 @@ void dialogproperty_t::cell_data_number(GtkTreeViewColumn *,
 	                                                 &it,
 	                                                 iter);
 	gint n = GPOINTER_TO_INT(it.user_data);
+	dialogproperty_t *self = (dialogproperty_t*) inst;
+	const destitem_t& item = self->curelem->destitems[n];
 
 	g_object_set(ren, "text", std::to_string(n+1).c_str(), NULL);
 
-	internal_cell_color(ren, n);
+	internal_cell_color(ren, item.type);
 }
 
 void dialogproperty_t::cell_data_name(GtkTreeViewColumn *,
@@ -486,7 +520,7 @@ void dialogproperty_t::cell_data_name(GtkTreeViewColumn *,
 		text = "<span foreground=\"#a40000\">" + text + "</span>";
 	g_object_set(ren, "markup", text.c_str(), NULL);
 
-	internal_cell_color(ren, n);
+	internal_cell_color(ren, item.type);
 }
 
 void dialogproperty_t::cell_data_type(GtkTreeViewColumn *,
@@ -518,7 +552,7 @@ void dialogproperty_t::cell_data_type(GtkTreeViewColumn *,
 	}
 	
 	g_object_set(ren, "text", text, NULL);
-	internal_cell_color(ren, n);
+	internal_cell_color(ren, item.type);
 }
 
 void dialogproperty_t::cell_data_codec(GtkTreeViewColumn *,
@@ -581,7 +615,7 @@ void dialogproperty_t::cell_data_codec(GtkTreeViewColumn *,
 	
 	g_object_set(ren, "markup", text.c_str(), NULL);
 
-	internal_cell_color(ren, n);
+	internal_cell_color(ren, item.type);
 }
 
 void dialogproperty_t::cell_data_language(GtkTreeViewColumn *,
@@ -605,7 +639,7 @@ void dialogproperty_t::cell_data_language(GtkTreeViewColumn *,
 	
 	g_object_set(ren, "markup", text.c_str(), NULL);
 	
-	internal_cell_color(ren, n);
+	internal_cell_color(ren, item.type);
 }
 
 void dialogproperty_t::cell_data_isdefault(GtkTreeViewColumn *,
@@ -624,7 +658,7 @@ void dialogproperty_t::cell_data_isdefault(GtkTreeViewColumn *,
 	gboolean bstate = item.isdefault;
 	
 	g_object_set(ren, "active", bstate, NULL);
-	internal_cell_color(ren, n);
+	internal_cell_color(ren, item.type);
 }
 
 void dialogproperty_t::cell_data_isforced(GtkTreeViewColumn *,
@@ -643,7 +677,7 @@ void dialogproperty_t::cell_data_isforced(GtkTreeViewColumn *,
 	gboolean bstate = item.isforced;
 
 	g_object_set(ren, "active", bstate, NULL);
-	internal_cell_color(ren, n);
+	internal_cell_color(ren, item.type);
 }
 
 gboolean dialogproperty_t::filter_visible_func(GtkTreeModel *childmodel, GtkTreeIter *iter, gpointer self) {

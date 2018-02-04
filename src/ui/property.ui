@@ -27,6 +27,12 @@
     <property name="pixel_size">32</property>
     <property name="icon_name">go-up</property>
   </object>
+  <object class="GtkImage" id="image_reset">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixel_size">32</property>
+    <property name="icon_name">dialog-close</property>
+  </object>
   <object class="GtkListStore" id="liststore_cell_codec">
     <columns>
       <!-- column-name codec -->
@@ -379,7 +385,7 @@
                                 <child>
                                   <object class="GtkTreeViewColumn" id="col_isdefault">
                                     <property name="resizable">True</property>
-                                    <property name="title" translatable="yes">D</property>
+                                    <property name="title" translatable="yes">Predefinito</property>
                                     <property name="clickable">True</property>
                                     <child>
                                       <object class="GtkCellRendererToggle" id="ren_isdefault">
@@ -391,7 +397,7 @@
                                 <child>
                                   <object class="GtkTreeViewColumn" id="col_isforced">
                                     <property name="resizable">True</property>
-                                    <property name="title" translatable="yes">F</property>
+                                    <property name="title" translatable="yes">Forzato</property>
                                     <property name="clickable">True</property>
                                     <child>
                                       <object class="GtkCellRendererToggle" id="ren_isforced">
@@ -413,11 +419,33 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkButton" id="button_moveup">
+                              <object class="GtkGrid">
                                 <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="image">image_go_up</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkButton" id="button_moveup">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="image">image_go_up</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="button_movedown">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="image">image_go_down</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
@@ -425,11 +453,13 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button_movedown">
+                              <object class="GtkButton" id="button_reset">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="image">image_go_down</property>
+                                <property name="valign">end</property>
+                                <property name="vexpand">True</property>
+                                <property name="image">image_reset</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>

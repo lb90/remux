@@ -4,7 +4,10 @@
 #include <vector>
 #include <string>
 
-int launch_process(const std::vector<std::string>& argv, std::string& outputstring, bool want_stdout = false);
+int launch_process(const std::vector<std::string>& argv,
+                   std::string& outputstring,
+                   std::string& errstring,
+                   int *status);
 
 #endif
 
