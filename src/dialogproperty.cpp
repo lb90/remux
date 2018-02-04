@@ -24,6 +24,9 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	button_enqueue       = GTK_WIDGET(gtk_builder_get_object(builder, "button_enqueue"));
 	button_skip          = GTK_WIDGET(gtk_builder_get_object(builder, "button_skip"));
 	button_op            = GTK_WIDGET(gtk_builder_get_object(builder, "button_op"));
+	button_moveup        = GTK_WIDGET(gtk_builder_get_object(builder, "button_moveup"));
+	button_movedown      = GTK_WIDGET(gtk_builder_get_object(builder, "button_movedown"));
+	button_reset         = GTK_WIDGET(gtk_builder_get_object(builder, "button_reset"));
 	
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
 	
@@ -31,6 +34,9 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	g_signal_connect(button_enqueue, "clicked", G_CALLBACK(cb_enqueue), (gpointer) this);
 	g_signal_connect(button_skip, "clicked", G_CALLBACK(cb_skip), (gpointer) this);
 	g_signal_connect(button_op, "clicked", G_CALLBACK(cb_op), (gpointer) this);
+	g_signal_connect(button_moveup, "clicked", G_CALLBACK(cb_moveup), (gpointer) this);
+	g_signal_connect(button_movedown, "clicked", G_CALLBACK(cb_movedown), (gpointer) this);
+	g_signal_connect(button_reset, "clicked", G_CALLBACK(cb_reset), (gpointer) this);
 	
 	GtkTreeViewColumn *col;
 	GtkCellRenderer   *ren;
@@ -187,7 +193,7 @@ void dialogproperty_t::cb_op(GtkButton *, gpointer self) {
 			nonvideoitems.emplace_back(item);
 	}
 	
-	for (const destitem_t& item : videoitems) {
+	for (destitem_t& item : videoitems) {
 		item.lang = "ita";
 	}
 	
@@ -284,6 +290,98 @@ void dialogproperty_t::cb_reset(GtkButton *, gpointer self) {
 	
 	for (const origitem_t& origitem : elem.origitems) {
 		elem.destitems.emplace_back(origitem);
+	}
+}
+
+void dialogproperty_t::cb_moveup(GtkButton *, gpointer self) {
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	GtkTreeSelection *treeselection = gtk_tree_view_get_selection(GTK_TREE_VIEW(inst->treeview_item));
+	GtkTreeModel     *treemodel = gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview_item));
+	GtkTreeIter iter;
+	if (gtk_tree_selection_get_selected(treeselection, NULL, &iter)) {
+		GtkTreeIter underiter;
+		gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(treemodel), &underiter, &iter);
+		
+		int nn = GPOINTER_TO_INT(underiter.user_data);
+		assert(nn >= 0 && nn < inst->curelem->destitems.size());
+		size_t n = nn;
+	
+		if (n == 0) return;
+		size_t m = n - 1;
+		
+		std::vector<destitem_t> newdestitems;
+		for (size_t i = 0; i < inst->curelem->destitems.size(); i++) {
+			if (i == m)
+				newdestitems.emplace_back(inst->curelem->destitems[n]);
+			else if (i == n)
+				newdestitems.emplace_back(inst->curelem->destitems[m]);
+			else
+				newdestitems.emplace_back(inst->curelem->destitems[i]);
+		}
+		
+		inst->curelem->destitems.clear();
+		
+		for (const destitem_t& item : newdestitems)
+			inst->curelem->destitems.emplace_back(item);
+		
+		gtk_tree_model_filter_refilter(
+		  GTK_TREE_MODEL_FILTER(
+		    gtk_tree_view_get_model(
+		      GTK_TREE_VIEW(inst->treeview_item))));
+		
+		underiter = {};
+		iter = {};
+		
+		underiter.user_data = GINT_TO_POINTER(m);
+		gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(treemodel), &iter, &underiter);
+		
+		gtk_tree_selection_select_iter(treeselection, &iter);
+	}
+}
+
+void dialogproperty_t::cb_movedown(GtkButton *, gpointer self) {
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	GtkTreeSelection *treeselection = gtk_tree_view_get_selection(GTK_TREE_VIEW(inst->treeview_item));
+	GtkTreeModel     *treemodel = gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview_item));
+	GtkTreeIter iter;
+	if (gtk_tree_selection_get_selected(treeselection, NULL, &iter)) {
+		GtkTreeIter underiter;
+		gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(treemodel), &underiter, &iter);
+		
+		int nn = GPOINTER_TO_INT(underiter.user_data);
+		assert(nn >= 0 && nn < inst->curelem->destitems.size());
+		size_t n = nn;
+	
+		if (n + 1 == inst->curelem->destitems.size()) return;
+		size_t m = n + 1;
+		
+		std::vector<destitem_t> newdestitems;
+		for (size_t i = 0; i < inst->curelem->destitems.size(); i++) {
+			if (i == m)
+				newdestitems.emplace_back(inst->curelem->destitems[n]);
+			else if (i == n)
+				newdestitems.emplace_back(inst->curelem->destitems[m]);
+			else
+				newdestitems.emplace_back(inst->curelem->destitems[i]);
+		}
+		
+		inst->curelem->destitems.clear();
+		
+		for (const destitem_t& item : newdestitems)
+			inst->curelem->destitems.emplace_back(item);
+		
+		gtk_tree_model_filter_refilter(
+		  GTK_TREE_MODEL_FILTER(
+		    gtk_tree_view_get_model(
+		      GTK_TREE_VIEW(inst->treeview_item))));
+		
+		underiter = {};
+		iter = {};
+		
+		underiter.user_data = GINT_TO_POINTER(m);
+		gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(treemodel), &iter, &underiter);
+		
+		gtk_tree_selection_select_iter(treeselection, &iter);
 	}
 }
 

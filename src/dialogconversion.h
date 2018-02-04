@@ -19,20 +19,21 @@ private:
 		state_end,
 	};
 	
-	GtkBuilder *builder;
-	GtkDialog  *dialog;
+	GtkBuilder  *builder;
+	GtkDialog   *dialog;
 	
-	GtkWidget *label;
-	GtkWidget *stack;
-	GtkWidget *progressbar;
-	GtkWidget *image_warning;
-	GtkWidget *button_close;
-	GtkWidget *button_pause;
-	GtkWidget *image_button_start;
-	GtkWidget *image_button_pause;
-	GtkWidget *image_button_stop;
-	GtkWidget *image_button_done;
-	GtkWidget *textview;
+	GtkWidget   *label;
+	GtkWidget   *stack;
+	GtkWidget   *progressbar;
+	GtkWidget   *image_warning;
+	GtkWidget   *button_close;
+	GtkWidget   *button_pause;
+	GtkWidget   *image_button_start;
+	GtkWidget   *image_button_pause;
+	GtkWidget   *image_button_stop;
+	GtkWidget   *image_button_done;
+	GtkWidget   *textview;
+	GtkTextMark *endmark;
 	
 	state_t       state;
 	

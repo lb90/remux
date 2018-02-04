@@ -19,24 +19,24 @@ mediaconvert::mediaconvert()
    worker(worker_start, this)
  {}
 
-int mediaconvert::do_convert_ffmpeg(media_t& elem, destitem_t& item,
-                                   const std::string& extractedpath,
-                                   const std::string& convertedpath)
+int mediaconvert::do_convert(media_t& elem, destitem_t& item,
+                             const std::string& extractedpath,
+                             const std::string& convertedpath)
 {
 	std::vector<std::string> argv;
 	int code;
 	
-	communicate(progressdata(0, 0, nullptr, "conversione con ffmpeg..."));
+	communicate(progressdata(0, 0, nullptr, "reencoding..."));
 	
 	argv.emplace_back(app::ffmpeg_prog);
 	argv.emplace_back("-y"); /* overwrite existing files (always say yes) */
 	argv.emplace_back("-i");
-	argv.emplace_back("\""+extractedpath+"\""); /*TODO for unix*/
-	argv.emplace_back("\""convertedpath"\"");
+	argv.emplace_back(extractedpath);
+	argv.emplace_back(convertedpath);
 	
-	std::string outputstring;
+	std::string outputstring, errorstring;
 	int status = 0;
-	code = launch_process(argv, outputstring, false, &status);
+	code = launch_process(argv, outputstring, errorstring, &status);
 	if (code != 0) {
 		elem.err.conv = true;
 		elem.err.conv_description = "errore nell'apertura del processo";
@@ -57,57 +57,6 @@ int mediaconvert::do_convert_ffmpeg(media_t& elem, destitem_t& item,
 	communicate(progressdata(0, 0, nullptr, "ok!"));
 
 	return 0;
-}
-
-#ifdef _WIN32
-int mediaconvert::do_convert_ac3to(media_t& elem, destitem_t& item,
-                                   const std::string& extractedpath,
-                                   const std::string& convertedpath)
-{
-	std::vector<std::string> argv;
-	int code;
-	
-	communicate(progressdata(0, 0, nullptr, "conversione con eac3to..."));
-	
-	argv.emplace_back(app::ac3to_prog);
-	argv.emplace_back("\""+extractedpath+"\"");
-	argv.emplace_back("\""+convertedpath+"\"");
-	
-	std::string outputstring;
-	int status = 0;
-	code = launch_process(argv, outputstring, false, &status);
-	if (code != 0) {
-		elem.err.conv = true;
-		elem.err.conv_description = "errore nell'apertura del processo";
-		if (!outputstring.empty())
-			elem.err.conv_description += ": " + outputstring;
-		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
-		return -1;
-	}
-	if (status != 0) {
-		elem.err.conv = true;
-		elem.err.conv_description = "il processo è uscito con il codice di errore ";
-		elem.err.conv_description += std::to_string(status);
-		if (!outputstring.empty())
-			elem.err.conv_description += ": " + outputstring;
-		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
-		return -1;
-	}
-	communicate(progressdata(0, 0, nullptr, "ok!"));
-
-	return 0;
-}
-#endif
-
-int mediaconvert::do_convert(media_t& elem, destitem_t& item,
-                             const std::string& extractedpath,
-                             const std::string& convertedpath) {
-#ifdef _WIN32
-	if (item.orig.codecid == codecid_ac3 || item.orig.codecid == codecid_eac3) { /*TODO check ac3to can convert to type */
-		return do_convert_ac3to(elem, item, extractedpath, convertedpath);
-	}
-#endif
-	return do_convert_ffmpeg(elem, item, extractedpath, convertedpath);
 }
 
 int mediaconvert::do_extract(media_t& elem, destitem_t& item,
@@ -129,12 +78,11 @@ int mediaconvert::do_extract(media_t& elem, destitem_t& item,
 
 	argv.emplace_back(elem.path);
 	argv.emplace_back("tracks");
-	argv.emplace_back("\""+std::to_string(item.tid)+":"+extractedpath+"\""); /*TODO*/
-	/* on unix you could have \" in file system names */
+	argv.emplace_back(std::to_string(item.tid)+":"+extractedpath);
 	
-	std::string outputstring;
+	std::string outputstring, errorstring;
 	int status = 0;
-	code = launch_process(argv, outputstring, false, &status);
+	code = launch_process(argv, outputstring, errorstring, &status);
 	if (code != 0) {
 		elem.err.conv = true;
 		elem.err.conv_description = "errore nell'apertura del processo";
@@ -204,7 +152,7 @@ int mediaconvert::do_extract_convert(media_t& elem, destitem_t& item) {
 			return -1;
 	}
 
-	std::string extractedpath = util_build_filename(elem.outdirectory, "tmpextract"); /*TODO*/
+	std::string extractedpath = util_build_filename(elem.outdirectory, "tmpextract");
 	std::string convertedpath = util_build_filename(elem.outdirectory, "track_" + std::to_string(item.tid) + extension);
 	
 	code = do_extract(elem, item, extractedpath);
@@ -340,13 +288,13 @@ void mediaconvert::do_process(media_t& elem) {
 	argv.push_back("--output-charset");
 	argv.push_back("UTF-8");
 #endif
-	argv.push_back("\"@"+jsonpath+"\"");
+	argv.push_back("@"+jsonpath);
 	
 	communicate(progressdata(0, 0, nullptr, "unisco le tracce..."));
 	
-	std::string outputstring;
+	std::string outputstring, errorstring;
 	int status = 0;
-	code = launch_process(argv, outputstring, false, &status);
+	code = launch_process(argv, outputstring, errorstring, &status);
 	if (code != 0) {
 		elem.err.conv = true;
 		elem.err.conv_description = "errore nell'apertura del processo";

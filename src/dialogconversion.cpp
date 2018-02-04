@@ -28,6 +28,9 @@ dialogconversion::dialogconversion(GtkWindow *window)
 	g_signal_connect(button_pause, "clicked", G_CALLBACK(dialogconversion::cb_want_pause), (gpointer) this);
 	
 	gtk_stack_set_visible_child_name(GTK_STACK(stack), "page_convert");
+	
+	endmark = gtk_text_mark_new(NULL, FALSE); /* switch-to-right mark */
+	
 }
 
 void dialogconversion::show() {
@@ -51,6 +54,7 @@ int dialogconversion::check_do_communication(gpointer self) {
 			textbuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(inst->textview));
 			gtk_text_buffer_get_end_iter(textbuffer, &iter);
 			gtk_text_buffer_insert(textbuffer, &iter, ("\n" + commdata.elem->name).c_str(), -1);
+			//gtk_text_view_scroll_to_mark(inst->textview, endmark, );
 		}
 		if (!commdata.text.empty()) {
 			GtkTextBuffer *textbuffer;
@@ -58,6 +62,7 @@ int dialogconversion::check_do_communication(gpointer self) {
 			textbuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(inst->textview));
 			gtk_text_buffer_get_end_iter(textbuffer, &iter);
 			gtk_text_buffer_insert(textbuffer, &iter, ("\n" + commdata.text).c_str(), -1);
+			//gtk_text_view_scroll_to_mark(inst->textview, endmark, );
 		}
 	}
 	

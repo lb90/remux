@@ -34,6 +34,9 @@ private:
 	GtkWidget  *button_enqueue;
 	GtkWidget  *button_skip;
 	GtkWidget  *button_op;
+	GtkWidget  *button_moveup;
+	GtkWidget  *button_movedown;
+	GtkWidget  *button_reset;
 	
 	int      curn;
 	media_t *curelem;
@@ -85,6 +88,12 @@ private:
 	
 	static
 	void cb_reset(GtkButton *, gpointer self);
+	
+	static
+	void cb_moveup(GtkButton *, gpointer self);
+	
+	static
+	void cb_movedown(GtkButton *, gpointer self);
 	
 	static
 	void

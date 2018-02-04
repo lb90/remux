@@ -17,14 +17,15 @@ int media_scan(media_t& elem) {
 	elem.isinit = true;
 	
 	std::vector<std::string> argv;
-	std::string outputstring;
 
 	argv.emplace_back(app::mkvmerge_prog);
 	argv.emplace_back("-J");
-	argv.emplace_back("\""+elem.path+"\"");
+	argv.emplace_back(elem.path);
 
-	code = launch_process(argv, outputstring, true);
-	if (code < 0) {
+	std::string outputstring, errorstring;
+	int status = 0;
+	code = launch_process(argv, outputstring, errorstring, &status);
+	if (code != 0) { /*TODO also admit return value 1? */
 		elem.err.scan = true;
 		elem.err.scan_description = outputstring;
 	}
