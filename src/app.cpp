@@ -39,32 +39,25 @@ void app::elementactivated(int n) {
 int app::init() {
 	signalcentre::addhandler("element\\activate", app::elementactivated);
 	
-	#ifdef _WIN32
+#ifdef _WIN32
 	install_dir = util_install_directory();
-	#endif
+#endif
 
-	std::string set_mkvtoolnix = settings::pt.get("dir.mkvtoolnix", "");
-	std::string set_ffmpeg = settings::pt.get("dir.ffmpeg", "");
+	mkvtoolnix_dir = settings::pt.get("dir.mkvtoolnix", "");
+	ffmpeg_dir     = settings::pt.get("dir.ffmpeg", "");
 
-	#ifdef _WIN32
-	std::string set_ac3to = settings::pt.get("dir.ac3to", "");
-	
-	if (set_mkvtoolnix.empty()) {
+#ifdef _WIN32	
+	if (mkvtoolnix_dir.empty()) {
 		std::string intree = util_build_filename(install_dir, "mkvtoolnix");
 		if (g_file_test(intree.c_str(), G_FILE_TEST_IS_DIR))
 			mkvtoolnix_dir = intree;
 	}
-	if (set_ac3to.empty()) {
-		std::string intree = util_build_filename(install_dir, "eac3to");
-		if (g_file_test(intree.c_str(), G_FILE_TEST_IS_DIR))
-			ac3to_dir = intree;
-	}
-	if (set_ffmpeg.empty()) {
+	if (ffmpeg_dir.empty()) {
 		std::string intree = util_build_filename(install_dir, "ffmpeg");
 		if (g_file_test(intree.c_str(), G_FILE_TEST_IS_DIR))
 			ffmpeg_dir = intree;
 	}
-	#endif
+#endif
 	
 	if (mkvtoolnix_dir.empty()) {
 		mkvinfo_prog = "mkvinfo";
@@ -84,19 +77,13 @@ int app::init() {
 	else
 		ffmpeg_prog = util_build_filename(ffmpeg_dir, "ffmpeg");
 	
-	#ifdef _WIN32
-	if (ac3to_dir.empty())
-		ac3to_prog = "eac3to";
-	else
-		ac3to_prog = util_build_filename(ac3to_dir, "eac3to");
-	
+#ifdef _WIN32
 	mkvinfo_prog += ".exe";
 	mkvextract_prog += ".exe";
 	mkvmerge_prog += ".exe";
 	mkvpropedit_prog += ".exe";
 	ffmpeg_prog += ".exe";
-	ac3to_prog += ".exe";
-	#endif
+#endif
 
 	return 0;
 }

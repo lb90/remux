@@ -305,9 +305,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="rubber_banding">True</property>
                                 <child internal-child="selection">
-                                  <object class="GtkTreeSelection">
-                                    <property name="mode">multiple</property>
-                                  </object>
+                                  <object class="GtkTreeSelection"/>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn" id="col_number">
