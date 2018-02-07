@@ -26,7 +26,7 @@ private:
 	GtkWidget  *check_convert_ac3ita_aac;
 	GtkWidget  *check_remove_ac3;
 	GtkWidget  *check_remove_dolby;
-	GtkWidget  *treeview_item;
+	GtkWidget  *treeview;
 	GtkWidget  *entry_outname;
 	
 	GtkWidget  *textview_error;
@@ -37,6 +37,8 @@ private:
 	GtkWidget  *button_moveup;
 	GtkWidget  *button_movedown;
 	GtkWidget  *button_reset;
+	
+	GtkWidget  *treeview_menu;
 	
 	int      curn;
 	media_t *curelem;
@@ -69,6 +71,18 @@ private:
                             gpointer             self);
 
 	static
+	void cb_editing_started_language(GtkCellRenderer *ren,
+                                     GtkCellEditable *celleditable,
+                                     const gchar     *pathstr,
+                                     gpointer         self);
+
+	static
+	void cb_editing_changed_language(GtkCellRendererCombo *combo,
+                                     gchar                *pathstr,
+                                     GtkTreeIter          *seliter,
+                                     gpointer              self);
+
+	static
 	void cb_toggled_isdefault(GtkCellRendererToggle *ren, gchar *pathstr, gpointer self);
 	
 	static
@@ -94,6 +108,14 @@ private:
 	
 	static
 	void cb_movedown(GtkButton *, gpointer self);
+	
+	static
+	gboolean cb_treeview_buttonpress(GtkWidget *treeview, GdkEvent *event, gpointer self);
+	
+	static
+	gboolean cb_treeview_popupmenu(GtkWidget *treeview, gpointer self);
+
+	void util_treeview_do_popup_menu(GdkEvent* event);
 	
 	static
 	void

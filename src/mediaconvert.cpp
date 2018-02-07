@@ -26,7 +26,7 @@ int mediaconvert::do_convert(media_t& elem, destitem_t& item,
 	std::vector<std::string> argv;
 	int code;
 	
-	communicate(progressdata(0, 0, nullptr, "reencoding..."));
+	communicate(progressdata(0, 0, nullptr, "conversione della traccia estratta"));
 	
 	argv.emplace_back(app::ffmpeg_prog);
 	argv.emplace_back("-y"); /* overwrite existing files (always say yes) */
@@ -54,7 +54,7 @@ int mediaconvert::do_convert(media_t& elem, destitem_t& item,
 		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
 		return -1;
 	}
-	communicate(progressdata(0, 0, nullptr, "ok!"));
+	//communicate(progressdata(0, 0, nullptr, "ok!"));
 
 	return 0;
 }
@@ -107,7 +107,7 @@ int mediaconvert::do_extract(media_t& elem, destitem_t& item,
 		communicate(progressdata(0, 0, nullptr, elem.err.conv_description));
 		return -1;
 	}
-	communicate(progressdata(0, 0, nullptr, "ok!"));
+	//communicate(progressdata(0, 0, nullptr, "ok!"));
 
 	return 0;
 }
@@ -290,7 +290,7 @@ void mediaconvert::do_process(media_t& elem) {
 #endif
 	argv.push_back("@"+jsonpath);
 	
-	communicate(progressdata(0, 0, nullptr, "unisco le tracce..."));
+	communicate(progressdata(0, 0, nullptr, "merge finale"));
 	
 	std::string outputstring, errorstring;
 	int status = 0;
@@ -307,7 +307,7 @@ void mediaconvert::do_process(media_t& elem) {
 		std::string warning;
 		warning = "warning da mkvmerge";
 		if (!outputstring.empty())
-			warning += ": " + outputstring;
+			warning += ":\n" + outputstring;
 		communicate(progressdata(0, 0, nullptr, warning));
 	}
 	else if (status != 0) {
@@ -320,7 +320,7 @@ void mediaconvert::do_process(media_t& elem) {
 		return;
 	}
 	
-	communicate(progressdata(0, 0, nullptr, "ok!"));
+	//communicate(progressdata(0, 0, nullptr, "ok!"));
 }
 
 void mediaconvert::communicate(const progressdata& commdata) {

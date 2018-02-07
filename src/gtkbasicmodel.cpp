@@ -531,3 +531,19 @@ basic_list_model_new (gint numrows)
   return newbasicmodel;
 }
 
+void basic_list_model_emit_row_changed(BasicListModel *basic_list_model, int num) {
+	GtkTreeIter  iter;
+	GtkTreePath *path;
+	
+	g_return_if_fail (IS_BASIC_LIST_MODEL (basic_list_model));
+
+	iter.stamp     = basic_list_model->stamp;
+	iter.user_data = GINT_TO_POINTER(num);
+
+	path = basic_list_model_get_path(GTK_TREE_MODEL(basic_list_model), &iter);
+	if (path) {
+		gtk_tree_model_row_changed(GTK_TREE_MODEL(basic_list_model), path, &iter);
+		gtk_tree_path_free(path);
+	}
+}
+

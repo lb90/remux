@@ -1,14 +1,14 @@
 
 project('remux', ['c', 'cpp'],
   default_options : ['cpp_std=c++14'],
-  version : '1.0',
+  version : '1.2',
   meson_version : '>= 0.42'
 )
 
 gnome = import('gnome')
 
 gtk_dep        = dependency('gtk+-3.0',
-                       version: '>= 3.20')
+                       version: '>= 3.22')
 gmodule_dep    = dependency('gmodule-2.0')
 boost_dep      = dependency('boost',
                        modules: [],

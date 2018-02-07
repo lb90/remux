@@ -2,18 +2,24 @@
 <!-- Generated with glade 3.21.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkImage" id="image1">
+  <object class="GtkImage" id="image_copy">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">edit-copy</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_delete">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">edit-delete</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_enqueue">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="pixel_size">32</property>
     <property name="icon_name">dialog-ok</property>
     <property name="use_fallback">True</property>
-  </object>
-  <object class="GtkImage" id="image2">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixel_size">32</property>
-    <property name="icon_name">object-rotate-right</property>
   </object>
   <object class="GtkImage" id="image_go_down">
     <property name="visible">True</property>
@@ -32,6 +38,61 @@
     <property name="can_focus">False</property>
     <property name="pixel_size">32</property>
     <property name="icon_name">dialog-close</property>
+  </object>
+  <object class="GtkImage" id="image_skip">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixel_size">32</property>
+    <property name="icon_name">object-rotate-right</property>
+  </object>
+  <object class="GtkImage" id="imeage_reset">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">edit-undo</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkMenu" id="menu_treeview">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkImageMenuItem" id="menuitem_reset">
+        <property name="label" translatable="yes">_Reset</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_underline">True</property>
+        <property name="image">imeage_reset</property>
+        <property name="use_stock">False</property>
+        <property name="always_show_image">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkImageMenuItem" id="menuitem_copy">
+        <property name="label" translatable="yes">_Copia Linea</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_underline">True</property>
+        <property name="image">image_copy</property>
+        <property name="use_stock">False</property>
+        <property name="always_show_image">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkImageMenuItem" id="menuitem_delete">
+        <property name="label" translatable="yes">_Elimina</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_underline">True</property>
+        <property name="image">image_delete</property>
+        <property name="use_stock">False</property>
+        <property name="always_show_image">True</property>
+      </object>
+    </child>
   </object>
   <object class="GtkListStore" id="liststore_cell_codec">
     <columns>
@@ -94,7 +155,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="image">image1</property>
+                <property name="image">image_enqueue</property>
                 <property name="use_underline">True</property>
                 <property name="always_show_image">True</property>
                 <signal name="clicked" handler="cb_enqueue" swapped="no"/>
@@ -111,7 +172,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="image">image2</property>
+                <property name="image">image_skip</property>
                 <property name="use_underline">True</property>
                 <property name="always_show_image">True</property>
                 <signal name="clicked" handler="cb_skip" swapped="no"/>
@@ -300,7 +361,7 @@
                             <property name="propagate_natural_width">True</property>
                             <property name="propagate_natural_height">True</property>
                             <child>
-                              <object class="GtkTreeView" id="treeview_item">
+                              <object class="GtkTreeView" id="treeview">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="rubber_banding">True</property>

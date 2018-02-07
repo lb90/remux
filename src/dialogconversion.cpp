@@ -29,15 +29,38 @@ dialogconversion::dialogconversion(GtkWindow *window)
 	
 	gtk_stack_set_visible_child_name(GTK_STACK(stack), "page_convert");
 	
-	endmark = gtk_text_mark_new(NULL, FALSE); /* switch-to-right mark */
 	
+	GtkTextBuffer *textbuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
+	GtkTextIter enditer;
+	gtk_text_buffer_get_end_iter(textbuffer, &enditer);
+	endmark = gtk_text_buffer_create_mark(textbuffer, NULL, &enditer, FALSE); /* switch-to-right mark */
+	gtk_text_buffer_create_tag(textbuffer, "tag-bold", "weight", PANGO_WEIGHT_BOLD, NULL);
+	gtk_text_buffer_create_tag(textbuffer, "tag-red", "foreground", "#ff0000", NULL);
 }
 
 void dialogconversion::show() {
 	mc = new mediaconvert();
-	g_timeout_add(500, dialogconversion::check_do_communication, (gpointer) this);
+	g_timeout_add(100, dialogconversion::check_do_communication, (gpointer) this);
 
 	gtk_window_present(GTK_WINDOW(dialog));
+}
+
+void dialogconversion::append_to_textview(const std::string& text, bool bold, bool red) {
+	GtkTextBuffer *textbuffer;
+	GtkTextIter    iter;
+	textbuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
+	gtk_text_buffer_get_end_iter(textbuffer, &iter);
+	if (!bold && !red)
+		gtk_text_buffer_insert(textbuffer, &iter, text.c_str(), -1);
+	else if (bold && red)
+		gtk_text_buffer_insert_with_tags_by_name(textbuffer, &iter, text.c_str(), -1, "tag-bold", "tag-red", NULL);
+	else if (bold) {
+		gtk_text_buffer_insert_with_tags_by_name(textbuffer, &iter, text.c_str(), -1, "tag-bold", NULL);
+	}
+	else if (red) {
+		gtk_text_buffer_insert_with_tags_by_name(textbuffer, &iter, text.c_str(), -1, "tag-red", NULL);
+	}
+	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(textview), endmark, 0.0f, FALSE, 0.0f, 0.0f);
 }
 
 int dialogconversion::check_do_communication(gpointer self) {
@@ -48,30 +71,18 @@ int dialogconversion::check_do_communication(gpointer self) {
 		return TRUE;
 	
 	for (const auto& commdata : inst->mc->progressd) {
-		if (commdata.elem) {
-			GtkTextBuffer *textbuffer;
-			GtkTextIter    iter;
-			textbuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(inst->textview));
-			gtk_text_buffer_get_end_iter(textbuffer, &iter);
-			gtk_text_buffer_insert(textbuffer, &iter, ("\n" + commdata.elem->name).c_str(), -1);
-			//gtk_text_view_scroll_to_mark(inst->textview, endmark, );
+		if (commdata.total != 0) {
+			gtk_label_set_text(GTK_LABEL(inst->label), commdata.elem->name.c_str());
+			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(inst->progressbar), float(commdata.n) / float(commdata.total));
 		}
-		if (!commdata.text.empty()) {
-			GtkTextBuffer *textbuffer;
-			GtkTextIter    iter;
-			textbuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(inst->textview));
-			gtk_text_buffer_get_end_iter(textbuffer, &iter);
-			gtk_text_buffer_insert(textbuffer, &iter, ("\n" + commdata.text).c_str(), -1);
-			//gtk_text_view_scroll_to_mark(inst->textview, endmark, );
-		}
+		if (commdata.elem)
+			inst->append_to_textview("\n" + commdata.elem->name, true, true);
+		if (!commdata.text.empty())
+			inst->append_to_textview("\n" + commdata.text);
 	}
 	
 	auto& commdata = inst->mc->progressd.back();
-	
-	if (commdata.elem) {
-		gtk_label_set_text(GTK_LABEL(inst->label), commdata.elem->name.c_str());
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(inst->progressbar), float(commdata.n) / float(commdata.total));
-	}
+
 	if (commdata.done) {
 		inst->done();
 		return FALSE;
@@ -94,6 +105,8 @@ void dialogconversion::done() {
 	gtk_button_set_image(GTK_BUTTON(button_close), image_button_done);
 	
 	state = state_end;
+	
+	append_to_textview("\nFine", true, false);
 }
 
 void dialogconversion::cb_want_close(GtkButton *, gpointer self) {

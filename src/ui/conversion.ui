@@ -175,6 +175,7 @@
                 <property name="can_focus">True</property>
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
+                <property name="expanded">True</property>
                 <child>
                   <object class="GtkScrolledWindow">
                     <property name="visible">True</property>

@@ -29,6 +29,11 @@ endif
 res = gnome.compile_resources('res', 'res.gresource.xml')
 src += res
 
+if host_machine.system() == 'windows'
+  win = import('windows')
+  src += win.compile_resources('win/res.rc')
+endif
+
 gui = false
 if get_option('buildtype') == 'release'
   gui = true

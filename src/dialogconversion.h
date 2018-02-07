@@ -19,6 +19,12 @@ private:
 		state_end,
 	};
 	
+	enum format_t {
+		format_none,
+		format_bold,
+		format_bold_red
+	};
+	
 	GtkBuilder  *builder;
 	GtkDialog   *dialog;
 	
@@ -38,6 +44,9 @@ private:
 	state_t       state;
 	
 	mediaconvert *mc;
+	
+	void append_to_textview(const std::string& text, bool bold = false,
+	                                                 bool red = false);
 	
 	static int  check_do_communication(void *);
 

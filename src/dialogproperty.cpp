@@ -18,7 +18,7 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	check_convert_ac3ita_aac = GTK_WIDGET(gtk_builder_get_object(builder, "check_convert_ac3ita_aac"));
 	check_remove_ac3     = GTK_WIDGET(gtk_builder_get_object(builder, "check_remove_ac3"));
 	check_remove_dolby   = GTK_WIDGET(gtk_builder_get_object(builder, "check_remove_dolby"));
-	treeview_item        = GTK_WIDGET(gtk_builder_get_object(builder, "treeview_item"));
+	treeview             = GTK_WIDGET(gtk_builder_get_object(builder, "treeview"));
 	entry_outname        = GTK_WIDGET(gtk_builder_get_object(builder, "entry_outname"));
 	textview_error       = GTK_WIDGET(gtk_builder_get_object(builder, "textview_error"));
 	button_enqueue       = GTK_WIDGET(gtk_builder_get_object(builder, "button_enqueue"));
@@ -27,6 +27,7 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	button_moveup        = GTK_WIDGET(gtk_builder_get_object(builder, "button_moveup"));
 	button_movedown      = GTK_WIDGET(gtk_builder_get_object(builder, "button_movedown"));
 	button_reset         = GTK_WIDGET(gtk_builder_get_object(builder, "button_reset"));
+	treeview_menu        = GTK_WIDGET(gtk_builder_get_object(builder, "menu_treeview"));
 	
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
 	
@@ -37,6 +38,9 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	g_signal_connect(button_moveup, "clicked", G_CALLBACK(cb_moveup), (gpointer) this);
 	g_signal_connect(button_movedown, "clicked", G_CALLBACK(cb_movedown), (gpointer) this);
 	g_signal_connect(button_reset, "clicked", G_CALLBACK(cb_reset), (gpointer) this);
+	
+	g_signal_connect(treeview, "button-press-event", G_CALLBACK(cb_treeview_buttonpress), (gpointer) this);
+    g_signal_connect(treeview, "popup-menu", G_CALLBACK(cb_treeview_popupmenu), (gpointer) this);
 	
 	GtkTreeViewColumn *col;
 	GtkCellRenderer   *ren;
@@ -62,7 +66,8 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_codec"));
 	g_signal_connect(ren, "edited", G_CALLBACK(cb_edited_codec), (gpointer) this);
 	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_language"));
-	g_signal_connect(ren, "edited", G_CALLBACK(cb_edited_language), (gpointer) this);
+	g_signal_connect(ren, "editing-started", G_CALLBACK(cb_editing_started_language), (gpointer) this);
+	g_signal_connect(ren, "changed", G_CALLBACK(cb_editing_changed_language), (gpointer) this);
 	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_isdefault"));
 	g_signal_connect(ren, "toggled", G_CALLBACK(cb_toggled_isdefault), (gpointer) this);
 	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_isforced"));
@@ -119,7 +124,7 @@ int dialogproperty_t::setcurrentelement(gint n) {
 
 int dialogproperty_t::cancel() {
 	gtk_label_set_text(GTK_LABEL(label_name), "");
-	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview_item), NULL);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), NULL);
 	gtk_entry_set_text(GTK_ENTRY(entry_outname), "");
 
 	curn = -1;
@@ -138,7 +143,7 @@ void dialogproperty_t::setnewtreeviewmodel(int numrows) {
 	
 	gtk_tree_model_filter_set_visible_func(filter_model, filter_visible_func, this, NULL);
 
-	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview_item), GTK_TREE_MODEL(filter_model));
+	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(filter_model));
 	g_object_unref(filter_model);
 }
 
@@ -277,7 +282,7 @@ void dialogproperty_t::cb_op(GtkButton *, gpointer self) {
 	gtk_tree_model_filter_refilter(
 	  GTK_TREE_MODEL_FILTER(
 	    gtk_tree_view_get_model(
-	      GTK_TREE_VIEW(inst->treeview_item))));
+	      GTK_TREE_VIEW(inst->treeview))));
 }
 
 void dialogproperty_t::cb_reset(GtkButton *, gpointer self) {
@@ -295,8 +300,8 @@ void dialogproperty_t::cb_reset(GtkButton *, gpointer self) {
 
 void dialogproperty_t::cb_moveup(GtkButton *, gpointer self) {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
-	GtkTreeSelection *treeselection = gtk_tree_view_get_selection(GTK_TREE_VIEW(inst->treeview_item));
-	GtkTreeModel     *treemodel = gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview_item));
+	GtkTreeSelection *treeselection = gtk_tree_view_get_selection(GTK_TREE_VIEW(inst->treeview));
+	GtkTreeModel     *treemodel = gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview));
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(treeselection, NULL, &iter)) {
 		GtkTreeIter underiter;
@@ -327,7 +332,7 @@ void dialogproperty_t::cb_moveup(GtkButton *, gpointer self) {
 		gtk_tree_model_filter_refilter(
 		  GTK_TREE_MODEL_FILTER(
 		    gtk_tree_view_get_model(
-		      GTK_TREE_VIEW(inst->treeview_item))));
+		      GTK_TREE_VIEW(inst->treeview))));
 		
 		underiter = {};
 		iter = {};
@@ -341,8 +346,8 @@ void dialogproperty_t::cb_moveup(GtkButton *, gpointer self) {
 
 void dialogproperty_t::cb_movedown(GtkButton *, gpointer self) {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
-	GtkTreeSelection *treeselection = gtk_tree_view_get_selection(GTK_TREE_VIEW(inst->treeview_item));
-	GtkTreeModel     *treemodel = gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview_item));
+	GtkTreeSelection *treeselection = gtk_tree_view_get_selection(GTK_TREE_VIEW(inst->treeview));
+	GtkTreeModel     *treemodel = gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview));
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(treeselection, NULL, &iter)) {
 		GtkTreeIter underiter;
@@ -373,7 +378,7 @@ void dialogproperty_t::cb_movedown(GtkButton *, gpointer self) {
 		gtk_tree_model_filter_refilter(
 		  GTK_TREE_MODEL_FILTER(
 		    gtk_tree_view_get_model(
-		      GTK_TREE_VIEW(inst->treeview_item))));
+		      GTK_TREE_VIEW(inst->treeview))));
 		
 		underiter = {};
 		iter = {};
@@ -382,6 +387,45 @@ void dialogproperty_t::cb_movedown(GtkButton *, gpointer self) {
 		gtk_tree_model_filter_convert_child_iter_to_iter(GTK_TREE_MODEL_FILTER(treemodel), &iter, &underiter);
 		
 		gtk_tree_selection_select_iter(treeselection, &iter);
+	}
+}
+
+
+gboolean dialogproperty_t::cb_treeview_buttonpress(GtkWidget *treeview, GdkEvent *event, gpointer self) {
+	dialogproperty_t *inst;
+	GdkEventButton *eventbutton;
+	
+	inst = (dialogproperty_t*) self;
+	eventbutton = (GdkEventButton*) event;
+	if (eventbutton->type == GDK_BUTTON_PRESS && eventbutton->button == 3) {
+		
+		
+		inst->util_treeview_do_popup_menu(event);
+		
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
+gboolean dialogproperty_t::cb_treeview_popupmenu(GtkWidget *treeview, gpointer self) {
+	dialogproperty_t *inst;
+	
+	inst = (dialogproperty_t*) self;
+	inst->util_treeview_do_popup_menu(NULL);
+	return TRUE;
+}
+
+void dialogproperty_t::util_treeview_do_popup_menu(GdkEvent* event) {
+	if (event) {
+		gtk_menu_popup_at_pointer(GTK_MENU(treeview_menu), event);
+	}
+	else {
+		gtk_menu_popup_at_widget(GTK_MENU(treeview_menu),
+		                         treeview,
+		                         GDK_GRAVITY_NORTH_WEST,
+		                         GDK_GRAVITY_NORTH_WEST,
+		                         NULL);
 	}
 }
 
@@ -429,49 +473,60 @@ void dialogproperty_t::cb_edited_name(GtkCellRendererText *ren,
 }
 
 void dialogproperty_t::cb_edited_codec(GtkCellRendererText *ren,
-                                       gchar               *pathstr,
+                                       gchar               *filterpath_str,
                                        gchar               *new_text,
                                        gpointer             self)
 {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
-	GtkTreePath *path;
+	GtkTreePath *filterpath;
 	gint *indices, depth, n;
 	
-	path = gtk_tree_path_new_from_string(pathstr);
-	if (path) {
-		depth = gtk_tree_path_get_depth(path);
-		assert(depth == 1);
-		indices = gtk_tree_path_get_indices(path);
-		assert(indices);
-		n = indices[0];
-		assert(n >= 0);
-		assert(size_t(n) < inst->curelem->destitems.size());
-		
-		std::string newtext = new_text;
-		if (newtext == "AC-3")
-			inst->curelem->destitems[n].codecid = codecid_ac3;
-		else if (newtext == "EAC-3")
-			inst->curelem->destitems[n].codecid = codecid_eac3;
-		else if (newtext == "DTS")
-			inst->curelem->destitems[n].codecid = codecid_dts;
-		else if (newtext == "TrueHD")
-			inst->curelem->destitems[n].codecid = codecid_truehd;
-		else if (newtext == "AAC")
-			inst->curelem->destitems[n].codecid = codecid_aac;
-		else if (newtext == "MP2")
-			inst->curelem->destitems[n].codecid = codecid_mp2;
-		else if (newtext == "MP3")
-			inst->curelem->destitems[n].codecid = codecid_mp3;
-		else if (newtext == "Vorbis")
-			inst->curelem->destitems[n].codecid = codecid_vorbis;
-		else if (newtext == "FLAC")
-			inst->curelem->destitems[n].codecid = codecid_flac;
-		else if (newtext == "PCM")
-			inst->curelem->destitems[n].codecid = codecid_pcm;
-		else
-			inst->curelem->destitems[n].codecid = codecid_other;
+	filterpath = gtk_tree_path_new_from_string(filterpath_str);
+	if (filterpath) {
+		GtkTreeModelFilter *filter_model;
+		GtkTreePath *path;
+		filter_model = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview)));
+		path = gtk_tree_model_filter_convert_path_to_child_path(filter_model, filterpath);
+		if (path) {
+			depth = gtk_tree_path_get_depth(path);
+			assert(depth == 1);
+			indices = gtk_tree_path_get_indices(path);
+			assert(indices);
+			n = indices[0];
+			assert(n >= 0);
+			assert(size_t(n) < inst->curelem->destitems.size());
+			
+			std::string newtext = new_text;
+			if (newtext == "AC-3")
+				inst->curelem->destitems[n].codecid = codecid_ac3;
+			else if (newtext == "EAC-3")
+				inst->curelem->destitems[n].codecid = codecid_eac3;
+			else if (newtext == "DTS")
+				inst->curelem->destitems[n].codecid = codecid_dts;
+			else if (newtext == "TrueHD")
+				inst->curelem->destitems[n].codecid = codecid_truehd;
+			else if (newtext == "AAC")
+				inst->curelem->destitems[n].codecid = codecid_aac;
+			else if (newtext == "MP2")
+				inst->curelem->destitems[n].codecid = codecid_mp2;
+			else if (newtext == "MP3")
+				inst->curelem->destitems[n].codecid = codecid_mp3;
+			else if (newtext == "Vorbis")
+				inst->curelem->destitems[n].codecid = codecid_vorbis;
+			else if (newtext == "FLAC")
+				inst->curelem->destitems[n].codecid = codecid_flac;
+			else if (newtext == "PCM")
+				inst->curelem->destitems[n].codecid = codecid_pcm;
+			else
+				inst->curelem->destitems[n].codecid = codecid_other;
+			
+			BasicListModel *basic_list_model;
+			basic_list_model = BASIC_LIST_MODEL(gtk_tree_model_filter_get_model(filter_model));
+			basic_list_model_emit_row_changed(basic_list_model, n);
 
-		gtk_tree_path_free(path);
+			gtk_tree_path_free(path);
+		}
+		gtk_tree_path_free(filterpath);
 		path = NULL;
 	}
 }
@@ -495,11 +550,50 @@ void dialogproperty_t::cb_edited_language(GtkCellRendererText *ren,
 		assert(n >= 0);
 		assert(size_t(n) < inst->curelem->destitems.size());
 		
-		inst->curelem->destitems[n].lang = new_text;
+		std::string newlang = new_text;
+		if (newlang == "ita" || newlang == "eng")
+			inst->curelem->destitems[n].lang = newlang;
 
 		gtk_tree_path_free(path);
 		path = NULL;
 	}
+}
+
+void dialogproperty_t::cb_editing_started_language(GtkCellRenderer *ren,
+                                                   GtkCellEditable *celleditable,
+                                                   const gchar     *pathstr,
+                                                   gpointer         self)
+{
+}
+
+void dialogproperty_t::cb_editing_changed_language(GtkCellRendererCombo *ren,
+                                                   gchar                *pathstr,
+                                                   GtkTreeIter          *seliter,
+                                                   gpointer              self)
+{
+	GtkTreePath  *path;
+	GtkTreeModel *combomodel;
+	char         *selstring;
+	gint          n, *indices, depth;
+	g_print("hi!\n");
+	dialogproperty_t* inst;
+	inst = (dialogproperty_t*) self;
+	
+	g_object_get(ren, "model", &combomodel, NULL);
+	gtk_tree_model_get(combomodel, seliter, 0, &selstring, -1);
+	path = gtk_tree_path_new_from_string(pathstr);
+	depth = gtk_tree_path_get_depth(path);
+	indices = gtk_tree_path_get_indices(path);
+	
+	assert(depth == 1);
+	n = indices[0];
+	assert(n >= 0 && size_t(n) <= inst->curelem->destitems.size());
+	
+	destitem_t& item = inst->curelem->destitems[n];
+	
+	item.lang = selstring;
+	//basic_list_model_emit_row_changed();
+	gtk_tree_path_free(path);
 }
 
 void dialogproperty_t::cb_toggled_isdefault(GtkCellRendererToggle *ren, gchar *pathstr, gpointer self) {
