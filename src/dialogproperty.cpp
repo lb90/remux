@@ -66,8 +66,9 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_codec"));
 	g_signal_connect(ren, "edited", G_CALLBACK(cb_edited_codec), (gpointer) this);
 	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_language"));
-	g_signal_connect(ren, "editing-started", G_CALLBACK(cb_editing_started_language), (gpointer) this);
-	g_signal_connect(ren, "changed", G_CALLBACK(cb_editing_changed_language), (gpointer) this);
+	g_signal_connect(ren, "edited", G_CALLBACK(cb_edited_language), (gpointer) this);
+	//g_signal_connect(ren, "editing-started", G_CALLBACK(cb_editing_started_language), (gpointer) this);
+	//g_signal_connect(ren, "changed", G_CALLBACK(cb_editing_changed_language), (gpointer) this);
 	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_isdefault"));
 	g_signal_connect(ren, "toggled", G_CALLBACK(cb_toggled_isdefault), (gpointer) this);
 	ren = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "ren_isforced"));
@@ -308,7 +309,7 @@ void dialogproperty_t::cb_moveup(GtkButton *, gpointer self) {
 		gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(treemodel), &underiter, &iter);
 		
 		int nn = GPOINTER_TO_INT(underiter.user_data);
-		assert(nn >= 0 && nn < inst->curelem->destitems.size());
+		assert(nn >= 0 && size_t(nn) < inst->curelem->destitems.size());
 		size_t n = nn;
 	
 		if (n == 0) return;
@@ -354,7 +355,7 @@ void dialogproperty_t::cb_movedown(GtkButton *, gpointer self) {
 		gtk_tree_model_filter_convert_iter_to_child_iter(GTK_TREE_MODEL_FILTER(treemodel), &underiter, &iter);
 		
 		int nn = GPOINTER_TO_INT(underiter.user_data);
-		assert(nn >= 0 && nn < inst->curelem->destitems.size());
+		assert(nn >= 0 && size_t(nn) < inst->curelem->destitems.size());
 		size_t n = nn;
 	
 		if (n + 1 == inst->curelem->destitems.size()) return;
@@ -447,28 +448,38 @@ dialogproperty_t::~dialogproperty_t() {
 
 
 void dialogproperty_t::cb_edited_name(GtkCellRendererText *ren,
-                                      gchar               *pathstr,
+                                      gchar               *filterpath_str,
                                       gchar               *new_text,
                                       gpointer             self)
 {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
-	GtkTreePath *path;
+	GtkTreePath *filterpath;
 	gint *indices, depth, n;
 	
-	path = gtk_tree_path_new_from_string(pathstr);
-	if (path) {
-		depth = gtk_tree_path_get_depth(path);
-		assert(depth == 1);
-		indices = gtk_tree_path_get_indices(path);
-		assert(indices);
-		n = indices[0];
-		assert(n >= 0);
-		assert(size_t(n) < inst->curelem->destitems.size());
-		
-		inst->curelem->destitems[n].name = new_text;
+	filterpath = gtk_tree_path_new_from_string(filterpath_str);
+	if (filterpath) {
+		GtkTreeModelFilter *filter_model;
+		GtkTreePath *path;
+		filter_model = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview)));
+		path = gtk_tree_model_filter_convert_path_to_child_path(filter_model, filterpath);
+		if (path) {
+			depth = gtk_tree_path_get_depth(path);
+			assert(depth == 1);
+			indices = gtk_tree_path_get_indices(path);
+			assert(indices);
+			n = indices[0];
+			assert(n >= 0);
+			assert(size_t(n) < inst->curelem->destitems.size());
+			
+			inst->curelem->destitems[n].name = new_text;
 
-		gtk_tree_path_free(path);
-		path = NULL;
+			BasicListModel *basic_list_model;
+			basic_list_model = BASIC_LIST_MODEL(gtk_tree_model_filter_get_model(filter_model));
+			basic_list_model_emit_row_changed(basic_list_model, n);
+
+			gtk_tree_path_free(path);
+		}
+		gtk_tree_path_free(filterpath);
 	}
 }
 
@@ -527,35 +538,44 @@ void dialogproperty_t::cb_edited_codec(GtkCellRendererText *ren,
 			gtk_tree_path_free(path);
 		}
 		gtk_tree_path_free(filterpath);
-		path = NULL;
 	}
 }
 
 void dialogproperty_t::cb_edited_language(GtkCellRendererText *ren,
-                                          gchar               *pathstr,
+                                          gchar               *filterpath_str,
                                           gchar               *new_text,
                                           gpointer             self)
 {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
-	GtkTreePath *path;
+	GtkTreePath *filterpath;
 	gint *indices, depth, n;
 	
-	path = gtk_tree_path_new_from_string(pathstr);
-	if (path) {
-		depth = gtk_tree_path_get_depth(path);
-		assert(depth == 1);
-		indices = gtk_tree_path_get_indices(path);
-		assert(indices);
-		n = indices[0];
-		assert(n >= 0);
-		assert(size_t(n) < inst->curelem->destitems.size());
-		
-		std::string newlang = new_text;
-		if (newlang == "ita" || newlang == "eng")
-			inst->curelem->destitems[n].lang = newlang;
-
-		gtk_tree_path_free(path);
-		path = NULL;
+	filterpath = gtk_tree_path_new_from_string(filterpath_str);
+	if (filterpath) {
+		GtkTreeModelFilter *filter_model;
+		GtkTreePath *path;
+		filter_model = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview)));
+		path = gtk_tree_model_filter_convert_path_to_child_path(filter_model, filterpath);
+		if (path) {
+			depth = gtk_tree_path_get_depth(path);
+			assert(depth == 1);
+			indices = gtk_tree_path_get_indices(path);
+			assert(indices);
+			n = indices[0];
+			assert(n >= 0);
+			assert(size_t(n) < inst->curelem->destitems.size());
+			
+			std::string newlang = new_text;
+			if (newlang == "ita" || newlang == "eng")
+				inst->curelem->destitems[n].lang = newlang;
+				
+			BasicListModel *basic_list_model;
+			basic_list_model = BASIC_LIST_MODEL(gtk_tree_model_filter_get_model(filter_model));
+			basic_list_model_emit_row_changed(basic_list_model, n);
+			
+			gtk_tree_path_free(path);
+		}
+		gtk_tree_path_free(filterpath);
 	}
 }
 
@@ -571,7 +591,7 @@ void dialogproperty_t::cb_editing_changed_language(GtkCellRendererCombo *ren,
                                                    GtkTreeIter          *seliter,
                                                    gpointer              self)
 {
-	GtkTreePath  *path;
+/*	GtkTreePath  *path;
 	GtkTreeModel *combomodel;
 	char         *selstring;
 	gint          n, *indices, depth;
@@ -593,51 +613,70 @@ void dialogproperty_t::cb_editing_changed_language(GtkCellRendererCombo *ren,
 	
 	item.lang = selstring;
 	//basic_list_model_emit_row_changed();
-	gtk_tree_path_free(path);
+	gtk_tree_path_free(path);*/
 }
 
-void dialogproperty_t::cb_toggled_isdefault(GtkCellRendererToggle *ren, gchar *pathstr, gpointer self) {
+void dialogproperty_t::cb_toggled_isdefault(GtkCellRendererToggle *ren, gchar *filterpath_str, gpointer self) {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
-	GtkTreePath *path;
+	GtkTreePath *filterpath;
 	gint *indices, depth, n;
 	
-	path = gtk_tree_path_new_from_string(pathstr);
-	if (path) {
-		depth = gtk_tree_path_get_depth(path);
-		assert(depth == 1);
-		indices = gtk_tree_path_get_indices(path);
-		assert(indices);
-		n = indices[0];
-		assert(n >= 0);
-		assert(size_t(n) < inst->curelem->destitems.size());
-		
-		inst->curelem->destitems[n].isdefault
-		  = !inst->curelem->destitems[n].isdefault;
+	filterpath = gtk_tree_path_new_from_string(filterpath_str);
+	if (filterpath) {
+		GtkTreeModelFilter *filter_model;
+		GtkTreePath *path;
+		filter_model = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview)));
+		path = gtk_tree_model_filter_convert_path_to_child_path(filter_model, filterpath);
+		if (path) {
+			depth = gtk_tree_path_get_depth(path);
+			assert(depth == 1);
+			indices = gtk_tree_path_get_indices(path);
+			assert(indices);
+			n = indices[0];
+			assert(n >= 0);
+			assert(size_t(n) < inst->curelem->destitems.size());
+			
+			inst->curelem->destitems[n].isdefault
+			  = !inst->curelem->destitems[n].isdefault;
 
-		gtk_tree_path_free(path);
-		path = NULL;
+			BasicListModel *basic_list_model;
+			basic_list_model = BASIC_LIST_MODEL(gtk_tree_model_filter_get_model(filter_model));
+			basic_list_model_emit_row_changed(basic_list_model, n);
+			gtk_tree_path_free(path);
+		}
+		gtk_tree_path_free(filterpath);
 	}
 }
 
-void dialogproperty_t::cb_toggled_isforced(GtkCellRendererToggle *ren, gchar *pathstr, gpointer self) {
+void dialogproperty_t::cb_toggled_isforced(GtkCellRendererToggle *ren, gchar *filterpath_str, gpointer self) {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
-	GtkTreePath *path;
+	GtkTreePath *filterpath;
 	gint *indices, depth, n;
 	
-	path = gtk_tree_path_new_from_string(pathstr);
-	if (path) {
-		depth = gtk_tree_path_get_depth(path);
-		assert(depth == 1);
-		indices = gtk_tree_path_get_indices(path);
-		assert(indices);
-		n = indices[0];
-		assert(n >= 0);
-		assert(size_t(n) < inst->curelem->destitems.size());
-		
-		inst->curelem->destitems[n].isforced
-		  = !inst->curelem->destitems[n].isforced;
-		gtk_tree_path_free(path);
-		path = NULL;
+	filterpath = gtk_tree_path_new_from_string(filterpath_str);
+	if (filterpath) {
+		GtkTreeModelFilter *filter_model;
+		GtkTreePath *path;
+		filter_model = GTK_TREE_MODEL_FILTER(gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview)));
+		path = gtk_tree_model_filter_convert_path_to_child_path(filter_model, filterpath);
+		if (path) {
+			depth = gtk_tree_path_get_depth(path);
+			assert(depth == 1);
+			indices = gtk_tree_path_get_indices(path);
+			assert(indices);
+			n = indices[0];
+			assert(n >= 0);
+			assert(size_t(n) < inst->curelem->destitems.size());
+			
+			inst->curelem->destitems[n].isforced
+			  = !inst->curelem->destitems[n].isforced;
+			
+			BasicListModel *basic_list_model;
+			basic_list_model = BASIC_LIST_MODEL(gtk_tree_model_filter_get_model(filter_model));
+			basic_list_model_emit_row_changed(basic_list_model, n);
+			gtk_tree_path_free(path);
+		}
+		gtk_tree_path_free(filterpath);
 	}
 }
 

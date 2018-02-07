@@ -8,10 +8,22 @@
     <property name="icon_name">edit-copy</property>
     <property name="use_fallback">True</property>
   </object>
+  <object class="GtkImage" id="image_copy2">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">edit-copy</property>
+    <property name="use_fallback">True</property>
+  </object>
   <object class="GtkImage" id="image_delete">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">edit-delete</property>
+    <property name="use_fallback">True</property>
+  </object>
+  <object class="GtkImage" id="image_delete2">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">window-close</property>
     <property name="use_fallback">True</property>
   </object>
   <object class="GtkImage" id="image_enqueue">
@@ -36,8 +48,7 @@
   <object class="GtkImage" id="image_reset">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixel_size">32</property>
-    <property name="icon_name">dialog-close</property>
+    <property name="icon_name">edit-undo</property>
   </object>
   <object class="GtkImage" id="image_skip">
     <property name="visible">True</property>
@@ -502,6 +513,36 @@
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="button_copy">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="valign">center</property>
+                                    <property name="vexpand">True</property>
+                                    <property name="image">image_copy2</property>
+                                    <property name="always_show_image">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="button_delete">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="valign">center</property>
+                                    <property name="vexpand">True</property>
+                                    <property name="image">image_delete2</property>
+                                    <property name="always_show_image">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">3</property>
                                   </packing>
                                 </child>
                               </object>
