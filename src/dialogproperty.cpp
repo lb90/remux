@@ -26,6 +26,8 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	button_op            = GTK_WIDGET(gtk_builder_get_object(builder, "button_op"));
 	button_moveup        = GTK_WIDGET(gtk_builder_get_object(builder, "button_moveup"));
 	button_movedown      = GTK_WIDGET(gtk_builder_get_object(builder, "button_movedown"));
+	button_copy          = GTK_WIDGET(gtk_builder_get_object(builder, "button_copy"));
+	button_delete        = GTK_WIDGET(gtk_builder_get_object(builder, "button_delete"));
 	button_reset         = GTK_WIDGET(gtk_builder_get_object(builder, "button_reset"));
 	treeview_menu        = GTK_WIDGET(gtk_builder_get_object(builder, "menu_treeview"));
 	
@@ -37,6 +39,8 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	g_signal_connect(button_op, "clicked", G_CALLBACK(cb_op), (gpointer) this);
 	g_signal_connect(button_moveup, "clicked", G_CALLBACK(cb_moveup), (gpointer) this);
 	g_signal_connect(button_movedown, "clicked", G_CALLBACK(cb_movedown), (gpointer) this);
+	g_signal_connect(button_copy, "clicked", G_CALLBACK(cb_copy), (gpointer) this);
+	g_signal_connect(button_delete, "clicked", G_CALLBACK(cb_delete), (gpointer) this);
 	g_signal_connect(button_reset, "clicked", G_CALLBACK(cb_reset), (gpointer) this);
 	
 	g_signal_connect(treeview, "button-press-event", G_CALLBACK(cb_treeview_buttonpress), (gpointer) this);
@@ -146,6 +150,31 @@ void dialogproperty_t::setnewtreeviewmodel(int numrows) {
 
 	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(filter_model));
 	g_object_unref(filter_model);
+}
+
+int dialogproperty_t::getselection() {
+	GtkTreeSelection   *treesel;
+	GtkTreeModelFilter *filter_model;
+	GtkTreeIter         filter_iter;
+	GtkTreeIter         basic_iter;
+	int n;
+	
+	treesel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+	if (gtk_tree_selection_get_selected(treesel, (GtkTreeModel**) &filter_model, &filter_iter)) {
+		gtk_tree_model_filter_convert_iter_to_child_iter(filter_model, &basic_iter, &filter_iter);
+		
+		n = GPOINTER_TO_INT(basic_iter.user_data);
+		assert(n >= 0 && size_t(n) < curelem->destitems.size());
+		
+		return n;
+	}
+	else return -1;
+}
+
+void dialogproperty_t::selectnone() {
+	GtkTreeSelection   *treesel;
+	treesel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+	gtk_tree_selection_unselect_all(treesel);
 }
 
 void dialogproperty_t::gonext() {
@@ -286,6 +315,70 @@ void dialogproperty_t::cb_op(GtkButton *, gpointer self) {
 	      GTK_TREE_VIEW(inst->treeview))));
 }
 
+void dialogproperty_t::cb_copy(GtkButton *, gpointer self) {
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	assert(inst && inst->curelem);
+	
+	media_t& elem = *(inst->curelem);
+
+	int nn = inst->getselection();
+	if (nn < 0) return;
+	size_t n = nn;
+	
+	std::vector<destitem_t> firstpart;
+	for (size_t i = 0; i <= n; i++)
+		firstpart.emplace_back(elem.destitems[i]);
+	
+	std::vector<destitem_t> secondpart;
+	for (size_t i = n; i < inst->curelem->destitems.size(); i++)
+		secondpart.emplace_back(elem.destitems[i]);
+	
+	elem.destitems.clear();
+	
+	for (const destitem_t& item : firstpart)
+		elem.destitems.emplace_back(item);
+	for (const destitem_t& item : secondpart)
+		elem.destitems.emplace_back(item);
+	
+	gtk_tree_model_filter_refilter(
+	  GTK_TREE_MODEL_FILTER(
+	    gtk_tree_view_get_model(
+	      GTK_TREE_VIEW(inst->treeview))));
+}
+
+void dialogproperty_t::cb_delete(GtkButton *, gpointer self) {
+	dialogproperty_t *inst = (dialogproperty_t*) self;
+	assert(inst && inst->curelem);
+	
+	media_t& elem = *(inst->curelem);
+	
+	int nn = inst->getselection();
+	if (nn < 0) return;
+	size_t n = nn;
+	
+	std::vector<destitem_t> firstpart;
+	for (size_t i = 0; i < n; i++)
+		firstpart.emplace_back(elem.destitems[i]);
+	
+	std::vector<destitem_t> secondpart;
+	for (size_t i = n + 1; i < inst->curelem->destitems.size(); i++)
+		secondpart.emplace_back(elem.destitems[i]);
+	
+	elem.destitems.clear();
+	
+	for (const destitem_t& item : firstpart)
+		elem.destitems.emplace_back(item);
+	for (const destitem_t& item : secondpart)
+		elem.destitems.emplace_back(item);
+	
+	inst->selectnone();
+	
+	gtk_tree_model_filter_refilter(
+	  GTK_TREE_MODEL_FILTER(
+	    gtk_tree_view_get_model(
+	      GTK_TREE_VIEW(inst->treeview))));
+}
+
 void dialogproperty_t::cb_reset(GtkButton *, gpointer self) {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
 	assert(inst && inst->curelem);
@@ -297,6 +390,11 @@ void dialogproperty_t::cb_reset(GtkButton *, gpointer self) {
 	for (const origitem_t& origitem : elem.origitems) {
 		elem.destitems.emplace_back(origitem);
 	}
+	
+	gtk_tree_model_filter_refilter(
+	  GTK_TREE_MODEL_FILTER(
+	    gtk_tree_view_get_model(
+	      GTK_TREE_VIEW(inst->treeview))));
 }
 
 void dialogproperty_t::cb_moveup(GtkButton *, gpointer self) {

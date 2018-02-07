@@ -36,6 +36,8 @@ private:
 	GtkWidget  *button_op;
 	GtkWidget  *button_moveup;
 	GtkWidget  *button_movedown;
+	GtkWidget  *button_copy;
+	GtkWidget  *button_delete;
 	GtkWidget  *button_reset;
 	
 	GtkWidget  *treeview_menu;
@@ -46,6 +48,10 @@ private:
 	void gonext();
 
 	void setnewtreeviewmodel(int numrows);
+	
+	int getselection();
+	//void select(int n);
+	void selectnone();
 	
 	static
 	gboolean filter_visible_func(GtkTreeModel *childmodel,
@@ -99,6 +105,12 @@ private:
 	
 	static
 	void cb_op(GtkButton *, gpointer self);
+	
+	static
+	void cb_copy(GtkButton *, gpointer self);
+	
+	static
+	void cb_delete(GtkButton *, gpointer self);
 	
 	static
 	void cb_reset(GtkButton *, gpointer self);
