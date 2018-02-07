@@ -113,8 +113,8 @@ void internal_fill_element(media_t& elem) {
 			else
 				item.codecid = codecid_other;
 			
-			item.isdefault = trackpt.get("properties.default_track", true); /*TODO*/
-			item.isforced  = trackpt.get("properties.forced_track", true); /*TODO*/
+			item.isdefault = trackpt.get("properties.default_track", true);
+			item.isforced  = trackpt.get("properties.forced_track", false);
 		}
 	}
 	

@@ -33,7 +33,7 @@ std::string util_escape_json(const std::string &s) {
 void jsonargs::push_isdefault(bool isdefault) {
 	args.emplace_back("--default-track");
 	if (isdefault)
-		args.emplace_back("0:1");
+		args.emplace_back("-1:1");
 	else
 		args.emplace_back("-1:0");
 }
@@ -41,7 +41,7 @@ void jsonargs::push_isdefault(bool isdefault) {
 void jsonargs::push_isforced(bool isforced) {
 	args.emplace_back("--forced-track");
 	if (isforced)
-		args.emplace_back("0:1");
+		args.emplace_back("-1:1");
 	else
 		args.emplace_back("-1:0");
 }
