@@ -50,13 +50,10 @@ private:
 	void setnewtreeviewmodel(int numrows);
 	
 	int getselection();
-	//void select(int n);
+	void select(int n);
 	void selectnone();
-	
-	static
-	gboolean filter_visible_func(GtkTreeModel *childmodel,
-	                             GtkTreeIter *iter,
-	                             gpointer self);
+	void update_view();
+	void change_num_rows();
 
 	static
 	void cb_edited_name(GtkCellRendererText *ren,

@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cassert>
 #include <gtk/gtk.h>
 #include "gtkbasicmodel.h"
 
@@ -531,6 +532,12 @@ basic_list_model_new (gint numrows)
   return newbasicmodel;
 }
 
+void basic_list_model_emit_changed_all(BasicListModel *basic_list_model) {
+	for (int i = 0; i < basic_list_model->numrows; i++) {
+		basic_list_model_emit_row_changed(basic_list_model, i);
+	}
+}
+
 void basic_list_model_emit_row_changed(BasicListModel *basic_list_model, int num) {
 	GtkTreeIter  iter;
 	GtkTreePath *path;
@@ -545,5 +552,71 @@ void basic_list_model_emit_row_changed(BasicListModel *basic_list_model, int num
 		gtk_tree_model_row_changed(GTK_TREE_MODEL(basic_list_model), path, &iter);
 		gtk_tree_path_free(path);
 	}
+}
+
+void basic_list_model_emit_row_inserted(BasicListModel *basic_list_model) {
+	GtkTreeIter  iter;
+	GtkTreePath *path;
+	
+	g_return_if_fail (IS_BASIC_LIST_MODEL (basic_list_model));
+
+	assert(basic_list_model->numrows >= 0);
+	basic_list_model->numrows += 1;
+	int newnumrows = basic_list_model->numrows;
+
+	iter.stamp     = basic_list_model->stamp;
+	iter.user_data = GINT_TO_POINTER(newnumrows - 1);
+
+	path = basic_list_model_get_path(GTK_TREE_MODEL(basic_list_model), &iter);
+	assert(path);
+
+	gtk_tree_model_row_inserted(GTK_TREE_MODEL(basic_list_model), path, &iter);
+	gtk_tree_path_free(path);
+	
+	basic_list_model_emit_changed_all(basic_list_model);
+}
+
+void basic_list_model_emit_row_deleted(BasicListModel *basic_list_model) {
+	GtkTreeIter  iter;
+	GtkTreePath *path;
+	
+	g_return_if_fail (IS_BASIC_LIST_MODEL (basic_list_model));
+
+	assert(basic_list_model->numrows >= 1);
+
+	iter.stamp     = basic_list_model->stamp;
+	iter.user_data = GINT_TO_POINTER(basic_list_model->numrows - 1);
+	path = basic_list_model_get_path(GTK_TREE_MODEL(basic_list_model), &iter);
+	assert(path);
+
+	basic_list_model->numrows -= 1;
+	gtk_tree_model_row_deleted(GTK_TREE_MODEL(basic_list_model), path);
+	gtk_tree_path_free(path);
+	
+	basic_list_model_emit_changed_all(basic_list_model);
+}
+
+void basic_list_model_set_new_num_rows(BasicListModel *basic_list_model, int numrows) {
+	GtkTreeIter  iter;
+	GtkTreePath *path;
+	
+	g_return_if_fail (IS_BASIC_LIST_MODEL (basic_list_model));
+
+	int oldnumrows = basic_list_model->numrows;
+	int delta = numrows - oldnumrows;
+	
+	if (delta != 0) {		
+		if (delta > 0) {
+			for (int i = 0; i < delta; i++)
+				basic_list_model_emit_row_inserted(basic_list_model);
+		}
+		else {
+			int pos_delta = -delta;
+			for (int i = 0; i < pos_delta; i++)
+				basic_list_model_emit_row_deleted(basic_list_model);
+		}
+	}
+	
+	basic_list_model_emit_changed_all(basic_list_model);
 }
 

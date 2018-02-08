@@ -36,6 +36,12 @@ GType             basic_list_model_get_type (void);
 
 BasicListModel   *basic_list_model_new (gint numrows);
 
+void              basic_list_model_emit_changed_all(BasicListModel *basic_list_model);
+
 void              basic_list_model_emit_row_changed(BasicListModel *basic_list_model, int num);
+void              basic_list_model_emit_row_inserted(BasicListModel *basic_list_model);
+void              basic_list_model_emit_row_deleted(BasicListModel *basic_list_model);
+
+void              basic_list_model_set_new_num_rows(BasicListModel *basic_list_model, int numrows);
 
 #endif
