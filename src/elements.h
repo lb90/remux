@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <boost/property_tree/ptree.hpp>
 
 enum itemtype_t {
@@ -94,5 +95,8 @@ struct media_t {
 	
 	err_t       err;
 };
+
+std::string codecid_to_name(codecid_t codecid);
+codecid_t codecid_from_name(const std::string& name);
 
 #endif

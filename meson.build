@@ -7,13 +7,16 @@ project('remux', ['c', 'cpp'],
 
 gnome = import('gnome')
 
+cxx = meson.get_compiler('cpp')
+
 gtk_dep        = dependency('gtk+-3.0',
                        version: '>= 3.22')
 gmodule_dep    = dependency('gmodule-2.0')
+threads_dep    = dependency('threads')
 boost_dep      = dependency('boost',
                        modules: [],
-                       version: '>= 1.60')
-threads_dep    = dependency('threads')
+                       version: '>= 1.60',
+                       required : false)
 
 deps = [
   gtk_dep,

@@ -38,7 +38,7 @@ private:
 	GtkWidget  *button_movedown;
 	GtkWidget  *button_copy;
 	GtkWidget  *button_delete;
-	GtkWidget  *button_reset;
+	GtkWidget  *button_resetall;
 	
 	GtkWidget  *treeview_menu;
 	
@@ -54,6 +54,11 @@ private:
 	void selectnone();
 	void update_view();
 	void change_num_rows();
+	void row_changed(int n);
+	
+	int get_n_from_pathstr(const char *pathstr);
+	int get_n_from_path(GtkTreePath *path);
+	int get_n_from_iter(GtkTreeIter *iter);
 
 	static
 	void cb_edited_name(GtkCellRendererText *ren,
@@ -72,6 +77,12 @@ private:
                             gchar               *pathstr,
                             gchar               *new_text,
                             gpointer             self);
+
+	static
+	void cb_editing_started_codec(GtkCellRenderer *ren,
+                                  GtkCellEditable *celleditable,
+                                  const gchar     *pathstr,
+                                  gpointer         self);
 
 	static
 	void cb_editing_started_language(GtkCellRenderer *ren,
@@ -110,7 +121,7 @@ private:
 	void cb_delete(GtkButton *, gpointer self);
 	
 	static
-	void cb_reset(GtkButton *, gpointer self);
+	void cb_resetall(GtkButton *, gpointer self);
 	
 	static
 	void cb_moveup(GtkButton *, gpointer self);
