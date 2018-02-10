@@ -184,6 +184,23 @@ void dialogproperty_t::selectnone() {
 	gtk_tree_selection_unselect_all(treesel);
 }
 
+void dialogproperty_t::scrollto(int n, bool totop) {
+	GtkTreePath *path;
+	double row_align;
+
+	row_align = totop ? 0.0f : 1.0f;
+
+	path = get_path_from_n(n);
+	
+	gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(treeview),
+	                             path,
+	                             NULL,
+	                             TRUE,
+	                             row_align,
+	                             0.0f);
+	gtk_tree_path_free(path);
+}
+
 void dialogproperty_t::update_view() {
 	BasicListModel *basic_model;
 	basic_model = BASIC_LIST_MODEL(gtk_tree_view_get_model(GTK_TREE_VIEW(treeview)));
@@ -208,6 +225,13 @@ void dialogproperty_t::row_changed(int n) {
 	assert(size_t(n) < curelem->destitems.size());
 	
 	basic_list_model_emit_row_changed(basic_model, n);
+}
+
+GtkTreePath *dialogproperty_t::get_path_from_n(int n) {
+	GtkTreePath *path;
+	path = gtk_tree_path_new();
+	gtk_tree_path_append_index(path, n);
+	return path;
 }
 
 int dialogproperty_t::get_n_from_pathstr(const char *pathstr) {
@@ -334,37 +358,52 @@ void dialogproperty_t::cb_op(GtkButton *, gpointer self) {
 	for (destitem_t& item : nonvideoitems)
 		elem.destitems.emplace_back(item);
 	
-	for (destitem_t& item : elem.destitems) { /*TODO xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
-		if (item.type == itemtype_audio) {
-			if (item.codecid == codecid_ac3 ||
-			    item.codecid == codecid_eac3)
-			{
-				if (want_remove_ac3) {
-					item.want = false;
-				}
-				else {
-					item.isdefault = false;
-					item.isforced = false;
-				}
-			}
-		}
-	}
+	
+	std::vector<destitem_t> processeditems;
 	
 	for (destitem_t& item : elem.destitems) {
-		if (item.type == itemtype_audio) {
-			if (item.codecid == codecid_dts ||
-			    item.codecid == codecid_truehd)
-			{
-				if (want_remove_dolby) {
-					item.want = false;
-				}
-				else {
-					item.isdefault = false;
-					item.isforced = false;
-				}
+		if (item.codecid == codecid_ac3 ||
+		    item.codecid == codecid_eac3 ) {
+			if (want_remove_ac3) {
+				continue;
+			}
+			else {
+				item.isdefault = false;
+				item.isforced = false;
 			}
 		}
+
+		processeditems.emplace_back(item);
 	}
+	
+	elem.destitems.clear();
+	
+	for (destitem_t& item : processeditems)
+		elem.destitems.emplace_back(item);
+	
+	processeditems.clear();
+	
+	for (destitem_t& item : elem.destitems) {
+		if (item.codecid == codecid_dts ||
+		    item.codecid == codecid_truehd ) {
+			if (want_remove_dolby) {
+				continue;
+			}
+			else {
+				item.isdefault = false;
+				item.isforced = false;
+			}
+		}
+
+		processeditems.emplace_back(item);
+	}
+	
+	elem.destitems.clear();
+	
+	for (destitem_t& item : processeditems)
+		elem.destitems.emplace_back(item);
+	
+	processeditems.clear();
 	
 	for (destitem_t& item : elem.destitems) {
 		if (item.type == itemtype_subtitle) {
@@ -406,6 +445,9 @@ void dialogproperty_t::cb_copy(GtkButton *, gpointer self) {
 		elem.destitems.emplace_back(item);
 	
 	inst->change_num_rows();
+	
+	inst->select(nn + 1);
+	inst->scrollto(nn + 1, false);
 }
 
 void dialogproperty_t::cb_delete(GtkButton *, gpointer self) {
@@ -433,7 +475,7 @@ void dialogproperty_t::cb_delete(GtkButton *, gpointer self) {
 	for (const destitem_t& item : secondpart)
 		elem.destitems.emplace_back(item);
 	
-	inst->selectnone();
+	//inst->selectnone();
 	
 	inst->change_num_rows();
 }
@@ -482,6 +524,7 @@ void dialogproperty_t::cb_moveup(GtkButton *, gpointer self) {
 	inst->update_view();
 		
 	inst->select(m);
+	inst->scrollto(m, true);
 }
 
 void dialogproperty_t::cb_movedown(GtkButton *, gpointer self) {
@@ -513,6 +556,7 @@ void dialogproperty_t::cb_movedown(GtkButton *, gpointer self) {
 	inst->update_view();
 		
 	inst->select(m);
+	inst->scrollto(m, false);
 }
 
 

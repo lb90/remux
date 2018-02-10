@@ -52,9 +52,12 @@ private:
 	int getselection();
 	void select(int n);
 	void selectnone();
+	void scrollto(int n, bool totop);
 	void update_view();
 	void change_num_rows();
 	void row_changed(int n);
+	
+	GtkTreePath* get_path_from_n(int n);
 	
 	int get_n_from_pathstr(const char *pathstr);
 	int get_n_from_path(GtkTreePath *path);

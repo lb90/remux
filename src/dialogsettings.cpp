@@ -13,7 +13,6 @@ dialogsettings_t::dialogsettings_t(GtkWindow *window)
 	dialog = GTK_DIALOG(gtk_builder_get_object(builder, "dialog"));
 	
 	chooser_mkvtoolnix = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "chooser_mkvtoolnix"));
-	chooser_ac3to      = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "chooser_ac3to"));
 	chooser_ffmpeg     = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "chooser_ffmpeg"));
 	
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
@@ -24,8 +23,6 @@ dialogsettings_t::dialogsettings_t(GtkWindow *window)
 	std::string filename;
 	filename = settings::pt.get("dir.mkvtoolnix", "UNEXISTING");
 	gtk_file_chooser_set_filename(chooser_mkvtoolnix, filename.c_str());
-	filename = settings::pt.get("dir.ac3to", "UNEXISTING");
-	gtk_file_chooser_set_filename(chooser_ac3to, filename.c_str());
 	filename = settings::pt.get("dir.ffmpeg", "UNEXISTING");
 	gtk_file_chooser_set_filename(chooser_ffmpeg, filename.c_str());
 }
@@ -43,9 +40,6 @@ void dialogsettings_t::response(GtkDialog *dialog, gint resp_id, gpointer self) 
 		
 		filename = gtk_file_chooser_get_filename(inst->chooser_mkvtoolnix);
 		settings::pt.put("dir.mkvtoolnix", filename);
-		g_free(filename);
-		filename = gtk_file_chooser_get_filename(inst->chooser_ac3to);
-		settings::pt.put("dir.ac3to", filename);
 		g_free(filename);
 		filename = gtk_file_chooser_get_filename(inst->chooser_ffmpeg);
 		settings::pt.put("dir.ffmpeg", filename);

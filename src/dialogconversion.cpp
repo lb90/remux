@@ -72,11 +72,12 @@ int dialogconversion::check_do_communication(gpointer self) {
 	
 	for (const auto& commdata : inst->mc->progressd) {
 		if (commdata.total != 0) {
-			gtk_label_set_text(GTK_LABEL(inst->label), commdata.elem->name.c_str());
 			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(inst->progressbar), float(commdata.n) / float(commdata.total));
 		}
-		if (commdata.elem)
+		if (commdata.elem != nullptr) {
+			gtk_label_set_text(GTK_LABEL(inst->label), commdata.elem->name.c_str());
 			inst->append_to_textview("\n" + commdata.elem->name, true, true);
+		}
 		if (!commdata.text.empty())
 			inst->append_to_textview("\n" + commdata.text);
 	}

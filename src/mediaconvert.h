@@ -40,11 +40,6 @@ private:
 	int          do_convert_ffmpeg(media_t& elem, destitem_t& item,
                                    const std::string& extractedpath,
                                    const std::string& convertedpath);
-#ifdef _WIN32
-	int          do_convert_ac3to(media_t& elem, destitem_t& item,
-                                  const std::string& extractedpath,
-                                  const std::string& convertedpath);
-#endif
 	int          do_convert(media_t& elem, destitem_t& item,
 	                        const std::string& extractedpath,
                             const std::string& convertedpath);

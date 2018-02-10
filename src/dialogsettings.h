@@ -15,7 +15,6 @@ private:
 	GtkDialog  *dialog;
 	
 	GtkFileChooser  *chooser_mkvtoolnix;
-	GtkFileChooser  *chooser_ac3to;
 	GtkFileChooser  *chooser_ffmpeg;
 	
 	static
