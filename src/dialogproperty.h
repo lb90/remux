@@ -45,6 +45,9 @@ private:
 	int      curn;
 	media_t *curelem;
 	
+	int menu_i;
+	int menu_j;
+	
 	void gonext();
 
 	void setnewtreeviewmodel(int numrows);

@@ -7,6 +7,8 @@
 #define WIN32_LEAN_AND_MEAN
 #define UNICODE
 #include <windows.h>
+#include "launchprocess.h"
+#include "app.h" /*TODO temp */
 
 void get_lasterror_description(DWORD lasterrorcode, std::string& errorstring_utf8) 
 { 
@@ -152,7 +154,9 @@ int launch_process(const std::vector<std::string>& argv,
 			ret = -1;
 		}
 		else {
-			DWORD flags = CREATE_NO_WINDOW;
+			DWORD flags = 0;
+			if (!app::showwindow)
+				DWORD flags |= CREATE_NO_WINDOW;
 			bcode = CreateProcessW((LPWSTR) application_name,
 								   (LPWSTR) command_line,
 								   NULL,      // process security attributes

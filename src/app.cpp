@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <vector>
 #include <string>
 #include "signalcentre.h"
 #include "settings.h"
@@ -17,6 +18,10 @@ std::string app::ffmpeg_dir;
 std::string app::mkvextract_prog;
 std::string app::mkvmerge_prog;
 std::string app::ffmpeg_prog;
+
+bool        app::showwindow;
+
+std::vector<std::string> app::subtitletags;
 
 void app::scandirectory(const char *directoryname) {
 	model_clear();
@@ -74,6 +79,17 @@ int app::init() {
 	mkvmerge_prog += ".exe";
 	ffmpeg_prog += ".exe";
 #endif
+	try {
+		const auto& childpt = settings::pt.get_child("tags.subtitle");
+		for (const auto& item : childpt) {
+			if (item.first == "tag")
+				subtitletags.emplace_back(item.second.data());
+		}
+	}
+	catch (boost::property_tree::ptree_error e) {
+	}
+	
+	showwindow = settings::pt.get("showwindow", false);
 
 	return 0;
 }

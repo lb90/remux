@@ -2,6 +2,7 @@
 #include <cassert>
 #include <utility>
 #include <algorithm>
+#include "app.h"
 #include "dialogproperty.h"
 #include "util.h"
 #include "model.h"
@@ -84,6 +85,9 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	
 	curn = -1;
 	curelem = nullptr;
+	
+	menu_i = 0;
+	menu_j = 0;
 }
 
 void dialogproperty_t::show() {
@@ -362,14 +366,16 @@ void dialogproperty_t::cb_op(GtkButton *, gpointer self) {
 	std::vector<destitem_t> processeditems;
 	
 	for (destitem_t& item : elem.destitems) {
-		if (item.codecid == codecid_ac3 ||
-		    item.codecid == codecid_eac3 ) {
-			if (want_remove_ac3) {
-				continue;
-			}
-			else {
-				item.isdefault = false;
-				item.isforced = false;
+		if (item.type == itemtype_audio) {
+			if (item.codecid == codecid_ac3 ||
+				item.codecid == codecid_eac3 ) {
+				if (want_remove_ac3) {
+					continue;
+				}
+				else {
+					item.isdefault = false;
+					item.isforced = false;
+				}
 			}
 		}
 
@@ -384,14 +390,16 @@ void dialogproperty_t::cb_op(GtkButton *, gpointer self) {
 	processeditems.clear();
 	
 	for (destitem_t& item : elem.destitems) {
-		if (item.codecid == codecid_dts ||
-		    item.codecid == codecid_truehd ) {
-			if (want_remove_dolby) {
-				continue;
-			}
-			else {
-				item.isdefault = false;
-				item.isforced = false;
+		if (item.type == itemtype_audio) {
+			if (item.codecid == codecid_dts ||
+				item.codecid == codecid_truehd ) {
+				if (want_remove_dolby) {
+					continue;
+				}
+				else {
+					item.isdefault = false;
+					item.isforced = false;
+				}
 			}
 		}
 
@@ -404,19 +412,22 @@ void dialogproperty_t::cb_op(GtkButton *, gpointer self) {
 		elem.destitems.emplace_back(item);
 	
 	processeditems.clear();
-	
+
 	for (destitem_t& item : elem.destitems) {
 		if (item.type == itemtype_subtitle) {
 			if (item.lang == "ita") {
-				if (item.name.find("FORCED") != std::string::npos) {
-					item.isdefault = true;
-					item.isforced = true;
+				for (const std::string& tag : app::subtitletags) {
+					if (item.name.find(tag) != std::string::npos) {
+						item.isdefault = true;
+						item.isforced = true;
+						break;
+					}
 				}
 			}
 		}
 	}
-	
-	inst->update_view();
+
+	inst->change_num_rows();
 }
 
 void dialogproperty_t::cb_copy(GtkButton *, gpointer self) {

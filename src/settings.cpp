@@ -32,14 +32,30 @@ void settings::init() {
 }
 
 void settings::write() {
+	boost::property_tree::ptree newpt;
+
+	newpt.put("dir.mkvtoolnix", app::mkvtoolnix_dir);
+	newpt.put("dir.ffmpeg", app::ffmpeg_dir);
+	
+	boost::property_tree::ptree tagpt;
+	for (const std::string& tag : app::subtitletags) {
+		tagpt.add("tag", tag);
+	}
+
+	newpt.add_child("tags.subtitle", tagpt);
+	
+	newpt.put("showwindow", app::showwindow);
+
 	boost::property_tree::xml_writer_settings<std::string> xmlstyle(' ', 2);
 	try {
-		boost::property_tree::write_xml(storepath, pt, std::locale("C"), xmlstyle);
+		boost::property_tree::write_xml(storepath, newpt, std::locale("C"), xmlstyle);
 	}
 	catch (boost::property_tree::ptree_error e) {
 #ifndef _WIN32
 		g_print("could not save config file. %s\n", e.what());
 #endif
 	}
+	
+	
 }
 

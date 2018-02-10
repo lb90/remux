@@ -1,6 +1,7 @@
 #ifndef REMUX_APP_H
 #define REMUX_APP_H
 
+#include <vector>
 #include <string>
 
 class app {
@@ -24,6 +25,12 @@ public:
 	std::string mkvmerge_prog;
 	static
 	std::string ffmpeg_prog;
+	
+	static
+	std::vector<std::string> subtitletags;
+	
+	static
+	bool showwindow;
 };
 
 #endif
