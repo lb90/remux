@@ -9,7 +9,6 @@
 #define  WINVER        _WIN32_WINNT_VISTA
 #define _WIN32_IE      _WIN32_IE_IE80
 
-#include <windows.h>
-#include <shlobj.h>
+int get_config_folder();
 
 #endif

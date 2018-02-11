@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <cstdint>
 #include <string>
+#include <windows.h>
+#include <shlobj.h>
 #include <glib.h>
 #include "glibutil.h"
 

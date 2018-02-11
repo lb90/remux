@@ -314,105 +314,125 @@ void dialogproperty_t::cb_op(GtkButton *, gpointer self) {
 	media_t& elem = *(inst->curelem);
 	if (elem.destitems.empty()) return;
 
+/* separate video, audio, subtitle and other tracks */
 	std::vector<destitem_t> videoitems;
-	std::vector<destitem_t> nonvideoitems;
+	std::vector<destitem_t> audioitems;
+	std::vector<destitem_t> subtitleitems;
+	std::vector<destitem_t> otheritems;
 	
 	for (const destitem_t& item : elem.destitems) {
 		if (item.type == itemtype_video)
 			videoitems.emplace_back(item);
+		else if (item.type == itemtype_audio)
+			audioitems.emplace_back(item);
+		else if (item.type == itemtype_subtitle)
+			subtitleitems.emplace_back(item);
 		else
-			nonvideoitems.emplace_back(item);
+			otheritems.emplace_back(item);
 	}
-	
+
+/* set video tracks as ita */
 	for (destitem_t& item : videoitems) {
 		item.lang = "ita";
 	}
 	
-	if (want_convert_ac3ita_aac) {
-		std::vector<destitem_t> ac3itaitems;
-		std::vector<destitem_t> nonac3itaitems;
-		for (const destitem_t& item : nonvideoitems) {
-			if (item.type == itemtype_audio && item.lang == "ita" &&
-			      (item.codecid == codecid_ac3 || item.codecid == codecid_eac3))
-				ac3itaitems.emplace_back(item);
-			else
-				nonac3itaitems.emplace_back(item);
-		}
-		
-		for (destitem_t& ac3itaitem : ac3itaitems) {
-			ac3itaitem.codecid = codecid_aac;
-			ac3itaitem.isdefault = true;
-			ac3itaitem.isforced = true;
-		}
-		
-		nonvideoitems.clear();
-		
-		for (destitem_t& item : ac3itaitems)
-			nonvideoitems.emplace_back(item);
-
-		for (destitem_t& item : nonac3itaitems)
-			nonvideoitems.emplace_back(item);
+/* from audioitems, separate ac3, dolby and every other */
+	std::vector<destitem_t> audioitems_ac3;
+	std::vector<destitem_t> audioitems_dolby;
+	std::vector<destitem_t> audioitems_not_ac3_nor_dolby;
+	for (const destitem_t& item : audioitems) {
+		if ( (item.codecid == codecid_ac3 || item.codecid == codecid_eac3) )
+			audioitems_ac3.emplace_back(item);
+		else if ( (item.codecid == codecid_dts || item.codecid == codecid_truehd) )
+			audioitems_dolby.emplace_back(item);
+		else
+			audioitems_not_ac3_nor_dolby.emplace_back(item);
 	}
+
+/* from audio ac3 tracks, separate ita and every other */
+	std::vector<destitem_t> audioac3items_ita;
+	std::vector<destitem_t> audioac3items_not_ita;
+	for (const destitem_t& item : audioitems_ac3) {
+		if ( item.lang == "ita" )
+			audioac3items_ita.emplace_back(item);
+		else
+			audioac3items_not_ita.emplace_back(item);
+	}
+
+/* if you want to convert ac3 ita to aac, create copy tracks with aac codec */
+	std::vector<destitem_t> aacconverted;
+	if (want_convert_ac3ita_aac) {
+		for (destitem_t& item : audioac3items_ita) {
+			aacconverted.emplace_back(item);
+		}
+		for (destitem_t& item : aacconverted) { /* set their properties */
+			item.codecid = codecid_aac;
+			item.isdefault = true;
+			item.isforced = true;
+		}
+	}
+
+/* from audio dolby tracks, separate ita and every other */
+	std::vector<destitem_t> audiodolbyitems_ita;
+	std::vector<destitem_t> audiodolbyitems_not_ita;
+	for (const destitem_t& item : audioitems_dolby) {
+		if ( item.lang == "ita" )
+			audiodolbyitems_ita.emplace_back(item);
+		else
+			audiodolbyitems_not_ita.emplace_back(item);
+	}
+
+/* merge back audio items as 1) aac converted 2) ac3 ita 3) ac3 other langs
+   4) dolby ita 5) dolby other langs 6) others */
+	audioitems.clear();
+	for (const destitem_t& item : aacconverted)
+		audioitems.emplace_back(item);
+	if (!want_remove_ac3) {
+		for (const destitem_t& item : audioac3items_ita)
+			audioitems.emplace_back(item);
+		for (const destitem_t& item : audioac3items_not_ita)
+			audioitems.emplace_back(item);
+	}
+	if (!want_remove_dolby) {
+		for (const destitem_t& item : audiodolbyitems_ita)
+			audioitems.emplace_back(item);
+		for (const destitem_t& item : audiodolbyitems_not_ita)
+			audioitems.emplace_back(item);
+	}
+	for (const destitem_t& item : audioitems_not_ac3_nor_dolby)
+		audioitems.emplace_back(item);
 	
 	elem.destitems.clear();
 	
 	for (destitem_t& item : videoitems)
 		elem.destitems.emplace_back(item);
 
-	for (destitem_t& item : nonvideoitems)
+	for (destitem_t& item : audioitems)
 		elem.destitems.emplace_back(item);
 	
-	
-	std::vector<destitem_t> processeditems;
+	for (destitem_t& item : subtitleitems)
+		elem.destitems.emplace_back(item);
+
+/* in case ac3 tracks or dolby tracks were saved, set them NOT default and NOT forced */
+	for (destitem_t& item : elem.destitems) {
+		if (item.type == itemtype_audio) {
+			if ( item.codecid == codecid_ac3 || item.codecid == codecid_eac3 ) {
+				item.isdefault = false;
+				item.isforced = false;
+			}
+		}
+	}
 	
 	for (destitem_t& item : elem.destitems) {
 		if (item.type == itemtype_audio) {
-			if (item.codecid == codecid_ac3 ||
-				item.codecid == codecid_eac3 ) {
-				if (want_remove_ac3) {
-					continue;
-				}
-				else {
-					item.isdefault = false;
-					item.isforced = false;
-				}
+			if ( item.codecid == codecid_dts || item.codecid == codecid_truehd ) {
+				item.isdefault = false;
+				item.isforced = false;
 			}
 		}
-
-		processeditems.emplace_back(item);
 	}
-	
-	elem.destitems.clear();
-	
-	for (destitem_t& item : processeditems)
-		elem.destitems.emplace_back(item);
-	
-	processeditems.clear();
-	
-	for (destitem_t& item : elem.destitems) {
-		if (item.type == itemtype_audio) {
-			if (item.codecid == codecid_dts ||
-				item.codecid == codecid_truehd ) {
-				if (want_remove_dolby) {
-					continue;
-				}
-				else {
-					item.isdefault = false;
-					item.isforced = false;
-				}
-			}
-		}
 
-		processeditems.emplace_back(item);
-	}
-	
-	elem.destitems.clear();
-	
-	for (destitem_t& item : processeditems)
-		elem.destitems.emplace_back(item);
-	
-	processeditems.clear();
-
+/* set target subtitles as default and forced */
 	for (destitem_t& item : elem.destitems) {
 		if (item.type == itemtype_subtitle) {
 			if (item.lang == "ita") {
