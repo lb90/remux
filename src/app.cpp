@@ -27,7 +27,6 @@ dialogproperty_t *app::dialogproperty = nullptr;
 std::vector<std::string> app::subtitletags;
 
 void app::scandirectory(const char *directoryname) {
-	model_clear();
 	scan_directory(directoryname);
 }
 
