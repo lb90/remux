@@ -6,6 +6,7 @@
 #include "treeview.h"
 #include "app.h"
 #include "glibutil.h"
+#include "dialogproperty.h"
 
 GtkBuilder *builder;
 
@@ -14,31 +15,44 @@ void cb_app_exit(GSimpleAction*, GVariant*, gpointer userdata) {
 	g_application_quit(G_APPLICATION(gtkapp));
 }
 
+void cb_app_enqueue(GSimpleAction*, GVariant*, gpointer userdata) {
+	if (app::dialogproperty) {
+		dialogproperty_t::cb_enqueue(NULL, app::dialogproperty);
+	}
+}
+
 void cb_activate(GtkApplication* app, gpointer) {
 	if (get_window(NULL))
 		gtk_window_present(get_window(NULL));
 }
 
-void cb_startup(GtkApplication* app, gpointer) {
+void cb_startup(GtkApplication* gtkapp, gpointer) {
 	GtkWidget *window;
 	
 	settings::init();
+	
+	auto app_exit = g_simple_action_new("exit", NULL);
+	g_signal_connect(G_OBJECT(app_exit), "activate", G_CALLBACK(cb_app_exit), (gpointer) gtkapp);
+	g_action_map_add_action(G_ACTION_MAP(gtkapp), G_ACTION(app_exit));
+	auto app_enqueue = g_simple_action_new("enqueue", NULL);
+	g_signal_connect(G_OBJECT(app_enqueue), "activate", G_CALLBACK(cb_app_enqueue), (gpointer) gtkapp);
+	g_action_map_add_action(G_ACTION_MAP(gtkapp), G_ACTION(app_enqueue));
+
+	const char* accels[] = {NULL, NULL};
+	accels[0] = "<Control>A";
+	gtk_application_set_accels_for_action(gtkapp, "app.enqueue", accels);
 
 	builder = gtk_builder_new_from_resource("/org/remux/remux/ui/form.ui");
 	window = GTK_WIDGET(gtk_builder_get_object(builder, "form"));
+	gtk_application_add_window(gtkapp, GTK_WINDOW(window));
 	
-	window_init(window);
+	window_init(window, gtkapp);
 	treeview_init(builder);
 	
 	app::init();
+	app::gtkapp = gtkapp;
 	
 	gtk_builder_connect_signals(builder, NULL);
-	
-	gtk_application_add_window(app, GTK_WINDOW(window));
-	
-	auto app_exit = g_simple_action_new("exit", NULL);
-	g_signal_connect(G_OBJECT(app_exit), "activate", G_CALLBACK(cb_app_exit), (gpointer) app);
-	g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(app_exit));
 	
 	gtk_widget_show_all(window);
 }

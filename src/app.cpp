@@ -21,6 +21,9 @@ std::string app::ffmpeg_prog;
 
 bool        app::showwindow;
 
+GtkApplication *app::gtkapp;
+dialogproperty_t *app::dialogproperty = nullptr;
+
 std::vector<std::string> app::subtitletags;
 
 void app::scandirectory(const char *directoryname) {

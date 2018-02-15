@@ -3,7 +3,7 @@
 
 #include <gtk/gtk.h>
 
-int window_init(GtkWidget *window);
+int window_init(GtkWidget *window, GtkApplication *gtkapp);
 GtkWindow* get_window(GtkWindow *window);
 
 #endif

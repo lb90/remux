@@ -17,6 +17,7 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	dialog               = GTK_DIALOG(gtk_builder_get_object(builder, "dialog_property"));
 	stack                = GTK_WIDGET(gtk_builder_get_object(builder, "stack"));
 	label_name           = GTK_WIDGET(gtk_builder_get_object(builder, "label_name"));
+	label_position       = GTK_WIDGET(gtk_builder_get_object(builder, "label_position"));
 	check_convert_ac3ita_aac = GTK_WIDGET(gtk_builder_get_object(builder, "check_convert_ac3ita_aac"));
 	check_remove_ac3     = GTK_WIDGET(gtk_builder_get_object(builder, "check_remove_ac3"));
 	check_remove_dolby   = GTK_WIDGET(gtk_builder_get_object(builder, "check_remove_dolby"));
@@ -88,6 +89,9 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	
 	menu_i = 0;
 	menu_j = 0;
+	
+	gtk_application_add_window(app::gtkapp, GTK_WINDOW(dialog));
+	app::dialogproperty = this;
 }
 
 void dialogproperty_t::show() {
@@ -111,6 +115,11 @@ int dialogproperty_t::setcurrentelement(gint n) {
 		op::media_scan(n);
 	
 	gtk_label_set_text(GTK_LABEL(label_name), curelem->name.c_str());
+	std::string position;
+	position += std::to_string(curn + 1);
+	position += " / ";
+	position += std::to_string(elementv.size());
+	gtk_label_set_text(GTK_LABEL(label_position), position.c_str());
 
 	if (curelem->err.scan) {
 		gtk_stack_set_visible_child_name(GTK_STACK(stack), "page_error");
@@ -638,6 +647,7 @@ void dialogproperty_t::self_deleter(GtkDialog *dialog, gpointer self) {
 
 dialogproperty_t::~dialogproperty_t() {
 	g_object_unref(builder);
+	app::dialogproperty = nullptr;
 }
 
 

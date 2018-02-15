@@ -116,7 +116,7 @@ GtkWindow *get_window(GtkWindow *registerw) {
 	return win;
 }
 
-int window_init(GtkWidget *window) {
+int window_init(GtkWidget *window, GtkApplication *gtkapp) {
 	GActionEntry action_entries[] = {
 		{"open",           cb_win_open,           NULL, NULL, NULL },
 		{"convert",        cb_win_convert,        NULL, NULL, NULL },
@@ -132,6 +132,13 @@ int window_init(GtkWidget *window) {
 	                                action_entries,
 	                                G_N_ELEMENTS(action_entries),
 	                                window);
+
+/*	const char* accels[] = {NULL, NULL};
+	accels[0] = "<Control>O";
+	gtk_application_set_accels_for_action(gtkapp, "win.open", accels);
+	accels[0] = "<Control>B";
+	gtk_application_set_accels_for_action(gtkapp, "win.enqueue", accels);*/
+
 	get_window(GTK_WINDOW(window));
 	return 0;
 }

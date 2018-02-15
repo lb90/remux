@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <gtk/gtk.h>
+#include "dialogproperty.h"
 
 class app {
 public:
@@ -31,6 +33,12 @@ public:
 	
 	static
 	bool showwindow;
+	
+	static
+	GtkApplication *gtkapp;
+	
+	static
+	dialogproperty_t *dialogproperty;
 };
 
 #endif

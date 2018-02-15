@@ -23,6 +23,7 @@ private:
 	GtkWidget  *stack;
 	
 	GtkWidget  *label_name;
+	GtkWidget  *label_position;
 	GtkWidget  *check_convert_ac3ita_aac;
 	GtkWidget  *check_remove_ac3;
 	GtkWidget  *check_remove_dolby;
@@ -110,10 +111,10 @@ private:
 	
 	static
 	void self_deleter(GtkDialog *dialog, gpointer self);
-	
+public:
 	static
 	void cb_enqueue(GtkButton *, gpointer self);
-	
+private:
 	static
 	void cb_skip(GtkButton *, gpointer self);
 	
