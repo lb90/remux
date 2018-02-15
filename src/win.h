@@ -9,6 +9,8 @@
 #define  WINVER        _WIN32_WINNT_VISTA
 #define _WIN32_IE      _WIN32_IE_IE80
 
-int get_config_folder();
+#include <string>
+
+int get_config_folder(std::string& configfolder);
 
 #endif

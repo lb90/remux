@@ -7,6 +7,9 @@
 #include "glibutil.h"
 #include "app.h"
 #include "settings.h"
+#ifdef _WIN32
+#include "win.h"
+#endif
 
 boost::property_tree::ptree settings::pt;
 std::string                 settings::storepath;
@@ -16,7 +19,10 @@ void settings::makedefaults() {
 
 void settings::init() {
 #ifdef _WIN32
-	storepath = util_build_filename(app::install_dir, "config.xml");
+	std::string configfolder;
+	if (get_config_folder(configfolder) == 0)
+		storepath = util_build_filename(configfolder, "config.xml");
+	else storepath = "config.xml";
 #else
 	storepath = "/etc/remux/config.xml";
 #endif

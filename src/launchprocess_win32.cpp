@@ -156,7 +156,7 @@ int launch_process(const std::vector<std::string>& argv,
 		else {
 			DWORD flags = 0;
 			if (!app::showwindow)
-				DWORD flags |= CREATE_NO_WINDOW;
+				flags |= CREATE_NO_WINDOW;
 			bcode = CreateProcessW((LPWSTR) application_name,
 								   (LPWSTR) command_line,
 								   NULL,      // process security attributes

@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
 	#endif
 
 	g_set_application_name("Remux");
-	gtkapp = gtk_application_new("org.remux.remux", G_APPLICATION_FLAGS_NONE);
+	gtkapp = gtk_application_new("org.remux.remux", G_APPLICATION_NON_UNIQUE);
 	
 	g_signal_connect(G_OBJECT(gtkapp), "startup",  G_CALLBACK(cb_startup),  NULL);
 	g_signal_connect(G_OBJECT(gtkapp), "activate",  G_CALLBACK(cb_activate),  NULL);
