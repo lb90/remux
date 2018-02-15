@@ -139,6 +139,7 @@ void op::enqueue(int n) {
 		return;
 
 	assert(size_t(n) < elementv.size());
+	if (elementv[n].err.scan) return;
 	model_enqueue(size_t(n));
 }
 
