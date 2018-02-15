@@ -368,6 +368,11 @@
                     <property name="expand">True</property>
                     <property name="clickable">True</property>
                     <child>
+                      <object class="GtkCellRendererPixbuf">
+                        <property name="icon_name">video-x-generic</property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkCellRendererText" id="ren_name"/>
                     </child>
                   </object>
@@ -378,6 +383,11 @@
                     <property name="title" translatable="yes">Cartella</property>
                     <property name="expand">True</property>
                     <property name="clickable">True</property>
+                    <child>
+                      <object class="GtkCellRendererPixbuf">
+                        <property name="icon_name">folder</property>
+                      </object>
+                    </child>
                     <child>
                       <object class="GtkCellRendererText" id="ren_directory"/>
                     </child>
