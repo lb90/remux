@@ -12,6 +12,8 @@ public:
 
 	static void scandirectory(const char *directoryname);
 	static void elementactivated(int n);
+	
+	static void set_conversion_timer(int h, int m);
 
 	static
 	std::string install_dir; /* only used in win32 */
@@ -39,6 +41,15 @@ public:
 	
 	static
 	dialogproperty_t *dialogproperty;
+	
+	static bool has_timer;
+	static int hour;
+	static int minute;
+	
+	static bool on_other_day;
+	static int year;
+	static int month;
+	static int day;
 };
 
 #endif

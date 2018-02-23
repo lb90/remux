@@ -1,4 +1,6 @@
 #include <cstdlib>
+#include <cassert>
+#include <ctime>
 #include <vector>
 #include <string>
 #include "signalcentre.h"
@@ -7,6 +9,7 @@
 #include "model.h"
 #include "scandirectory.h"
 #include "dialogproperty.h"
+#include "dialogconversion.h"
 #include "window.h"
 #include "app.h"
 
@@ -18,6 +21,15 @@ std::string app::ffmpeg_dir;
 std::string app::mkvextract_prog;
 std::string app::mkvmerge_prog;
 std::string app::ffmpeg_prog;
+
+bool app::has_timer;
+int app::hour;
+int app::minute;
+	
+bool app::on_other_day;
+int app::year;
+int app::month;
+int app::day;
 
 bool        app::showwindow;
 
@@ -37,6 +49,56 @@ void app::elementactivated(int n) {
 	
 	dialog->setcurrentelement(n);
 	dialog->show();
+}
+
+bool check_conversion_timer(void*) {
+    time_t t = time(NULL);
+    struct tm *lt = localtime(&time);
+
+    if ( (tm->tm_hour >  hour) ||
+         (tm->tm_hour == hour && tm->tm_min >= minute) ) {
+        
+        if (on_other_day) {
+            if (tm->tm_year == year &&
+                tm->tm_mon == month &&
+                tm->tm_mday == day) {
+
+                return TRUE;
+            }
+        }
+        
+        has_timer = false;
+        dialogconversion *dialog = new dialogconversion(window);
+    	dialog->show();
+    	return FALSE;
+    }
+    
+    return TRUE;
+}
+
+void app::set_conversion_timer(int h, int m) {
+    assert(h >= 0);
+    assert(m >= 0);
+    assert(h < 24);
+    assert(m < 60);
+    
+    time_t t = time(NULL);
+    struct tm *lt = localtime(&time);
+    
+    has_timer = true;
+    hour = h
+    minute = m;
+    if (  (hour >  (tm->tm_hour) )
+       || (hour == (tm->tm_hour) && minute > (tm->tm_min)) )
+        on_other_day = false;
+    else {
+        on_other_day = true;
+
+        year  = tm->tm_year;
+        month = tm->tm_mon;
+        day   = tm->tm_mday;
+    }
+    g_timeout_add_seconds(1, check_conversion_timer, NULL);
 }
 
 int app::init() {
