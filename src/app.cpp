@@ -66,7 +66,7 @@ bool check_conversion_timer(void*) {
                 return TRUE;
             }
         }
-        
+
         has_timer = false;
         dialogconversion *dialog = new dialogconversion(window);
     	dialog->show();
@@ -81,6 +81,8 @@ void app::set_conversion_timer(int h, int m) {
     assert(m >= 0);
     assert(h < 24);
     assert(m < 60);
+    
+    bool already_had_timer = has_timer;
     
     time_t t = time(NULL);
     struct tm *lt = localtime(&time);
@@ -98,7 +100,8 @@ void app::set_conversion_timer(int h, int m) {
         month = tm->tm_mon;
         day   = tm->tm_mday;
     }
-    g_timeout_add_seconds(1, check_conversion_timer, NULL);
+    if (!already_had_timer)
+        g_timeout_add_seconds(1, check_conversion_timer, NULL);
 }
 
 int app::init() {
