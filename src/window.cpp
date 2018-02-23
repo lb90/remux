@@ -21,11 +21,10 @@ void cb_win_open(GSimpleAction*, GVariant*, gpointer userdata) {
 	fcdialog = gtk_file_chooser_dialog_new("Apri Media",
                                            window,
                                            GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                                           NULL,
-                                           "_Apri",
-                                           GTK_RESPONSE_OK,
                                            "_Annulla",
                                            GTK_RESPONSE_CANCEL,
+                                           "_Apri",
+                                           GTK_RESPONSE_OK,
                                            NULL);
 	res = gtk_dialog_run(GTK_DIALOG(fcdialog));
 	if (res == GTK_RESPONSE_OK) {

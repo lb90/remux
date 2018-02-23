@@ -113,6 +113,19 @@ void app::remove_conversion_timer() {
     has_timer = false;
 }
 
+void app::suspend_conversion_timer() {
+    if (has_timer) {
+        g_source_remove(checker_id);
+        checker_id = 0;
+    }
+}
+
+void app::resume_conversion_timer() {
+    if (has_timer && (checker_id == 0)) {
+        checker_id = g_timeout_add_seconds(1, check_conversion_timer, NULL);
+    }
+}
+
 int app::init() {
 	signalcentre::addhandler("element\\activate", app::elementactivated);
 	

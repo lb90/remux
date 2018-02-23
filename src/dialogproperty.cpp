@@ -92,6 +92,8 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	
 	gtk_application_add_window(app::gtkapp, GTK_WINDOW(dialog));
 	app::dialogproperty = this;
+	
+	app::suspend_conversion_timer();
 }
 
 void dialogproperty_t::show() {
@@ -648,6 +650,7 @@ void dialogproperty_t::self_deleter(GtkDialog *dialog, gpointer self) {
 dialogproperty_t::~dialogproperty_t() {
 	g_object_unref(builder);
 	app::dialogproperty = nullptr;
+	app::resume_conversion_timer();
 }
 
 
