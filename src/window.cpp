@@ -21,13 +21,13 @@ void cb_win_open(GSimpleAction*, GVariant*, gpointer userdata) {
 	fcdialog = gtk_file_chooser_dialog_new("Apri Media",
                                            window,
                                            GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                                           "_Annulla",
+                                           "A_nnulla",
                                            GTK_RESPONSE_CANCEL,
                                            "_Apri",
-                                           GTK_RESPONSE_OK,
+                                           GTK_RESPONSE_ACCEPT,
                                            NULL);
 	res = gtk_dialog_run(GTK_DIALOG(fcdialog));
-	if (res == GTK_RESPONSE_OK) {
+	if (res == GTK_RESPONSE_ACCEPT) {
 		char *directoryname;
 		GtkFileChooser *chooser = GTK_FILE_CHOOSER(fcdialog);
 		directoryname = gtk_file_chooser_get_filename(chooser);
