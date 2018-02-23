@@ -58,18 +58,8 @@ void cb_win_remove(GSimpleAction*, GVariant*, gpointer userdata) {
 void cb_win_convert(GSimpleAction*, GVariant*, gpointer userdata) {
 	GtkWindow *window = GTK_WINDOW(userdata);
 	
-	dialogstart *dialogstart = new dialogstart(window);
-	bool bcode = false;
-	bcode = dialogstart->run();
-	if (bcode) {
-	    if (dialogstart->timer) {
-	        app::set_conversion_timer(dialogstart->h, dialog_start->m);
-	    }
-	    else {
-	        dialogconversion *dialog = new dialogconversion(window);
-    	    dialog->show();
-    	}
-	}
+	dialogstart *dialogstart = new dialogconversionstart(window);
+	dialogstart->show();
 }
 
 void cb_win_showproperty(GSimpleAction*, GVariant*, gpointer userdata) {
