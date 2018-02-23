@@ -17,6 +17,7 @@ private:
 	
 	GtkFileChooser     *chooser_mkvtoolnix;
 	GtkFileChooser     *chooser_ffmpeg;
+	GtkFileChooser     *chooser_log;
 	GtkButton          *button_reset_mkvtoolnix;
 	GtkButton          *button_reset_ffmpeg;
 

@@ -15,6 +15,7 @@ dialogsettings_t::dialogsettings_t(GtkWindow *window)
 	
 	chooser_mkvtoolnix =  GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "chooser_mkvtoolnix"));
 	chooser_ffmpeg     =  GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "chooser_ffmpeg"));
+	chooser_log        =  GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "chooser_log"));
 	listbox            =      GTK_LIST_BOX(gtk_builder_get_object(builder, "listbox"));
 	check_show_window  = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "check_show_window"));
 	button_tag_add     =        GTK_BUTTON(gtk_builder_get_object(builder, "button_tag_add"));
@@ -47,6 +48,7 @@ dialogsettings_t::dialogsettings_t(GtkWindow *window)
 		gtk_file_chooser_set_filename(chooser_ffmpeg, app::ffmpeg_dir.c_str());
 	else
 		gtk_file_chooser_set_filename(chooser_ffmpeg, "UNKNWON");
+	gtk_file_chooser_set_filename(chooser_log, app::log_dir.c_str());
 	
 	numtags = 0;
 	for (const std::string& tag : app::subtitletags) {
@@ -76,7 +78,6 @@ void dialogsettings_t::set_mkvtoolnix(GtkFileChooserButton*, gpointer self) {
 	dialogsettings_t *inst;
 	
 	inst = (dialogsettings_t*) self;
-	g_print("set mkvtnix\n");
 	inst->resetted_mkv = false;
 }
 
@@ -84,7 +85,6 @@ void dialogsettings_t::set_ffmpeg(GtkFileChooserButton*, gpointer self) {
 	dialogsettings_t *inst;
 	
 	inst = (dialogsettings_t*) self;
-	g_print("set mkvtnix\n");
 	inst->resetted_ff = false;
 }
 
@@ -164,6 +164,10 @@ void dialogsettings_t::response(GtkDialog *dialog, gint resp_id, gpointer self) 
 		else {
 			app::ffmpeg_dir.clear();
 		}
+
+        filename = gtk_file_chooser_get_filename(inst->chooser_log);
+        app::log_dir = filename;
+        g_free(filename);
 		
 		/*TODO*/
 		/*iterate over listbox*/

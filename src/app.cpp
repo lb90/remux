@@ -3,6 +3,7 @@
 #include <ctime>
 #include <vector>
 #include <string>
+#include <glib/gstdio.h>
 #include "signalcentre.h"
 #include "settings.h"
 #include "glibutil.h"
@@ -22,6 +23,8 @@ std::string app::install_dir;
 
 std::string app::mkvtoolnix_dir;
 std::string app::ffmpeg_dir;
+
+std::string app::log_dir;
 
 std::string app::mkvextract_prog;
 std::string app::mkvmerge_prog;
@@ -146,6 +149,20 @@ int app::init() {
 
 	mkvtoolnix_dir = settings::pt.get("dir.mkvtoolnix", "");
 	ffmpeg_dir     = settings::pt.get("dir.ffmpeg", "");
+	
+	log_dir = settings::pt.get("dir.log", "");
+	if (log_dir.empty() || !g_file_test(log_dir.c_str(), G_FILE_TEST_IS_DIR)) {
+#ifdef _WIN32
+        std::string configfolder;
+        if (get_config_folder(configfolder) == 0) {
+            log_dir = util_build_filename(configfolder, "Logs");
+            if (!g_file_test(log_dir.c_str(), G_FILE_TEST_EXISTS))
+                g_mkdir(log_dir.c_str(), 0);
+        }
+#else
+        log_dir = "/var/log/remux";
+#endif
+	}
 
 #ifdef _WIN32	
 	if (mkvtoolnix_dir.empty()) {

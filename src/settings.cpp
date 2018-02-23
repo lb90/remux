@@ -42,6 +42,7 @@ void settings::write() {
 
 	newpt.put("dir.mkvtoolnix", app::mkvtoolnix_dir);
 	newpt.put("dir.ffmpeg", app::ffmpeg_dir);
+	newpt.put("dir.log", app::log_dir);
 	
 	boost::property_tree::ptree tagpt;
 	for (const std::string& tag : app::subtitletags) {

@@ -27,6 +27,9 @@ public:
 	std::string mkvtoolnix_dir;
 	static
 	std::string ffmpeg_dir;
+	
+	static
+	std::string log_dir;
 
 	static
 	std::string mkvextract_prog;
