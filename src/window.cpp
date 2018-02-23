@@ -14,19 +14,23 @@
 #include "model.h" /*TEMP*/
 
 void cb_win_open(GSimpleAction*, GVariant*, gpointer userdata) {
-	GtkFileChooserNative *native;
+	GtkWidget *fcdialog;
 	gint res = 0;
 	GtkWindow *window = GTK_WINDOW(userdata);
 	
-	native = gtk_file_chooser_native_new("Apri Media",
-                                         window,
-                                         GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                                         "_Apri",
-                                         "_Annulla");
-	res = gtk_native_dialog_run(GTK_NATIVE_DIALOG(native));
-	if (res == GTK_RESPONSE_ACCEPT) {
+	fcdialog = gtk_file_chooser_dialog_new("Apri Media",
+                                           window,
+                                           GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+                                           NULL,
+                                           "_Apri",
+                                           GTK_RESPONSE_OK,
+                                           "_Annulla",
+                                           GTK_RESPONSE_CANCEL,
+                                           NULL);
+	res = gtk_dialog_run(GTK_DIALOG(fcdialog));
+	if (res == GTK_RESPONSE_OK) {
 		char *directoryname;
-		GtkFileChooser *chooser = GTK_FILE_CHOOSER(native);
+		GtkFileChooser *chooser = GTK_FILE_CHOOSER(fcdialog);
 		directoryname = gtk_file_chooser_get_filename(chooser);
 		
 		app::scandirectory(directoryname);
@@ -34,7 +38,7 @@ void cb_win_open(GSimpleAction*, GVariant*, gpointer userdata) {
 		g_free(directoryname);
 	}
 
-	g_object_unref (native);
+	gtk_widget_destroy(fcdialog);
 }
 
 void cb_win_selall(GSimpleAction*, GVariant*, gpointer userdata) {
