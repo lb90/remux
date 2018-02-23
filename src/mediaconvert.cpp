@@ -11,12 +11,14 @@
 #include "model.h"
 #include "jsonargs.h"
 #include "launchprocess.h"
+#include "logfile.h"
 #include "mediaconvert.h"
 
 mediaconvert::mediaconvert()
  : progressd(),
    progressd_lock(),
-   worker(worker_start, this)
+   worker(worker_start, this),
+   logfile()
  {}
 
 int mediaconvert::do_convert(media_t& elem, destitem_t& item,
@@ -344,7 +346,9 @@ void mediaconvert::do_processall() {
 		assert(indexv.size() < INT_MAX);
 		communicate(progressdata(int(indexv.size()), int(i), &elem, ""));
 		
+		logfile.started(elem.name);
 		do_process(elem);
+		logfile.ended(elem.err.conv_description, elem.err.conv ? 2 : 0);
 		
 		for (const destitem_t& item : elem.destitems) {
 			if (!item.outpath.empty())
@@ -354,6 +358,8 @@ void mediaconvert::do_processall() {
 
 	assert(indexv.size() < INT_MAX);
 	communicate(progressdata(int(indexv.size()), int(indexv.size()), nullptr, "", true));
+	
+	logfile.save();
 }
 
 void mediaconvert::worker_start(void *self) {

@@ -6,6 +6,7 @@
 #include <thread>
 #include <mutex>
 #include "elements.h"
+#include "logfile.h"
 
 class mediaconvert {
 public:
@@ -35,6 +36,8 @@ public:
 	std::deque<progressdata> progressd;
 	std::mutex               progressd_lock;
 	std::thread              worker;
+	
+	clslogfile logfile;
 
 private:
 	int          do_convert_ffmpeg(media_t& elem, destitem_t& item,

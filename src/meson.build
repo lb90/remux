@@ -18,6 +18,7 @@ src = [
   'dialogconversion.cpp',
   'dialogsettings.cpp',
   'settings.cpp',
+  'logfile.cpp',
   'glibutil.cpp'
 ]
 
