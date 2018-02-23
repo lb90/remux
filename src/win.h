@@ -13,4 +13,7 @@
 
 int get_config_folder(std::string& configfolder);
 
+void prevent_standby();
+void resume_standby();
+
 #endif

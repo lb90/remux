@@ -41,3 +41,12 @@ cleanup:
 	return ret;
 }
 
+void prevent_standby() {
+    SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
+}
+
+void resume_standby() {
+    SetThreadExecutionState(ES_CONTINUOUS);
+}
+
+

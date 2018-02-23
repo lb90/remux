@@ -12,6 +12,9 @@
 #include "dialogconversion.h"
 #include "window.h"
 #include "app.h"
+#ifdef _WIN32
+#include "win.h" /* for standby */
+#endif
 
 unsigned app::checker_id;
 
@@ -102,8 +105,12 @@ void app::set_conversion_timer(int h, int m) {
         month = lt->tm_mon;
         day   = lt->tm_mday;
     }
-    if (!already_had_timer)
+    if (!already_had_timer) {
         checker_id = g_timeout_add_seconds(1, check_conversion_timer, NULL);
+#ifdef _WIN32
+        prevent_standby();
+#endif
+    }
 }
 
 void app::remove_conversion_timer() {
@@ -111,6 +118,10 @@ void app::remove_conversion_timer() {
     checker_id = 0;
     
     has_timer = false;
+    
+#ifdef _WIN32
+    resume_standby();
+#endif
 }
 
 void app::suspend_conversion_timer() {
