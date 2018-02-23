@@ -13,6 +13,8 @@
 #include "window.h"
 #include "app.h"
 
+unsigned app::checker_id;
+
 std::string app::install_dir;
 
 std::string app::mkvtoolnix_dir;
@@ -51,24 +53,24 @@ void app::elementactivated(int n) {
 	dialog->show();
 }
 
-bool check_conversion_timer(void*) {
+int app::check_conversion_timer(void*) {
     time_t t = time(NULL);
-    struct tm *lt = localtime(&time);
+    struct tm *lt = localtime(&t);
 
-    if ( (tm->tm_hour >  hour) ||
-         (tm->tm_hour == hour && tm->tm_min >= minute) ) {
+    if ( (lt->tm_hour >  hour) ||
+         (lt->tm_hour == hour && lt->tm_min >= minute) ) {
         
         if (on_other_day) {
-            if (tm->tm_year == year &&
-                tm->tm_mon == month &&
-                tm->tm_mday == day) {
+            if (lt->tm_year == year &&
+                lt->tm_mon == month &&
+                lt->tm_mday == day) {
 
                 return TRUE;
             }
         }
 
         has_timer = false;
-        dialogconversion *dialog = new dialogconversion(window);
+        dialogconversion *dialog = new dialogconversion(get_window(NULL));
     	dialog->show();
     	return FALSE;
     }
@@ -85,23 +87,30 @@ void app::set_conversion_timer(int h, int m) {
     bool already_had_timer = has_timer;
     
     time_t t = time(NULL);
-    struct tm *lt = localtime(&time);
+    struct tm *lt = localtime(&t);
     
     has_timer = true;
-    hour = h
+    hour = h;
     minute = m;
-    if (  (hour >  (tm->tm_hour) )
-       || (hour == (tm->tm_hour) && minute > (tm->tm_min)) )
+    if (  (hour >  (lt->tm_hour) )
+       || (hour == (lt->tm_hour) && minute > (lt->tm_min)) )
         on_other_day = false;
     else {
         on_other_day = true;
 
-        year  = tm->tm_year;
-        month = tm->tm_mon;
-        day   = tm->tm_mday;
+        year  = lt->tm_year;
+        month = lt->tm_mon;
+        day   = lt->tm_mday;
     }
     if (!already_had_timer)
-        g_timeout_add_seconds(1, check_conversion_timer, NULL);
+        checker_id = g_timeout_add_seconds(1, check_conversion_timer, NULL);
+}
+
+void app::remove_conversion_timer() {
+    g_source_remove(checker_id);
+    checker_id = 0;
+    
+    has_timer = false;
 }
 
 int app::init() {

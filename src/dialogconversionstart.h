@@ -11,10 +11,6 @@ public:
 	~dialogconversionstart();
 	
 	void show();
-	
-	bool timer;
-	int hour;
-	int minute;
 
 private:
 	GtkBuilder  *builder;
@@ -25,6 +21,21 @@ private:
 	GtkWidget   *spinbutton_h;
 	GtkWidget   *label_m;
 	GtkWidget   *spinbutton_m;
+	
+	GtkWidget   *button_ok;
+	GtkWidget   *button_close;
+	
+	static
+	void cb_toggled_use_timer(GtkToggleButton *toggle, void *self);
+	
+    static
+	void cb_ok(GtkButton *button, void *self);
+	
+	static
+	void cb_close(GtkButton *button, void *self);
+	
+	static
+	void self_deleter(GtkDialog *dialog, gpointer self);
 };
 
 #endif

@@ -7,7 +7,7 @@
 #include "signalcentre.h"
 #include "treeview.h"
 #include "dialogsettings.h"
-#include "dialogconversion.h"
+#include "dialogconversionstart.h"
 #include "app.h"
 #include "op.h"
 #include "mediaconvert.h" /*TEMP*/
@@ -58,7 +58,7 @@ void cb_win_remove(GSimpleAction*, GVariant*, gpointer userdata) {
 void cb_win_convert(GSimpleAction*, GVariant*, gpointer userdata) {
 	GtkWindow *window = GTK_WINDOW(userdata);
 	
-	dialogstart *dialogstart = new dialogconversionstart(window);
+	dialogconversionstart *dialogstart = new dialogconversionstart(window);
 	dialogstart->show();
 }
 

@@ -13,7 +13,10 @@ public:
 	static void scandirectory(const char *directoryname);
 	static void elementactivated(int n);
 	
+	static unsigned checker_id;
 	static void set_conversion_timer(int h, int m);
+	static int check_conversion_timer(void*);
+	static void remove_conversion_timer();
 
 	static
 	std::string install_dir; /* only used in win32 */

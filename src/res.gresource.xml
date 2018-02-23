@@ -3,6 +3,7 @@
   <gresource prefix="/org/remux/remux">
     <file>ui/form.ui</file>
     <file>ui/property.ui</file>
+    <file>ui/conversionstart.ui</file>
     <file>ui/conversion.ui</file>
     <file>ui/settings.ui</file>
   </gresource>

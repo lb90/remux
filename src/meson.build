@@ -14,6 +14,7 @@ src = [
   'window.cpp',
   'gtkbasicmodel.cpp',
   'dialogproperty.cpp',
+  'dialogconversionstart.cpp',
   'dialogconversion.cpp',
   'dialogsettings.cpp',
   'settings.cpp',

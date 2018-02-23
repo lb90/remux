@@ -12,16 +12,16 @@
     <property name="step_increment">1</property>
     <property name="page_increment">1</property>
   </object>
+  <object class="GtkImage" id="image_close">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">dialog-close</property>
+    <property name="use_fallback">True</property>
+  </object>
   <object class="GtkImage" id="image_ok">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">dialog-ok</property>
-    <property name="use_fallback">True</property>
-  </object>
-  <object class="GtkImage" id="image_undo">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">dialog-close</property>
     <property name="use_fallback">True</property>
   </object>
   <object class="GtkDialog" id="dialog">
@@ -43,12 +43,12 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="button_close">
                 <property name="label" translatable="yes">_Annulla</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="image">image_undo</property>
+                <property name="image">image_close</property>
                 <property name="use_underline">True</property>
                 <property name="always_show_image">True</property>
               </object>
@@ -59,7 +59,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="button_ok">
                 <property name="label" translatable="yes">_Ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -173,10 +173,6 @@
         </child>
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="-6">button1</action-widget>
-      <action-widget response="-5">button2</action-widget>
-    </action-widgets>
     <child>
       <placeholder/>
     </child>
