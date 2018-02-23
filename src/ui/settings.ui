@@ -144,7 +144,7 @@
                             <property name="action">select-folder</property>
                             <property name="create_folders">False</property>
                             <property name="preview_widget_active">False</property>
-                            <property name="title" translatable="yes">Cartella di MkvToolNix</property>
+                            <property name="title" translatable="yes">Seleziona cartella di MkvToolNix</property>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
@@ -158,7 +158,7 @@
                             <property name="action">select-folder</property>
                             <property name="create_folders">False</property>
                             <property name="preview_widget_active">False</property>
-                            <property name="title" translatable="yes">Cartela di FFMpeg</property>
+                            <property name="title" translatable="yes">Seleziona cartela di FFMpeg</property>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
@@ -217,7 +217,9 @@
                           <object class="GtkFileChooserButton" id="chooser_log">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="title" translatable="yes"/>
+                            <property name="action">select-folder</property>
+                            <property name="preview_widget_active">False</property>
+                            <property name="title" translatable="yes">Seleziona cartella dei file di Log</property>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
