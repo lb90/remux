@@ -34,26 +34,31 @@ std::string util_format_time(time_t t) {
 std::string util_get_duration(time_t t, time_t newt) {
     std::string durfmt;
     
-    double elapsedsecs = difftime(t, newt);
+    double elapsedsecs = difftime(newt, t);
     if (int32_t(elapsedsecs) < 0 ||  
         int32_t(elapsedsecs) > std::numeric_limits<int32_t>::max())
         return "";
 
     int32_t elapsedsecs_aux = int32_t(elapsedsecs);
-    int32_t hours = elapsedsecs_aux % 3600;
-    elapsedsecs_aux -= hours * 3600;
-    int32_t minutes = elapsedsecs_aux % 60;
+    int32_t seconds = elapsedsecs_aux % 60;
+    elapsedsecs_aux -= seconds;
+    int32_t minutes = (elapsedsecs_aux % 3600) / 60;
     elapsedsecs_aux -= minutes * 60;
-    int32_t seconds = elapsedsecs_aux;
+    int32_t hours = elapsedsecs_aux / 3600;
     
-    if (hours < 10) durfmt += "0";
-    durfmt += std::to_string(hours);
-    durfmt += ":";
-    if (minutes < 10) durfmt += "0";
-    durfmt += std::to_string(minutes);
-    durfmt += ":";
+    if (hours > 0) {
+        if (hours < 10) durfmt += "0";
+        durfmt += std::to_string(hours);
+        durfmt += "h ";
+    }
+    if (minutes > 0) {
+        if (minutes < 10) durfmt += "0";
+        durfmt += std::to_string(minutes);
+        durfmt += "m ";
+    }
     if (seconds < 10) durfmt += "0";
     durfmt += std::to_string(seconds);
+    durfmt += "s";
     
     return durfmt;
 }
@@ -68,12 +73,64 @@ void clslogfile::write_header() {
 "<style media=\"screen\" type=\"text/css\">\n"
 "table, th, td {\n"
 "border: 1px solid black;\n"
+"border-collapse: collapse;"
+"}\n"
+"tr:nth-child(even) {\n"
+"background-color: #dddddd;\n"
 "}\n"
 "</style>\n"
 "</head>\n"
 "<div style=\"overflow-x:auto;\">\n";
 
     html += header;
+}
+
+void clslogfile::write_info() {
+    std::vector<std::string> days = {
+        "Lunedì",
+        "Martedì",
+        "Mercoledì",
+        "Giovedì",
+        "Venerdì",
+        "Sabato",
+        "Domenica"
+    };
+    std::vector<std::string> months = {
+        "Gennaio",
+        "Febbraio",
+        "Marzo",
+        "Aprile",
+        "Maggio",
+        "Giugno",
+        "Luglio",
+        "Agosto",
+        "Settembre",
+        "Ottobre",
+        "Novembre",
+        "Dicembre"
+    };
+    
+    int c_success = 0;
+    int c_warning = 0;
+    int c_error = 0;
+    for (const litem_t item : items) {
+        if (item.result == 0)
+            c_success++;
+        else if (item.result == 1)
+            c_warning++;
+        else if (item.result == 2)
+            c_error++;
+    }
+
+    std::string infotofmt =
+"<h1>%s %s %s %s</h1>\n"
+"<div>\n"
+"&#9989 Totale successi: %s\n"
+"&#9888 Totale warning: %s\n"
+"&#10062 Totale errori: %s\n"
+"</div>\n";
+
+    
 }
 
 void clslogfile::write_table_description() {
@@ -113,11 +170,11 @@ void clslogfile::write_table_row(const litem_t& item) {
     std::string warning;
     std::string error;
     if (item.result == 0)
-        success = "X";
+        success = "&#9989";
     else if (item.result == 1)
-        warning = "X";
+        warning = "&#9888";
     else if (item.result == 2)
-        error = "X";
+        error = "&#10062";
 
     std::string text = item.text;
     std::string start = util_format_time(item.startt);
@@ -207,6 +264,7 @@ void clslogfile::save() {
     
     if (!abspath.empty()) {
         write_header();
+        write_info();
         write_table_description();
         
         for (const litem_t& item : items) {
