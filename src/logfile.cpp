@@ -87,13 +87,13 @@ void clslogfile::write_header() {
 
 void clslogfile::write_info() {
     std::vector<std::string> days = {
+        "Domenica",
         "Lunedì",
         "Martedì",
         "Mercoledì",
         "Giovedì",
         "Venerdì",
-        "Sabato",
-        "Domenica"
+        "Sabato"
     };
     std::vector<std::string> months = {
         "Gennaio",
@@ -117,7 +117,7 @@ void clslogfile::write_info() {
         if (item.result == 0)
             c_success++;
         else if (item.result == 1)
-            c_warning++;
+            /*c_warning++;*/c_success++;
         else if (item.result == 2)
             c_error++;
     }
@@ -125,12 +125,43 @@ void clslogfile::write_info() {
     std::string infotofmt =
 "<h1>%s %s %s %s</h1>\n"
 "<div>\n"
-"&#9989 Totale successi: %s\n"
-"&#9888 Totale warning: %s\n"
+"&#9989 Totale successi: %s<br>\n"
+/*"&#9888 Totale warning: %s\n"*/
 "&#10062 Totale errori: %s\n"
 "</div>\n";
 
+    const size_t sz = 10000;
+    char *cstr = (char*) malloc(sz);
+    if (cstr == NULL) return;
+    memset(cstr, 0, sz);
     
+    time_t t = items.front().startt;
+    struct tm *lt = localtime(&t);
+    
+    std::string day = days.at(lt->tm_wday);
+    std::string daynumber = std::to_string(lt->tm_mday);
+    std::string month = months.at(lt->tm_mon);
+    std::string year = std::to_string(lt->tm_year + 1900);
+    std::string success_count = std::to_string(c_success) + "/" + std::to_string(items.size());
+    std::string warning_count = std::to_string(c_warning) + "/" + std::to_string(items.size());
+    std::string error_count = std::to_string(c_error) + "/" + std::to_string(items.size());
+
+    std::string info;
+    int ret =
+    snprintf(cstr, sz, infotofmt.c_str(), day.c_str(),
+                                          daynumber.c_str(),
+                                          month.c_str(),
+                                          year.c_str(),
+                                          success_count.c_str(),
+                                          warning_count.c_str(),
+                                          error_count.c_str());
+
+    info = cstr;
+    free(cstr);
+    assert(ret >= 0);
+    if (size_t(ret) >= sz - 2) return;
+    
+    html += info;
 }
 
 void clslogfile::write_table_description() {
@@ -240,6 +271,8 @@ void clslogfile::save() {
         "nov",
         "dic"
     };
+    
+    if (items.empty()) return;
     
     basename += std::to_string(lt->tm_year + 1900);
     basename += months.at(lt->tm_mon);

@@ -39,6 +39,7 @@ private:
     std::string html;
     
     void write_header();
+    void write_info();
     void write_table_description();
     void write_table_row(const litem_t& item);
     void write_footer();
