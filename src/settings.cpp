@@ -52,6 +52,7 @@ void settings::write() {
 	newpt.add_child("tags.subtitle", tagpt);
 	
 	newpt.put("showwindow", app::showwindow);
+	newpt.put("processes.max_parallel", app::num_processes);
 
 	boost::property_tree::xml_writer_settings<std::string> xmlstyle(' ', 2);
 	try {

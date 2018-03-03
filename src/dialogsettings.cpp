@@ -18,6 +18,7 @@ dialogsettings_t::dialogsettings_t(GtkWindow *window)
 	chooser_log        =  GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "chooser_log"));
 	listbox            =      GTK_LIST_BOX(gtk_builder_get_object(builder, "listbox"));
 	check_show_window  = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "check_show_window"));
+	spinbutton_num_processes = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "spinbutton_num_processes"));
 	button_tag_add     =        GTK_BUTTON(gtk_builder_get_object(builder, "button_tag_add"));
 	button_tag_remove  =        GTK_BUTTON(gtk_builder_get_object(builder, "button_tag_remove"));
 	popover_tag        =       GTK_POPOVER(gtk_builder_get_object(builder, "popover_tag"));
@@ -185,6 +186,9 @@ void dialogsettings_t::response(GtkDialog *dialog, gint resp_id, gpointer self) 
 		}
 
 		app::showwindow = gtk_toggle_button_get_active(inst->check_show_window);
+		app::num_processes = gtk_adjustment_get_value(gtk_spin_button_get_adjustment(inst->spinbutton_num_processes));
+		if (app::num_processes < 0 || app::num_processes > 100)
+		    app::num_processes = 1;
 
 		settings::write();
 	}

@@ -45,6 +45,9 @@ public:
 	bool showwindow;
 	
 	static
+	int num_processes;
+	
+	static
 	GtkApplication *gtkapp;
 	
 	static

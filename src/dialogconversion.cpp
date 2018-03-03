@@ -70,9 +70,10 @@ int dialogconversion::check_do_communication(gpointer self) {
 	if (inst->mc->progressd.empty())
 		return TRUE;
 	
-	for (const auto& commdata : inst->mc->progressd) {
-		if (commdata.total != 0) {
-			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(inst->progressbar), float(commdata.n) / float(commdata.total));
+	/*for (const auto& commdata : inst->mc->progressd) {
+		if (commdata.n_total != 0) {
+		    float fraction = float(commdata.n_current) / float(commdata.n_total);
+			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(inst->progressbar), fraction);
 		}
 		if (commdata.elem != nullptr) {
 			gtk_label_set_text(GTK_LABEL(inst->label), commdata.elem->name.c_str());
@@ -80,11 +81,11 @@ int dialogconversion::check_do_communication(gpointer self) {
 		}
 		if (!commdata.text.empty())
 			inst->append_to_textview("\n" + commdata.text);
-	}
+	}*/
 	
 	auto& commdata = inst->mc->progressd.back();
 
-	if (commdata.done) {
+	if (commdata.elem == nullptr) {
 		inst->done();
 		return FALSE;
 	}

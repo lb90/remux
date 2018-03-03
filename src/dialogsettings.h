@@ -30,6 +30,7 @@ private:
 	GtkEntry           *popover_tag_entry;
 	
 	GtkToggleButton    *check_show_window;
+	GtkSpinButton      *spinbutton_num_processes;
 	
 	bool resetted_mkv;
 	bool resetted_ff;

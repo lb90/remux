@@ -39,7 +39,8 @@ int app::year;
 int app::month;
 int app::day;
 
-bool        app::showwindow;
+bool app::showwindow;
+int  app::num_processes;
 
 GtkApplication *app::gtkapp;
 dialogproperty_t *app::dialogproperty = nullptr;
@@ -207,6 +208,9 @@ int app::init() {
 	}
 	
 	showwindow = settings::pt.get("showwindow", false);
+	num_processes = settings::pt.get("processes.max_parallel", 1);
+	if (num_processes < 0 || num_processes > 100)
+	    num_processes = 1;
 
 	return 0;
 }
