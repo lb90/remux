@@ -57,6 +57,7 @@ dialogsettings_t::dialogsettings_t(GtkWindow *window)
 	}
 	
 	gtk_toggle_button_set_active(check_show_window, app::showwindow);
+	gtk_adjustment_set_value(gtk_spin_button_get_adjustment(spinbutton_num_processes), app::num_processes);
 	
 	resetted_mkv = app::mkvtoolnix_dir.empty() ? true : false;
 	resetted_ff = app::ffmpeg_dir.empty() ? true : false;

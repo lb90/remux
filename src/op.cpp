@@ -96,7 +96,7 @@ void internal_fill_element(media_t& elem) {
 			item.codecname = trackpt.get("codec", "");
 			if (item.codecname == "AC-3")
 				item.codecid = codecid_ac3;
-			else if (item.codecname == "EAC-3")
+			else if (item.codecname == "E-AC-3")
 				item.codecid = codecid_ac3;
 			else if (item.codecname == "DTS") /*TODO*/
 				item.codecid = codecid_dts;

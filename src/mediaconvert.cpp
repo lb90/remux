@@ -1,38 +1,79 @@
 #include <cstdlib>
 #include <cassert>
 #include <vector>
+#include <deque>
 #include <string>
 #include <stdexcept>
 #include <thread>
 #include <glib.h>
 #include <glib/gstdio.h>
 #include "glibutil.h"
-#include "app.h"
-#include "model.h"
 #include "jsonargs.h"
 #include "launchprocess.h"
 #include "logfile.h"
 #include "mediaconvert.h"
 
-mediaconvert::mediaconvert()
+mediaconvert::mediaconvert(std::deque<media_t*> c_elementd, int c_num_processes,
+                           std::string c_ffmpeg_prog,
+                           std::string c_mkvextract_prog,
+                           std::string c_mkvmerge_prog)
  : progressd(),
    progressd_lock(),
-   pool(nullptr),
-   logfile()
+   ctl(this),
+   logfile(),
+   ffmpeg_prog(c_ffmpeg_prog),
+   mkvextract_prog(c_mkvextract_prog),
+   mkvmerge_prog(c_mkvmerge_prog),
+   m_elementd(c_elementd),
+   m_num_processes(c_num_processes),
+   threads(),
+   m_state(exec_state_run),
+   m_wanted_state(exec_state_run),
+   unique_number_counter(0),
+   m_tasks_count(0),
+   thread_pool_lock()
 {
-    pool = g_thread_pool_new(worker_start,
-                             (gpointer) this,
-                             app::max_threads,
-                             TRUE,
-                             &errspec);
-    if (pool == NULL) {
-        
+}
+/*
+mediaconvert::convertcontext::convertcontext(media_t& elem, int unique_number)
+ : elem(elem),
+   unique_number(unique_number),
+   extraction_tmpfile_name(),
+   conversion_tmpfile_prefix()
+{
+    
+}
+*/
+mediaconvert::~mediaconvert() {
+    m_wanted_state = exec_state_stop; /*TODO*/
+    
+    for (std::thread& thread : threads) {
+        thread.join();
+    }
+    
+    logfile.save();
+}
+
+void mediaconvert::start() {
+    assert(threads.empty());
+
+    for (int i = 0; i < m_num_processes; i++) {
+        threads.emplace_back(&mediaconvert::worker_start, this);
+        m_tasks_count++;
     }
 }
 
-mediaconvert::~mediaconvert() {
-    g_thread_pool_free(pool);
-    pool = nullptr;
+mediaconvert::controller::controller(mediaconvert *mc)
+ : mc(mc)
+{
+}
+
+void mediaconvert::controller::start_stop() {
+    mc->m_wanted_state = exec_state_stop;
+}
+
+bool mediaconvert::controller::completed_stop() {
+    return (mc->m_tasks_count == 0);
 }
 
 int mediaconvert::do_convert(media_t& elem, destitem_t& item,
@@ -44,8 +85,9 @@ int mediaconvert::do_convert(media_t& elem, destitem_t& item,
 	
 	//communicate(progressdata(0, 0, nullptr, "conversione della traccia estratta"));
 	
-	argv.emplace_back(app::ffmpeg_prog);
-	argv.emplace_back("-y"); /* overwrite existing files (always say yes) */
+	argv.emplace_back(ffmpeg_prog);
+	/* overwrite existing files, run unattended */
+	argv.emplace_back("-y");
 	argv.emplace_back("-i");
 	argv.emplace_back(extractedpath);
 	argv.emplace_back(convertedpath);
@@ -82,7 +124,7 @@ int mediaconvert::do_extract(media_t& elem, destitem_t& item,
 	
 	//communicate(progressdata(0, 0, nullptr, "estrazione traccia " + item.num));
 
-	argv.emplace_back(app::mkvextract_prog);
+	argv.emplace_back(mkvextract_prog);
 	argv.emplace_back("--command-line-charset");
 #ifdef _WIN32
 	argv.emplace_back("UTF-16");
@@ -128,7 +170,8 @@ int mediaconvert::do_extract(media_t& elem, destitem_t& item,
 	return 0;
 }
 
-int mediaconvert::do_extract_convert(media_t& elem, destitem_t& item) {
+int mediaconvert::do_extract_convert(convertcontext& cvtctx, destitem_t& item) {
+    media_t& elem = *cvtctx.p_elem;
 	int code;
 	
 	std::string extension;
@@ -168,14 +211,20 @@ int mediaconvert::do_extract_convert(media_t& elem, destitem_t& item) {
 			return -1;
 	}
 
-	std::string extractedpath = util_build_filename(elem.outdirectory, "tmpextract");
-	std::string convertedpath = util_build_filename(elem.outdirectory, "track_" + std::to_string(item.tid) + extension);
+	std::string extractedpath = util_build_filename(elem.outdirectory,
+	                                                cvtctx.extraction_tmpfile_name);
+	std::string convertedpath = util_build_filename(elem.outdirectory,
+	                                                cvtctx.conversion_tmpfile_prefix +
+	                                                std::to_string(item.tid) +
+	                                                extension);
 	
 	code = do_extract(elem, item, extractedpath);
 	if (code != 0)
 		return -1;
 	code = do_convert(elem, item, extractedpath, convertedpath);
-	g_remove(extractedpath.c_str());
+
+	g_remove(extractedpath.c_str()); /* cleanup temporary extraction file */
+
 	if (code != 0)
 		return -1;
 		
@@ -184,22 +233,23 @@ int mediaconvert::do_extract_convert(media_t& elem, destitem_t& item) {
 	return 0;
 }
 
-int mediaconvert::check_do_extract_convert(media_t& elem, destitem_t& item) {
+int mediaconvert::check_do_extract_convert(convertcontext& cvtctx, destitem_t& item) {
 	if (item.codecid != item.orig.codecid)
-		return do_extract_convert(elem, item);
+		return do_extract_convert(cvtctx, item);
 	
 	return 0;
 }
 
-void mediaconvert::do_process(media_t& elem) {
+void mediaconvert::process(convertcontext& cvtctx) {
+    media_t& elem = *cvtctx.p_elem;
 	int code;
 	bool bcode;
 	
 	for (destitem_t& item : elem.destitems) {
-		if (!item.want)
+		if (!item.want) /*TODO remove */
 			continue;
 		
-		code = check_do_extract_convert(elem, item);
+		code = check_do_extract_convert(cvtctx, item);
 		if (code != 0)
 			return;
 	}
@@ -297,7 +347,7 @@ void mediaconvert::do_process(media_t& elem) {
 		
 	std::vector<std::string> argv;
 
-	argv.push_back(app::mkvmerge_prog);
+	argv.push_back(mkvmerge_prog);
 #ifndef _WIN32
 	argv.push_back("--command-line-charset");
 	argv.push_back("UTF-8");
@@ -343,7 +393,7 @@ void mediaconvert::communicate(const progressdata& commdata) {
 	std::lock_guard<std::mutex> lock(progressd_lock);
 	progressd.emplace_back(commdata);
 }
-
+/*
 void mediaconvert::do_processall() {
 	std::vector<size_t> indexv;
 
@@ -363,23 +413,50 @@ void mediaconvert::do_processall() {
 	assert(indexv.size() < INT_MAX);
 	communicate(progressdata(int(indexv.size()), int(indexv.size()), nullptr));
 	
-	logfile.save();
+	
+}
+*/
+int mediaconvert::interlocked_get_context(convertcontext *ctx) {
+    std::lock_guard<std::mutex> lock(thread_pool_lock);
+    
+    if (m_elementd.empty())
+        return 1;
+    
+    ctx->p_elem = m_elementd.front();
+    m_elementd.pop_front();
+
+    ctx->unique_number = unique_number_counter++;
+    ctx->extraction_tmpfile_name = "extract_tmpfile_" + std::to_string(ctx->unique_number);
+    ctx->conversion_tmpfile_prefix = "conversion_tmpfile_" + std::to_string(ctx->unique_number) + "_track_";
+    
+    return 0;
 }
 
-void mediaconvert::worker_start(void *data, void *self) {
-	mediaconvert *inst = (mediaconvert*) self;
-	media_t      *p_elem = (media_t*) data;
+void mediaconvert::worker_start() {
+    while (true) {
+        convertcontext cvtctx;
 
-	logfile.started(elem.name);
-	inst->do_process(*p_elem);
-	logfile.ended(elem.err.conv_description, elem.err.conv ? 2 : 0);
-	
-	for (const destitem_t& item : elem.destitems) { /*TODO use unique names */
-		if (!item.outpath.empty())
-		g_remove(item.outpath.c_str());
+	    if (m_wanted_state == exec_state_stop)
+	        break;
+
+	    if (mediaconvert::interlocked_get_context(&cvtctx) > 0)
+	        break;
+	    
+	    media_t& elem = *cvtctx.p_elem;
+	    
+	    logfile.started(elem.name); /* <-- TODO */
+	    mediaconvert::process(cvtctx);
+	    logfile.ended(elem.err.conv_description, elem.err.conv ? 2 : 0);
+	    
+	    /* cleanup */
+	    for (const destitem_t& item : elem.destitems) {
+		    if (!item.outpath.empty())
+		        g_remove(item.outpath.c_str());
+	    }
+	    
+	    communicate(progressdata(&elem));
 	}
 	
-	assert(indexv.size() < INT_MAX);
-	communicate(progressdata(int(indexv.size()), int(i), &elem));
+	m_tasks_count--;
 }
 
