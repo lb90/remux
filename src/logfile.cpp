@@ -12,6 +12,7 @@
 
 clslogfile::clslogfile()
  : items(),
+   m_mutex(),
    html()
 {
 }
@@ -235,15 +236,21 @@ void clslogfile::write_footer() {
     html += footer;
 }
 
-void clslogfile::started(const std::string& name) {
-    items.emplace_back();
-    items.back().name = name;
-}
+void clslogfile::publish(time_t t1,
+                         time_t t2,
+                         const std::string& name,
+                         const std::string& text,
+                         int result)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
 
-void clslogfile::ended(const std::string& text, int result) {
-    items.back().endt = time(NULL);
-    items.back().result = result;
+    items.emplace_back();
+
+    items.back().name = name;
+    items.back().startt = t1;
+    items.back().endt = t2;
     items.back().text = text;
+    items.back().result = result;
 }
 
 void clslogfile::save() {

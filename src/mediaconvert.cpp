@@ -444,9 +444,14 @@ void mediaconvert::worker_start() {
 	    
 	    media_t& elem = *cvtctx.p_elem;
 	    
-	    logfile.started(elem.name); /* <-- TODO */
+	    time_t t1 = time(NULL);
 	    mediaconvert::process(cvtctx);
-	    logfile.ended(elem.err.conv_description, elem.err.conv ? 2 : 0);
+	    time_t t2 = time(NULL);
+	    logfile.publish(t1,
+	                    t2,
+	                    elem.name,
+	                    elem.err.conv_description,
+	                    elem.err.conv ? 2 : 0); /* TODO */
 	    
 	    /* cleanup */
 	    for (const destitem_t& item : elem.destitems) {

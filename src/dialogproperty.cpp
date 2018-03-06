@@ -32,6 +32,10 @@ dialogproperty_t::dialogproperty_t(GtkWindow *window)
 	button_copy          = GTK_WIDGET(gtk_builder_get_object(builder, "button_copy"));
 	button_delete        = GTK_WIDGET(gtk_builder_get_object(builder, "button_delete"));
 	button_resetall      = GTK_WIDGET(gtk_builder_get_object(builder, "button_resetall"));
+	
+	grid_warning         = GTK_WIDGET(gtk_builder_get_object(builder, "grid_warning"));
+	label_warning         = GTK_WIDGET(gtk_builder_get_object(builder, "label_warning"));
+	
 	treeview_menu        = GTK_WIDGET(gtk_builder_get_object(builder, "menu_treeview"));
 	
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
@@ -141,6 +145,8 @@ int dialogproperty_t::setcurrentelement(gint n) {
 		gtk_entry_set_text(GTK_ENTRY(entry_outname), curelem->outname.c_str());
 		
 		gtk_widget_set_sensitive(button_enqueue, TRUE);
+		
+		check_for_warnings();
 	}
 	
 	return 0;
@@ -459,6 +465,8 @@ void dialogproperty_t::cb_op(GtkButton *, gpointer self) {
 	}
 
 	inst->change_num_rows();
+	
+	inst->check_for_warnings();
 }
 
 void dialogproperty_t::cb_copy(GtkButton *, gpointer self) {
@@ -478,6 +486,9 @@ void dialogproperty_t::cb_copy(GtkButton *, gpointer self) {
 	std::vector<destitem_t> secondpart;
 	for (size_t i = n; i < inst->curelem->destitems.size(); i++)
 		secondpart.emplace_back(elem.destitems[i]);
+	
+	if (secondpart.empty()) return;
+	secondpart.front().isdefault = false;
 	
 	elem.destitems.clear();
 	
@@ -541,7 +552,7 @@ void dialogproperty_t::cb_moveup(GtkButton *, gpointer self) {
 	dialogproperty_t *inst = (dialogproperty_t*) self;
 		
 	int nn = inst->getselection();
-	if (nn < 0) return
+	if (nn < 0) return;
 	assert(size_t(nn) < inst->curelem->destitems.size());
 	size_t n = nn;
 	
@@ -617,6 +628,48 @@ gboolean dialogproperty_t::cb_treeview_buttonpress(GtkWidget *treeview, GdkEvent
 	}
 	
 	return FALSE;
+}
+
+void dialogproperty_t::check_for_warnings() {
+    media_t& elem = *curelem;
+    int predef_count_video = 0;
+    int predef_count_audio = 0;
+    int predef_count_subtitle = 0;
+    int predef_count_button = 0;
+    
+    for (const destitem_t& item : elem.destitems) {
+        if (item.isdefault) {
+            if (item.type == itemtype_video)
+                predef_count_video++;
+            else if (item.type == itemtype_audio)
+                predef_count_audio++;
+            else if (item.type == itemtype_subtitle)
+                predef_count_subtitle++;
+            else if (item.type == itemtype_button)
+                predef_count_button++;
+        }
+    }
+    
+    std::string suffix;
+    if (predef_count_video > 1)
+        suffix += ", video";
+    if (predef_count_audio > 1)
+        suffix += ", audio";
+    if (predef_count_subtitle > 1)
+        suffix += ", sottotitolo";
+    if (predef_count_button > 1)
+        suffix += ", button";
+    
+    if (suffix.empty()) {
+        gtk_widget_set_visible(grid_warning, FALSE);
+    }
+    else {
+        suffix = suffix.substr(2, std::string::npos);
+        
+        std::string label_text = "Sono presenti più tracce predefinite di tipo " + suffix;
+        gtk_label_set_text(GTK_LABEL(label_warning), label_text.c_str());
+        gtk_widget_set_visible(grid_warning, TRUE);
+    }
 }
 
 gboolean dialogproperty_t::cb_treeview_popupmenu(GtkWidget *treeview, gpointer self) {
@@ -843,6 +896,8 @@ void dialogproperty_t::cb_toggled_isdefault(GtkCellRendererToggle *ren, gchar *p
 		basic_list_model = BASIC_LIST_MODEL(gtk_tree_view_get_model(GTK_TREE_VIEW(inst->treeview)));
 		basic_list_model_emit_row_changed(basic_list_model, n);
 		gtk_tree_path_free(path);
+		
+		inst->check_for_warnings();
 	}
 }
 

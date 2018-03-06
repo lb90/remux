@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.21.0 -->
+<!-- Generated with glade 3.20.4 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkImage" id="image_copy">
@@ -350,7 +350,6 @@
                         </child>
                         <child>
                           <object class="GtkGrid" id="grid_warning">
-                            <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
                               <object class="GtkImage">
@@ -364,7 +363,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="labrl_warning">
+                              <object class="GtkLabel" id="label_warning">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">Sono presenti più tracce predefinite di tipo audio</property>

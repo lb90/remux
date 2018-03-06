@@ -41,6 +41,9 @@ private:
 	GtkWidget  *button_delete;
 	GtkWidget  *button_resetall;
 	
+	GtkWidget  *grid_warning;
+	GtkWidget  *label_warning;
+	
 	GtkWidget  *treeview_menu;
 	
 	int      curn;
@@ -60,6 +63,8 @@ private:
 	void update_view();
 	void change_num_rows();
 	void row_changed(int n);
+	
+	void check_for_warnings();
 	
 	GtkTreePath* get_path_from_n(int n);
 	
