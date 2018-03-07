@@ -24,6 +24,7 @@ dialogconversion::dialogconversion(GtkWindow *window)
 	
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
 	
+	g_signal_connect(dialog, "delete-event", G_CALLBACK(dialogconversion::cb_delete_event), (gpointer) this);
 	g_signal_connect(dialog, "destroy", G_CALLBACK(dialogconversion::self_deleter), (gpointer) this);
 	
 	g_signal_connect(button_stop, "clicked", G_CALLBACK(dialogconversion::cb_button_stop), (gpointer) this);
@@ -149,6 +150,14 @@ void dialogconversion::cb_button_stop(GtkButton *, gpointer self) {
 }
 
 void dialogconversion::cb_button_pause(GtkButton *, gpointer self) {
+}
+
+gboolean dialogconversion::cb_delete_event(GtkWidget *widget,
+                                           GdkEvent *event,
+                                           gpointer self)
+{
+    cb_button_stop(NULL, self);
+    return TRUE;
 }
 
 dialogconversion::~dialogconversion() {

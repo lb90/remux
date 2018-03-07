@@ -60,6 +60,11 @@ private:
 	void done();
 	
 	static
+	gboolean cb_delete_event(GtkWidget *widget,
+                             GdkEvent *event,
+                             gpointer self);
+	
+	static
 	void self_deleter(GtkDialog *dialog, gpointer self);
 };
 
