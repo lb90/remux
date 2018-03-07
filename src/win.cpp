@@ -30,8 +30,8 @@ int get_appdata_folder(std::string& appdata_folder) {
 	appdata_folder = appdata_u8;
 
 cleanup:
-	if (appdata)
-		g_free(appdata);
+	if (appdata_u8)
+		g_free(appdata_u8);
 	if (appdata_u16 != NULL)
 		CoTaskMemFree(appdata_u16);
 
@@ -40,11 +40,14 @@ cleanup:
 
 int get_config_folder(std::string& configfolder) {
 	std::string appdata;
+	int ret;
 
-	get_appdata_folder(appdata);
-	configfolder = util_build_filename(appdata, "Remux");
-	if (!g_file_test(configfolder.c_str(), G_FILE_TEST_EXISTS))
-		g_mkdir(configfolder.c_str(), 0);
+	ret = get_appdata_folder(appdata);
+	if (ret == 0) {
+		configfolder = util_build_filename(appdata, "Remux");
+		if (!g_file_test(configfolder.c_str(), G_FILE_TEST_EXISTS))
+			g_mkdir(configfolder.c_str(), 0);
+	}
 	
 	return ret;
 }

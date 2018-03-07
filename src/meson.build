@@ -24,6 +24,7 @@ src = [
 
 if host_machine.system() == 'windows'
   src += 'launchprocess_win32.cpp'
+  src += 'win.cpp'
 else
   src += 'launchprocess_glib.cpp'
 endif
@@ -33,7 +34,7 @@ src += res
 
 if host_machine.system() == 'windows'
   win = import('windows')
-  src += win.compile_resources('win/res.rc')
+  src += win.compile_resources('winres/remux.rc')
 endif
 
 gui = false
